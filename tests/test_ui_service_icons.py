@@ -12,14 +12,10 @@ ROOT = Path(__file__).resolve().parent.parent
 class ServiceIconUiTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        env = Environment(
+        cls.template = Environment(
             loader=FileSystemLoader(ROOT / "templates"),
             autoescape=select_autoescape(["html"]),
-        )
-        # _nav.html wraps its labels in _(); render them untranslated here.
-        env.add_extension("jinja2.ext.i18n")
-        env.install_null_translations()
-        cls.template = env.get_template("_nav.html")
+        ).get_template("_nav.html")
 
     def render_nav(self, values=None, enabled=None, shelfmark=False):
         values = values or {}
@@ -159,7 +155,7 @@ class ServiceIconUiTestCase(unittest.TestCase):
         docs_icon = ROOT / "docs" / "assets" / "icon.png"
 
         self.assertNotIn("📚 Docs", nav_html)
-        self.assertIn('title="{{ _(\'Documentation\') }}"', nav_html)
+        self.assertIn('title="Documentation"', nav_html)
         self.assertNotIn("{ .md-button", docs_home)
         self.assertIn('class="md-button md-button--primary"', docs_home)
         self.assertIn("logo: assets/icon.png", mkdocs_config)
