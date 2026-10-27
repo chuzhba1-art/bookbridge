@@ -1107,6 +1107,7 @@ class SyncManager:
     def _peer_position_is_own_writeback(
         self, abs_id: str, client_name: str, observed_pct: float, margin: float,
         observed_marker: object = None, title_snip: str = "",
+        external_write_age: Optional[float] = None,
     ) -> bool:
         """Whether a peer's current position is the echo of BookBridge's own write.
 
@@ -1126,7 +1127,11 @@ class SyncManager:
         match: a user read landing within `margin` of our last write is no longer
         mistaken for our own echo, and a marker that has moved on is never
         mistaken for an echo just because the percentage still happens to be
-        close."""
+        close.
+
+        `external_write_age` is how long ago a device wrote the observed value, as
+        the built-in KoSync server saw it. A device write newer than ours is user
+        movement however close the percentages land."""
         try:
             from src.services.write_tracker import GLOBAL_USER, get_recent_write, marker_echo_verdict
         except ImportError:
@@ -1139,6 +1144,15 @@ class SyncManager:
                 client_name, abs_id, suppression_window=window, user_id=GLOBAL_USER
             )
         if not recent:
+            return False
+
+        # Same process clock (the built-in server); read slightly earlier, so any skew errs toward echo.
+        if isinstance(external_write_age, (int, float)) and external_write_age < recent['age']:
+            logger.info(
+                f"🪞 '{abs_id}' '{title_snip}' '{client_name}' ({observed_pct:.2%}) was written by a "
+                f"device {external_write_age:.0f}s ago, after BookBridge's own write-back "
+                f"{recent['age']:.0f}s ago - treating it as user movement"
+            )
             return False
 
         verdict = marker_echo_verdict(recent, observed_marker)
@@ -4417,6 +4431,7 @@ class SyncManager:
                             abs_id, other_name, other_pct, regression_margin,
                             observed_marker=config[other_name].current.get('_position_marker'),
                             title_snip=title_snip,
+                            external_write_age=config[other_name].current.get('_kosync_last_put_age_seconds'),
                         ):
                             logger.info(
                                 f"🪞 '{abs_id}' '{title_snip}' Rollback veto skipped: "
@@ -4456,6 +4471,7 @@ class SyncManager:
                     abs_id, client_name, observed_pct, client_echo_margin,
                     observed_marker=config[client_name].current.get('_position_marker'),
                     title_snip=title_snip,
+                    external_write_age=config[client_name].current.get('_kosync_last_put_age_seconds'),
                 ):
                     echo_clients.add(client_name)
             for client_name in sorted(echo_clients):
