@@ -19,7 +19,8 @@ All notable changes to BookBridge will be documented in this file.
   that auto-matches books you put on it, and how long to wait before posting progress to Hardcover, StoryGraph and
   Goodreads are each a single setting now, applied to every app you use. Apps you had set differently keep their own
   values until you change that choice, and the card tells you they differ. Setting highlights to 0 now stops highlight
-  copying even while Readest uploads keep running. Highlights, reading history, the "Up Next" shelf and posting to
+  copying even while Readest uploads keep running. **Find shelves** on the "Up Next" card lists the shelves and
+  collections in every library app you use, not only Grimmory. Highlights, reading history, the "Up Next" shelf and posting to
   trackers each have their own card, and KOReader's page-turn wait, backward-progress protection, history
   switches and *Compare text positions when percentages disagree* sit beside the matching settings for every app
   under **Reading & Sync**.

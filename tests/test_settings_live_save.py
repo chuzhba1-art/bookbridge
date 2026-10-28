@@ -11,7 +11,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -171,6 +171,18 @@ class TestSettingsSaveRestartsOnlyWhenNeeded(unittest.TestCase):
             header, _, body = card.partition('class="section-body')
             if 'toggle-switch' in header and 'toggleSection(' not in header:
                 self.assertNotRegex(body, r'<(input|select|textarea)\b', header.split('</h3>')[0])
+
+    def test_find_shelves_looks_in_every_library_app_in_use(self):
+        def app(configured, shelves):
+            return Mock(is_configured=Mock(return_value=configured), get_all_shelves=Mock(return_value=shelves))
+        bundle = Mock(booklore_client=app(False, [{'name': 'Grimmory only'}]),
+                      bookorbit_client=app(True, [{'id': 3, 'name': 'Up Next'}, {'id': 4, 'name': 'Favourites'}]),
+                      kavita_client=app(True, [{'title': 'up next'}]))
+        with patch('src.web_server.uc', return_value=bundle):
+            shelves = self.client.get('/api/watch-shelves').get_json()
+        self.assertEqual(shelves, [{'id': 'Favourites', 'name': 'Favourites (BookOrbit)'},
+                                   {'id': 'Up Next', 'name': 'Up Next (BookOrbit, Kavita)'}])
+        bundle.booklore_client.get_all_shelves.assert_not_called()
 
     def test_the_page_marks_restart_settings_and_ships_defaults(self):
         html = self.client.get('/settings').get_data(as_text=True)

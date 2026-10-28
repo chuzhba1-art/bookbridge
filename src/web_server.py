@@ -571,7 +571,7 @@ _ADMIN_ONLY_ENDPOINTS = {
     'clean_cache', 'api_series_backfill', 'api_debug_abs_series', 'api_storyteller_backfill',
     'admin_users', 'admin_user_integrations',
     'api_restart', 'test_connection',
-    'get_booklore_libraries', 'get_booklore_shelves', 'get_abs_libraries',
+    'get_booklore_libraries', 'get_booklore_shelves', 'get_watch_shelves', 'get_abs_libraries',
     'api_booklore_refresh', 'alignments_llm_status', 'alignments_realign', 'alignments_restore',
     'kosync_admin.api_get_kosync_documents',
     'kosync_admin.api_link_kosync_document',
@@ -13549,6 +13549,29 @@ def get_booklore_shelves():
         return jsonify({"error": str(e)}), 500
 
 
+def get_watch_shelves() -> Response:
+    """Shelves and collections that can be the "Up Next" shelf, from every library app in use."""
+    clients = uc()
+    apps = (('Grimmory', clients.booklore_client), ('BookOrbit', clients.bookorbit_client),
+            ('Kavita', clients.kavita_client))
+    found = {}
+    for app_name, client in apps:
+        if client is None or not client.is_configured():
+            continue
+        try:
+            shelves = client.get_all_shelves() or []
+        except Exception as e:
+            logger.warning(f"Could not list {app_name} shelves: {e}", exc_info=True)
+            continue
+        for shelf in shelves:
+            name = str(shelf.get('name') or shelf.get('title') or '').strip() if isinstance(shelf, dict) else ''
+            if name:
+                found.setdefault(name.lower(), (name, []))[1].append(app_name)
+    result = [{"id": name, "name": f"{name} ({', '.join(in_apps)})"} for name, in_apps in found.values()]
+    result.sort(key=lambda x: x["id"].lower())
+    return jsonify(result)
+
+
 def get_abs_libraries():
     """Return available Audiobookshelf libraries."""
     if not container.abs_client().is_configured():
@@ -15147,6 +15170,7 @@ def create_app(test_container=None):
     app.add_url_rule('/api/kavita/cover/<series_id>', 'proxy_kavita_cover', proxy_kavita_cover, methods=['GET'])
     app.add_url_rule('/api/booklore/libraries', 'get_booklore_libraries', get_booklore_libraries, methods=['GET'])
     app.add_url_rule('/api/booklore/shelves', 'get_booklore_shelves', get_booklore_shelves, methods=['GET'])
+    app.add_url_rule('/api/watch-shelves', 'get_watch_shelves', get_watch_shelves, methods=['GET'])
     app.add_url_rule('/api/abs/libraries', 'get_abs_libraries', get_abs_libraries, methods=['GET'])
     app.add_url_rule('/api/booklore/refresh', 'api_booklore_refresh', api_booklore_refresh, methods=['POST'])
     app.add_url_rule('/api/bookfusion/device/start', 'api_bookfusion_device_start', api_bookfusion_device_start, methods=['POST'])

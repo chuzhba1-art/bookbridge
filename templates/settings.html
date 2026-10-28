@@ -2247,7 +2247,7 @@
                         <div style="display: flex; gap: 10px;">
                             <input type="text" name="ALL_APPS_SHELF_WATCH_NAME" value="{{ merged_values.ALL_APPS_SHELF_WATCH_NAME }}"
                                 placeholder="Up Next" style="flex:1;">
-                            <button class="btn" type="button" onclick="checkBookloreWatchShelf()">🔍 Find Grimmory shelves</button>
+                            <button class="btn" type="button" onclick="checkBookloreWatchShelf()">🔍 Find shelves</button>
                         </div>
                         <select id="booklore_watch_shelf_picker" style="display:none; margin-top:10px;"
                             onchange="applyShelfPickerSelection('ALL_APPS_SHELF_WATCH_NAME', 'booklore_watch_shelf_picker', true)">
@@ -3393,13 +3393,13 @@
 
         function checkBookloreWatchShelf() {
             populateLibraryPicker({
-                endpoint: '/api/booklore/shelves',
+                endpoint: '/api/watch-shelves',
                 button: event.target,
                 inputName: 'ALL_APPS_SHELF_WATCH_NAME',
                 selectId: 'booklore_watch_shelf_picker',
                 statusId: 'booklore_watch_shelf_picker_status',
-                emptyMessage: 'No shelves found. Create one in Grimmory first, then click Find again.',
-                labelBuilder: (shelf) => `${shelf.name} (${shelf.count} books)`,
+                emptyMessage: 'No shelves or collections found. Create one in your library app first, then click Find again.',
+                labelBuilder: (shelf) => shelf.name,
             });
         }
 
