@@ -47,31 +47,35 @@ every save reset it to off.
 changed** shows every card holding a value that differs from its default, and each such field has
 a *reset* link.
 
-## Phase 2 — per-user reading preferences (your call)
+## Phase 2 — per-user reading preferences (done, adjust to taste)
 
-These describe how *you* read, not how the server runs. Each consumer already runs in a
-user-scoped path (KoSync request, per-user sync cycle or client bundle):
+Settings that describe how *one reader* reads, not how the server runs, moved to
+**My Integrations → Reading preferences**. Each is a three-way choice: **Server default** (follows the
+value in Settings, which the admin page now badges "default for readers"), **On** or **Off**.
 
-| Setting | Read at | Notes |
-| --- | --- | --- |
-| `KOREADER_ANNOTATION_SYNC`, `KOREADER_STATUS_SYNC_ENABLED`, `KOREADER_SYNC_READ_HISTORY`, `KOREADER_COMBINE_DEVICE_STATS` | `kosync_server.py`, `sync_manager.py` | "your devices" |
-| `KOSYNC_FURTHEST_WINS`, `KOSYNC_ACTIVE_DEVICE_WINS` | `kosync_server.py:2097`, `kosync_device_arbiter.py:47` | how your own readers disagree |
-| `SYNC_COMPLETION_PROPAGATION`, `SYNC_COMPLETION_THRESHOLD` | `sync_manager.py:392`, `readest_upload_service.py:528` | when *you* count a book finished |
-| `ABS_READING_CHECKPOINTS`, `STORYTELLER_LISTENING_SESSIONS`, `GRIMMORY_READING_SESSIONS`, `BOOKORBIT_READING_SESSIONS` | sync clients, `sync_manager.py` | what lands in *your* stats |
-| `SERIES_SHOW_CURRENT_BOOK_DETAIL` | template only | display preference |
+| Setting | Read at |
+| --- | --- |
+| `KOREADER_ANNOTATION_SYNC`, `KOREADER_STATUS_SYNC_ENABLED`, `KOREADER_SYNC_READ_HISTORY` | KoSync device-sync endpoints, sync cycle, Mark complete / Clear progress |
+| `KOSYNC_FURTHEST_WINS` | KoSync PUT |
+| `SYNC_COMPLETION_PROPAGATION` | sync cycle |
+| `ABS_READING_CHECKPOINTS`, `STORYTELLER_LISTENING_SESSIONS` | sync cycle (ABS client, Storyteller-led push) |
+| `SERIES_SHOW_CURRENT_BOOK_DETAIL` | Library page |
 
-**Decision needed:** is the admin's value a *default* each reader can override (recommended), or
-a value that is *enforced* for everyone?
+How it works: `PER_USER_PREFERENCE_KEYS` (`src/utils/user_config.py`) are stored in the user's
+credential dict but are deliberately **not** in `PER_USER_CREDENTIAL_KEYS`, so `user_preference()` falls
+back to the global value for every reader, regular users included. Sync cycles carry the reader's
+credentials in context; KoSync requests carry only the user id, so those call sites pass the
+`DatabaseService` and the choice is read by id. A blank choice means "follow the server default".
+Tests: `tests/test_reading_preferences.py`.
 
-Mechanism for "default": a new `PER_USER_PREFERENCE_KEYS` set, stored in the user's credential
-dict but **not** in `PER_USER_CREDENTIAL_KEYS`, so `resolve_setting` falls back to the global value
-for everyone, regular users included. Consumers switch from `env_truthy(K)` to
-`user_setting(K)`. On My Integrations the controls must be three-way, *Server default (On) / On /
-Off*. A plain checkbox always saves true or false, so a reader could never go back to following
-the server default.
+To move a setting back to server-only: remove it from `PER_USER_PREFERENCE_KEYS` and the "Reading
+preferences" group; its consumers keep working (they fall back to the global value).
 
-Larger, so later: shelf watch per user (it runs as the primary admin today), Telegram per user
-(one global log handler), and `ABS_PROGRESS_OFFSET_SECONDS` (captured in `ABSSyncClient.__init__`).
+Candidates left server-wide for now: `KOSYNC_ACTIVE_DEVICE_WINS` (still in shadow mode),
+`KOREADER_COMBINE_DEVICE_STATS`, `GRIMMORY_READING_SESSIONS` / `BOOKORBIT_READING_SESSIONS` (read in
+KoSync hot paths and session flushes), `SYNC_COMPLETION_THRESHOLD` (also read by the Readest upload
+sweep). Larger: shelf watch per user (runs as the primary admin today), Telegram per user (one global
+log handler), `ABS_PROGRESS_OFFSET_SECONDS` (captured in `ABSSyncClient.__init__`).
 
 ## Phase 3 — combine further
 

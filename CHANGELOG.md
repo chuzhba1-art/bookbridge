@@ -19,6 +19,13 @@ All notable changes to BookBridge will be documented in this file.
   a single row, and they no longer hide behind the Instant Sync switch.
 - **Find a setting searches every tab, and "Only what I've changed" lists your changes.** Each changed setting has a
   **reset** link back to its default.
+- **Each reader chooses their own reading preferences.** Highlight, reading-status and History sharing between
+  KOReader devices, protection from an out-of-date device, marking a finished book finished everywhere, Audiobookshelf
+  reading checkpoints, counting Storyteller as listening time, and the series view on your Library are now under
+  **My Integrations → Reading preferences**. Each starts at **Server default**, which follows the value in Settings,
+  and can be set to On or Off for just that reader.
+- **Settings are described in plain words.** Labels such as "Client Diff Threshold" and "Rollback Veto Tolerance"
+  now say what they do, and descriptions say what changes for you and when you would touch them.
 
 ### Fixed
 

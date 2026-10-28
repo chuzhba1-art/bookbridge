@@ -36,7 +36,7 @@ from src.utils.user_context import (
     set_current_user_credentials, reset_current_user_credentials,
     get_current_user_credentials, get_current_user_id,
 )
-from src.utils.user_config import resolve_setting, user_setting
+from src.utils.user_config import PER_USER_PREFERENCE_KEYS, resolve_setting, user_preference_enabled, user_setting
 from src.utils.user_config import global_fallback_allowed as _global_fallback_allowed
 from src.utils.user_config import SERVICE_ENABLE_KEYS
 from src.utils.kosync_url import is_builtin_kosync_url
@@ -5276,6 +5276,7 @@ def settings():
                          user_message=user_message,
                          user_error=user_error,
                          restart_keys=sorted(RESTART_REQUIRED_SETTINGS),
+                         reader_pref_keys=sorted(PER_USER_PREFERENCE_KEYS),
                          setting_defaults={k: DEFAULT_CONFIG.get(k, '') for k in sorted(KNOWN_SETTING_KEYS)}))
     response.headers['Cache-Control'] = 'no-store, max-age=0'
     return response
@@ -11470,7 +11471,7 @@ def mark_complete(abs_id):
     # normally marks a book finished for KOReader -- never sees it. Pressing this
     # button is the most explicit "I finished this" the bridge has, so it would be
     # the worst one to miss.
-    if not perform_delete and env_truthy('KOREADER_STATUS_SYNC_ENABLED', 'true'):
+    if not perform_delete and user_preference_enabled('KOREADER_STATUS_SYNC_ENABLED', 'true', database_service):
         try:
             written = database_service.record_koreader_status_for_book(
                 abs_id,

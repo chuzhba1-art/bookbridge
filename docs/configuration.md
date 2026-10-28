@@ -148,7 +148,7 @@ Audiobookshelf remains the default audiobook source when a mapping is not explic
 | Keep every match in its auto-add collection | `ABS_COLLECTION_RECONCILE` | `false` | Global. Every sync cycle, each matched Audiobookshelf audiobook missing from its owner's auto-add collection is added again, so an add that failed at match time is not permanent. An Audiobookshelf collection only holds books from one library, so with several audiobook libraries a collection of that name is kept in each. Add-only: while on, a book removed from the collection by hand is added back. |
 | Progress Offset | `ABS_PROGRESS_OFFSET_SECONDS` | `0` | Rewinds progress written back to ABS by this many seconds. |
 | Save reading checkpoints in ABS listening history | `ABS_READING_CHECKPOINTS` | `false` | Adds one second of artificial listening time when ebook reading advances the ABS audiobook position, preserving a recoverable entry in ABS listening history. Labels reading as listening and slightly increases ABS listening statistics. Resets, rewinds, unchanged positions, and existing audiobook listening credit are unaffected. |
-| Limit Search to Configured Library | `ABS_ONLY_SEARCH_IN_ABS_LIBRARY_ID` | `false` | In the UI this is a checkbox. Direct env usage can also be set to a library ID string. |
+| Only search the chosen Audiobookshelf library | `ABS_ONLY_SEARCH_IN_ABS_LIBRARY_ID` | `false` | In the UI this is a checkbox. Direct env usage can also be set to a library ID string. |
 | Enable ABS Ebook Sync | `SYNC_ABS_EBOOK` | `false` | Turns on bidirectional reading-progress sync with the ebook file attached to an Audiobookshelf item. |
 | ABS Ebook Position Format | `ABS_EBOOK_LOCATOR_FORMAT` | `cfi` | `cfi`, `readium`, or `auto`. See the note below. |
 
@@ -174,7 +174,7 @@ The bridge **is** a KoSync server — KOReader devices sync directly with it. De
 | Setting | Env Var | Default | Notes |
 | --- | --- | --- | --- |
 | Enable | `KOSYNC_ENABLED` | `false` | Turns on KOSync support. |
-| Hash Method | `KOSYNC_HASH_METHOD` | `content` | `content` is safest. `filename` is faster but less reliable. |
+| How devices recognise a book | `KOSYNC_HASH_METHOD` | `content` | `content` is safest. `filename` is faster but less reliable. |
 | Take each reader's sync login from Grimmory | `KOSYNC_CREDENTIALS_FROM_GRIMMORY` | `false` | Global. At startup and each sync cycle, an active reader's KoSync username and password are taken from the KOReader login of their Grimmory account, and keep following it when it changes there. A reader who already has a different KoSync login set in BookBridge keeps it — clear their KoSync username to switch to the Grimmory one. A Grimmory username that another BookBridge user already has is skipped. Both cases are logged as warnings; readers without a Grimmory KOReader login are left alone. |
 | PUT Debounce | `KOSYNC_PUT_DEBOUNCE_SECONDS` | `300` | Wait this long after KOReader stops pushing before running the sync cycle. |
 | Use Percentage from Server | `KOSYNC_USE_PERCENTAGE_FROM_SERVER` | `false` | Uses raw percentage instead of text matching. |
@@ -576,7 +576,7 @@ Connection:
 | Server URL | `OLLAMA_URL` | `http://ollama:11434` | Your Ollama server. Use container DNS (`http://ollama:11434`) or `http://localhost:11434`. |
 | Embedding Model | `OLLAMA_EMBED_MODEL` | `nomic-embed-text` | Used for similarity. Pull it first: `ollama pull nomic-embed-text`. |
 | Chat / Judge Model | `OLLAMA_CHAT_MODEL` | `qwen2.5:14b` | Used to judge ambiguous matches. |
-| Keep Alive | `OLLAMA_KEEP_ALIVE` | `5m` | How long models stay loaded after a request (`5m`, `1h`, `-1` = forever, `0` = unload now). |
+| Keep the model loaded for | `OLLAMA_KEEP_ALIVE` | `5m` | How long models stay loaded after a request (`5m`, `1h`, `-1` = forever, `0` = unload now). |
 | Chat Context Length | `OLLAMA_NUM_CTX` | empty | Context window for judge calls. Empty = server default. |
 
 What it can do — each is a separate toggle, and the defaults below only take effect once **Enable** is on:
@@ -640,7 +640,7 @@ audio ↔ text alignment; it runs locally by default and needs no external servi
 | Provider | `TRANSCRIPTION_PROVIDER` | `local` | `local`, `deepgram`, or `whispercpp`. |
 | Whisper Model | `WHISPER_MODEL` | `tiny` | Local Whisper model size or a custom Whisper.cpp model name. |
 | Whisper Language | `WHISPER_LANGUAGE` | empty | Local Whisper only. Blank detects each chunk's language; a code such as `ru` or `en` fixes it. Applies to new transcriptions; saved transcripts are reused. |
-| Filter Non-Speech Audio | `WHISPER_VAD_FILTER` | `false` | Local Whisper only. Uses voice activity detection to reduce transcription over music and silence while preserving audio timestamps. Check quiet narration before enabling broadly. Applies to new transcriptions. |
+| Skip music and silence | `WHISPER_VAD_FILTER` | `false` | Local Whisper only. Uses voice activity detection to reduce transcription over music and silence while preserving audio timestamps. Check quiet narration before enabling broadly. Applies to new transcriptions. |
 | Whisper Device | `WHISPER_DEVICE` | `auto` | `auto`, `cpu`, or `cuda`. |
 | Whisper Compute Type | `WHISPER_COMPUTE_TYPE` | `auto` | Precision mode for local Whisper. |
 | Whisper.cpp URL | `WHISPER_CPP_URL` | empty | Full endpoint URL, including the path — e.g. `http://HOST:8080/v1/audio/transcriptions`. |
@@ -651,13 +651,13 @@ audio ↔ text alignment; it runs locally by default and needs no external servi
 | Deepgram API Key | `DEEPGRAM_API_KEY` | empty | Deepgram API key. |
 | Deepgram Model | `DEEPGRAM_MODEL` | `nova-2` | Deepgram model tier. |
 | SMIL Validation Threshold | `SMIL_VALIDATION_THRESHOLD` | `60` | Minimum token match percentage for accepting SMIL timing data. |
-| Content-Match Guard | `CONTENT_MATCH_GUARD` | `true` | Refuses to store an alignment when transcript and ebook wording overlap too little, even without Ollama. |
+| Refuse alignments that look like a different book | `CONTENT_MATCH_GUARD` | `true` | Refuses to store an alignment when transcript and ebook wording overlap too little, even without Ollama. |
 | Content-Match Min Overlap | `CONTENT_MATCH_MIN_OVERLAP` | `0.15` | Minimum direct word n-gram overlap required by the guard. Raise only when you knowingly align a rough edition. |
-| Segmented Alignment Maps | `ALIGNMENT_SEGMENTED_MAPS` | `false` | Experimental. Enable only for a collection whose audiobook narrates sections in a different order from the EPUB spine, then remap that book. |
+| Handle chapters read aloud out of order | `ALIGNMENT_SEGMENTED_MAPS` | `false` | Experimental. Enable only for a collection whose audiobook narrates sections in a different order from the EPUB spine, then remap that book. |
 | Use Forced Alignment | `CTC_ENABLED` | `true` | Recommended. Aligns each audiobook directly against its ebook's text, word by word, instead of transcribing it first; also locates each chapter directly in the audio, so long books skip Whisper entirely. Runs on the CPU in every image via the default QuartzNet model. Off always uses transcription (Whisper/lexical). New installs default on; existing installs keep whatever they had. |
-| CTC Model | `CTC_MODEL` | `quartznet` | `quartznet` (NVIDIA QuartzNet15x5, English only) runs on the CPU in every image. `mms_fa` (Meta MMS, ~1000 languages) needs a self-built image with `INSTALL_CTC=true` and effectively an NVIDIA GPU. Visible under Advanced once forced alignment is on. |
+| Alignment model | `CTC_MODEL` | `quartznet` | `quartznet` (NVIDIA QuartzNet15x5, English only) runs on the CPU in every image. `mms_fa` (Meta MMS, ~1000 languages) needs a self-built image with `INSTALL_CTC=true` and effectively an NVIDIA GPU. Visible under Advanced once forced alignment is on. |
 | QuartzNet Model File | `CTC_QUARTZNET_MODEL_PATH` | empty | Optional path to a local `model.onnx` (or the folder holding it). Empty downloads it once (77 MB) from Storyteller's package registry into `/data/models/quartznet15x5-en/`; set this if that download fails. |
-| CTC Device | `CTC_DEVICE` | `auto` | MMS only — QuartzNet always runs on the CPU. Uses an NVIDIA GPU when available; CPU is practical only for short books with MMS. |
+| Run the MMS model on | `CTC_DEVICE` | `auto` | MMS only — QuartzNet always runs on the CPU. Uses an NVIDIA GPU when available; CPU is practical only for short books with MMS. |
 | Use a read-along's own timings when they check out | `SMIL_SKIP_CTC` | `false` | Applies while forced alignment is on. When the ebook is a read-along (a Storyteller or StoryAlign EPUB with media overlays), checks its timings for places where they lose sync with the audio; timings that pass become the book's map without running forced alignment. Off: forced alignment runs first, and the read-along's timings are used only if it fails. |
 
 Transcription notes:
@@ -666,10 +666,10 @@ Transcription notes:
 - The `whispercpp` provider works with any OpenAI-compatible transcription endpoint — whisper.cpp server, speaches, parakeet, or a proxy such as llama-swap — not just whisper.cpp itself. Use the 🔗 **Test** button next to the URL to check the endpoint before saving. Inside Docker, do not use `localhost`; use the host's LAN IP or the whisper container's service name.
 - **Split Uploads** exists for servers that return one merged segment per request (parakeet does this). Alignment can only be as precise as the segments it gets back, so on those servers set it low — 2 or 3 minutes — and leave it at `0` for servers that already return fine-grained segments.
 - **Send Original Audio** skips local ffmpeg normalization and splitting, which saves minutes per book, but only works on servers that decode arbitrary formats *and* chunk long audio themselves (e.g. parakeet with `-long-audio`). Leave it off for whisper.cpp, which requires 16kHz WAV input. When it is on, **Audio Split Length** no longer applies — the server controls chunking.
-- **Content-Match Guard** is the safe default. It prevents a wrong, abridged, or otherwise incompatible ebook/audio pairing from replacing a usable map when semantic matching is unavailable. Check the selected editions before lowering its threshold.
-- **Segmented Alignment Maps** is an opt-in fix for an unusual edition where the EPUB's chapter order does not match narration order. It does nothing for normally ordered books. Enable it, then use **Remap alignment** for the affected book.
+- **Refuse alignments that look like a different book** is the safe default. It prevents a wrong, abridged, or otherwise incompatible ebook/audio pairing from replacing a usable map when semantic matching is unavailable. Check the selected editions before lowering its threshold.
+- **Handle chapters read aloud out of order** is an opt-in fix for an unusual edition where the EPUB's chapter order does not match narration order. It does nothing for normally ordered books. Enable it, then use **Remap alignment** for the affected book.
 - **Forced alignment** is the recommended, default-on method: it runs on the CPU in every published image (standard and `-cuda`) using QuartzNet, and it finds each chapter directly in the audio, so long books skip the Whisper transcript entirely — a 22-hour audiobook takes about 7.5 minutes on a modern 8-thread CPU, a 39-hour one about 15. It falls back to transcription automatically, with no user action needed, for a book that is not in English, whose audio does not follow the text closely enough, whose chapters are narrated out of order, or that appears to be a different book — that fallback is expected, not an error. New installs default it on; existing installs keep whatever they had.
-- For a non-English book, switch **CTC Model** to `mms_fa` under **Advanced — forced alignment model**. MMS needs a self-built image (`INSTALL_CTC=true`) and effectively an NVIDIA GPU — see [Forced alignment for non-English books (MMS)](#forced-alignment-for-non-english-books-mms) below.
+- For a non-English book, switch **Alignment model** to `mms_fa` under **Advanced — forced alignment model**. MMS needs a self-built image (`INSTALL_CTC=true`) and effectively an NVIDIA GPU — see [Forced alignment for non-English books (MMS)](#forced-alignment-for-non-english-books-mms) below.
 
 ### Sync Tuning
 
@@ -677,19 +677,19 @@ Found under **Settings -> Reading & Sync**. Each app that cannot notify BookBrid
 
 | Setting | Env Var | Default | Notes |
 | --- | --- | --- | --- |
-| Sync Period (Minutes) | `SYNC_PERIOD_MINS` | `5` | Main background sync interval. |
-| Min ABS Change (Seconds) | `SYNC_DELTA_ABS_SECONDS` | `60` | Minimum ABS timestamp change before it counts as real movement. |
-| Min Ebook Change (%) | `SYNC_DELTA_KOSYNC_PERCENT` | `0.5` | Minimum ebook percentage change before it counts as real movement. |
+| Sync every (minutes) | `SYNC_PERIOD_MINS` | `5` | Main background sync interval. |
+| Smallest audio move that counts (seconds) | `SYNC_DELTA_ABS_SECONDS` | `60` | Minimum ABS timestamp change before it counts as real movement. |
+| Smallest ebook move that counts (%) | `SYNC_DELTA_KOSYNC_PERCENT` | `0.5` | Minimum ebook percentage change before it counts as real movement. |
 | Min Ebook Change (Words) | `SYNC_DELTA_KOSYNC_WORDS` | `400` | Extra guardrail for ebook movement. |
-| Client Diff Threshold (%) | `SYNC_DELTA_BETWEEN_CLIENTS_PERCENT` | `0.5` | Minimum gap between clients before propagation begins. |
-| Fuzzy Match Threshold | `FUZZY_MATCH_THRESHOLD` | `80` | Matching threshold used by several book and text lookups. |
-| Job Max Retries | `JOB_MAX_RETRIES` | `5` | Retry count for failed background jobs. |
+| Treat apps this close as already in step (%) | `SYNC_DELTA_BETWEEN_CLIENTS_PERCENT` | `0.5` | Minimum gap between clients before propagation begins. |
+| Text matching strictness (0–100) | `FUZZY_MATCH_THRESHOLD` | `80` | Matching threshold used by several book and text lookups. |
+| Retry a failed job up to (times) | `JOB_MAX_RETRIES` | `5` | Retry count for failed background jobs. |
 | Job Retry Delay (Minutes) | `JOB_RETRY_DELAY_MINS` | `15` | Delay before retrying failed jobs. |
 | Reading Session Merge Gap (Minutes) | `READING_SESSION_MERGE_MINUTES` | `5` | Groups non-KOReader progress into one session. The effective idle gap is at least twice the sync period and at most 30 minutes. |
 | Cross-Format Deadband (Seconds) | `CROSSFORMAT_DEADBAND_SECONDS` | `2.0` | Prevents tiny cross-format gaps from causing leader flips while avoiding backward writes to newer high-confidence ebook locators. |
 | Cross-Format Roundtrip Tolerance | `CROSSFORMAT_ROUNDTRIP_TOLERANCE_CHARS` | `2` | Locator roundtrip tolerance used when stabilizing cross-format locators. |
 | Honor a Deliberate Rewind | `SYNC_TRUST_CORROBORATED_REWIND` | `true` | Lets a rewind lead after the same app reports you continuing from the new position; an isolated stale backward report is held briefly. |
-| Locator Round-Trip Tolerance (Seconds) | `LOCATOR_ROUNDTRIP_TOLERANCE_SECONDS` | `30` | Rejects an otherwise character-close rebuilt locator when it lands far away on the audio timeline, which protects segmented maps at a section seam. |
+| Position double-check tolerance (seconds) | `LOCATOR_ROUNDTRIP_TOLERANCE_SECONDS` | `30` | Rejects an otherwise character-close rebuilt locator when it lands far away on the audio timeline, which protects segmented maps at a section seam. |
 
 ### Advanced Toggles
 
@@ -783,7 +783,7 @@ Consider raising **Whisper Model** to `small` or `medium` if your GPU can handle
 
 Forced alignment's default model, QuartzNet, needs no build and already runs on the
 CPU in every published image — see [Transcription Settings](#transcription-settings)
-above. For a book that is not in English, switch **CTC Model** to `mms_fa` (Meta MMS,
+above. For a book that is not in English, switch **Alignment model** to `mms_fa` (Meta MMS,
 ~1000 languages) instead. MMS is not included in the published images; build your own
 with its torch and torchaudio dependencies, then select `mms_fa` under **Advanced —
 forced alignment model** in Settings and use **Remap alignment** on the book:
@@ -794,5 +794,5 @@ docker compose up -d
 ```
 
 Use an NVIDIA GPU for full-length audiobooks with MMS. CPU mode is available for short
-books but is very slow. Leaving **CTC Model** on `quartznet` keeps the default
+books but is very slow. Leaving **Alignment model** on `quartznet` keeps the default
 CPU-only pipeline unchanged.

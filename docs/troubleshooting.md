@@ -13,13 +13,13 @@ as a bonus alignment source.
 ### An alignment is rejected, or opens at the wrong place
 
 - Confirm that the selected ebook and audiobook are the same edition. The
-  **Content-Match Guard** deliberately refuses maps with too little shared wording;
+  **Refuse alignments that look like a different book** deliberately refuses maps with too little shared wording;
   leave it enabled unless you know the pairing is a rough but intended match.
 - Open **Settings -> Alignment -> Alignment Health**. A low-quality map can be rebuilt with
   **Remap alignment**, and **Restore previous** returns to the last saved map if the
   replacement is worse.
 - If a collection's audiobook narrates chapters in a different order from the EPUB,
-  enable experimental **Segmented Alignment Maps** in Settings, then remap that book.
+  enable experimental **Handle chapters read aloud out of order** in Settings, then remap that book.
   It is off by default and is not needed for normally ordered books.
 - **Forced alignment** (on by default) matches each audiobook directly against its ebook
   and locates every chapter in the audio itself, so most books never touch Whisper. It
@@ -35,10 +35,10 @@ as a bonus alignment source.
   transcript prove the original pairing; otherwise manual review is required.
   See [transcription recovery](TRANSCRIPTION_RECOVERY.md).
 - If local Whisper detects the wrong language, set **Whisper Language** under
-  Transcription to a code such as `ru` or `en`. **Filter Non-Speech Audio** can
+  Transcription to a code such as `ru` or `en`. **Skip music and silence** can
   reduce transcription over music and silence; test quiet narration first.
   Both affect new local transcriptions, not saved transcripts. Keep the
-  Content-Match Guard enabled while checking the ebook and audio pairing.
+  **Refuse alignments that look like a different book** check on while checking the ebook and audio pairing.
 
 ### Read-along highlights run ahead or stop partway through a sentence
 
