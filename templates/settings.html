@@ -1954,6 +1954,12 @@
                             simply opening an out-of-date second reader can also become the new position.
                         </div>
                     </div>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="kosync_xpath_order" name="KOSYNC_XPATH_ORDER_ENABLED"
+                            {% if get_bool('KOSYNC_XPATH_ORDER_ENABLED') %}checked{% endif %}>
+                        <label for="kosync_xpath_order">Compare text positions when percentages disagree</label>
+                        <small>Your reader and BookBridge can measure the same book slightly differently, so an old spot on a device can report a higher percentage than where you really are, and win, moving you backwards. With this on, BookBridge checks where both positions actually are in the text. Off by default because it has to open the book, which can add a few seconds to the first sync.</small>
+                    </div>
                 </div>
             </div>
 
@@ -2186,12 +2192,6 @@
                             {% if get_bool('KOSYNC_AUTO_MAP_ON_AGREEMENT') %}checked{% endif %}>
                         <label for="kosync_auto_map">Auto-map on exact agreement</label>
                         <small>When you start reading an ebook that isn't linked yet, link it to its audiobook straight away if they share an ISBN/ASIN, or if both the text matcher and the AI agree on one exact audiobook. Anything less certain becomes a suggestion. The AI part needs a provider on the AI tab.</small>
-                    </div>
-                    <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="kosync_xpath_order" name="KOSYNC_XPATH_ORDER_ENABLED"
-                            {% if get_bool('KOSYNC_XPATH_ORDER_ENABLED') %}checked{% endif %}>
-                        <label for="kosync_xpath_order">Compare text positions when percentages disagree</label>
-                        <small>Your reader and BookBridge can measure the same book slightly differently, so an old spot on a device can report a higher percentage than where you really are, and win, moving you backwards. With this on, BookBridge checks where both positions actually are in the text. Off by default because it has to open the book, which can add a few seconds to the first sync.</small>
                     </div>
                     <div class="checkbox-wrapper full-width">
                         <input type="checkbox" id="kosync_hash_reconcile" name="KOSYNC_HASH_RECONCILE_ENABLED"

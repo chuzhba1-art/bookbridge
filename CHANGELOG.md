@@ -20,8 +20,9 @@ All notable changes to BookBridge will be documented in this file.
   Goodreads are each a single setting now, applied to every app you use. Apps you had set differently keep their own
   values until you change that choice, and the card tells you they differ. Setting highlights to 0 now stops highlight
   copying even while Readest uploads keep running. Highlights, reading history, the "Up Next" shelf and posting to
-  trackers each have their own card, and KOReader's page-turn wait, backward-progress protection and history
-  switches sit beside the matching settings for every app under **Reading & Sync**.
+  trackers each have their own card, and KOReader's page-turn wait, backward-progress protection, history
+  switches and *Compare text positions when percentages disagree* sit beside the matching settings for every app
+  under **Reading & Sync**.
 - **More of BookBridge is in Settings.** Identifying books a KOReader device opens that BookBridge doesn't know yet,
   the Storyteller collection for synced books, combining KOReader statistics across your devices, and the Whisper.cpp
   server timeout used to be environment variables only.
