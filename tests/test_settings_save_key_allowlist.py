@@ -55,7 +55,7 @@ class SettingsFormCoverageTestCase(unittest.TestCase):
     """An allowlist silently drops anything it does not know, so the template and
     the registry have to agree — otherwise a field renders and never saves."""
 
-    CONTROL_FIELDS = {'action', 'user_id', 'username', 'password', 'role', 'csrf_token'}
+    CONTROL_FIELDS = {'action', 'user_id', 'username', 'password', 'role', 'csrf_token', 'return_tab'}
 
     def test_every_settings_field_in_the_template_is_savable(self):
         unknown = sorted(

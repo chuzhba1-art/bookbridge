@@ -41,7 +41,7 @@ from src.utils.user_config import global_fallback_allowed as _global_fallback_al
 from src.utils.user_config import SERVICE_ENABLE_KEYS
 from src.utils.kosync_url import is_builtin_kosync_url
 
-from src.utils.config_loader import ConfigLoader, KNOWN_SETTING_KEYS, env_truthy
+from src.utils.config_loader import ConfigLoader, DEFAULT_CONFIG, KNOWN_SETTING_KEYS, RESTART_REQUIRED_SETTINGS, env_truthy
 from src.utils.cache_paths import safe_cache_path, safe_library_path, is_plain_basename, contained_library_file
 from src.utils.ebook_utils import (
     LINKABLE_EBOOK_EXTENSIONS,
@@ -5157,6 +5157,9 @@ def settings():
                     clean_value = f"http://{clean_value}"
             return clean_value
 
+        # Every value this save writes, to tell whether a restart is needed.
+        written = {}
+
         # 1. Handle Boolean Toggles (Checkbox logic)
         # Checkboxes are NOT sent if unchecked, so we must check every known bool key
         for key in bool_keys:
@@ -5165,6 +5168,7 @@ def settings():
             val_str = str(is_checked).lower()
             database_service.set_setting(key, val_str)
             os.environ[key] = val_str # Immediate update for current process
+            written[key] = val_str
 
         # 2. Handle Text Inputs
         # Iterate over form to find other keys
@@ -5199,9 +5203,11 @@ def settings():
             if clean_value:
                 database_service.set_setting(key, clean_value)
                 os.environ[key] = clean_value # Immediate update for current process
+                written[key] = clean_value
             elif key in current_settings:
                 database_service.set_setting(key, "")
                 os.environ[key] = "" # Immediate update for current process
+                written[key] = ""
 
         new_booklore_settings = {
             key: _normalized_form_value(key)
@@ -5215,6 +5221,23 @@ def settings():
                 client._book_cache.clear()
                 client._book_id_cache.clear()
                 client._cache_timestamp = 0
+
+        def _setting_changed(key):
+            if key not in written:
+                return False
+            old, new = current_settings.get(key) or '', written[key]
+            if key in bool_keys:
+                truthy = ('true', '1', 'yes', 'on')
+                return (old.strip().lower() in truthy) != (new.strip().lower() in truthy)
+            return old.strip() != new.strip()
+
+        restart_changes = sorted(k for k in RESTART_REQUIRED_SETTINGS if _setting_changed(k))
+        if not restart_changes:
+            logger.info("⚙️ Settings saved and applied without a restart")
+            session['message'] = "Settings saved. Your changes are already in effect."
+            return_tab = request.form.get('return_tab', '')
+            return redirect(url_for('settings') + (f"#{return_tab}" if return_tab.isidentifier() else ''))
+        logger.info("⚙️ Settings saved; restarting to apply %s", ", ".join(restart_changes))
 
         try:
             return render_restarting_page(
@@ -5251,7 +5274,9 @@ def settings():
                          current_user_id=(cu.id if cu else None),
                          primary_admin_id=primary_admin_id,
                          user_message=user_message,
-                         user_error=user_error))
+                         user_error=user_error,
+                         restart_keys=sorted(RESTART_REQUIRED_SETTINGS),
+                         setting_defaults={k: DEFAULT_CONFIG.get(k, '') for k in sorted(KNOWN_SETTING_KEYS)}))
     response.headers['Cache-Control'] = 'no-store, max-age=0'
     return response
 

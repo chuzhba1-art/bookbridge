@@ -524,6 +524,31 @@ DEFAULT_CONFIG = {
 # key registered in only one of them still saves.
 KNOWN_SETTING_KEYS = frozenset(ALL_SETTINGS) | frozenset(DEFAULT_CONFIG)
 
+# Settings captured once at startup: the scheduler and socket listener, module
+# globals, singleton __init__s, logging and paths. Saving a change to one of these
+# restarts the app; every other setting is read per call and applies on save.
+# tests/test_settings_live_save.py derives the startup reads from the source, so a
+# new one missing from this set fails the suite.
+RESTART_REQUIRED_SETTINGS = frozenset({
+    # Scheduler, listeners and process-wide state
+    'SYNC_PERIOD_MINS', 'INSTANT_SYNC_ENABLED', 'ABS_SOCKET_ENABLED',
+    'TZ', 'LOG_LEVEL',
+    'TELEGRAM_ENABLED', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'TELEGRAM_LOG_LEVEL',
+    # Paths
+    'DATA_DIR', 'BOOKS_DIR', 'EXTRA_EBOOK_DIRS', 'AUDIOBOOKS_DIR', 'STORYTELLER_LIBRARY_DIR',
+    # Read by singletons when they are built
+    'EBOOK_CACHE_SIZE', 'ALIGNMENT_CACHE_SIZE', 'FUZZY_MATCH_THRESHOLD',
+    'KOSYNC_HASH_METHOD', 'XPATH_FALLBACK_TO_PREVIOUS_SEGMENT',
+    'SYNC_DELTA_ABS_SECONDS', 'SYNC_DELTA_KOSYNC_PERCENT', 'SYNC_DELTA_BETWEEN_CLIENTS_PERCENT',
+    'ABS_PROGRESS_OFFSET_SECONDS', 'LLM_PROVIDER',
+    'STORYTELLER_RECOVERY_MAX_WAIT_MINUTES', 'STORYTELLER_RECOVERY_POLL_INTERVAL_MINUTES',
+    # Server connections held by the global clients and module globals
+    'ABS_ENABLED', 'ABS_SERVER', 'ABS_KEY', 'ABS_LIBRARY_ID', 'ABS_COLLECTION_NAME',
+    'BOOKLORE_SERVER', 'BOOKLORE_USER', 'BOOKLORE_PASSWORD', 'BOOKLORE_SHELF_NAME',
+    'CWA_SERVER', 'CWA_USERNAME', 'CWA_PASSWORD', 'CWA_SYNC_TOKEN',
+    'HARDCOVER_TOKEN', 'STORYTELLER_API_URL', 'STORYTELLER_USER', 'STORYTELLER_PASSWORD',
+})
+
 class ConfigLoader:
     """
     Loads configuration from database and updates environment variables.

@@ -6,7 +6,24 @@ All notable changes to BookBridge will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- **Saving settings no longer restarts BookBridge unless it has to.** Most changes now take effect the moment you
+  save. A setting marked **restart** is read once at startup: a server address, a folder, the sync period and a few
+  others. Saving a change to one of those still restarts the app, and the Save bar tells you so before you press it.
+- **Settings are grouped by what they are for.** The sidebar is now **Services**, **Reading & Sync**, **Library &
+  Matching**, **Alignment**, **AI**, **Server**, **Maintenance** and **Users**. The KOReader book-matching options
+  that sat under Suggestions, and the transcription and alignment options buried in System → Advanced, each have a
+  home of their own. The clean-up and backfill buttons live on **Maintenance**. Every on/off is now the same switch.
+- **One row per app for how often it is checked.** Each app's poll mode, interval and "wait until you pause" are now
+  a single row, and they no longer hide behind the Instant Sync switch.
+- **Find a setting searches every tab, and "Only what I've changed" lists your changes.** Each changed setting has a
+  **reset** link back to its default.
+
 ### Fixed
+
+- **"Wait until you pause" stays on for an app you have switched off.** Saving Settings while an app was switched
+  off quietly turned its "wait for position to settle" option back off.
 
 - **Storyteller listening shows as one Audiobookshelf session per sitting** (#566). With **Count as Listening Time**
   on, every sync opened and closed its own ABS listening session, so 30 minutes with a 3-minute sync showed as ten

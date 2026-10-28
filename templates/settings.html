@@ -122,7 +122,9 @@
 
         .form-group input,
         .form-group select,
-        .form-group textarea {
+        .form-group textarea,
+        .poll-row select,
+        .poll-custom input[type="number"] {
             padding: 10px;
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -138,18 +140,22 @@
             font-family: inherit;
         }
 
-        .form-group select {
+        .form-group select,
+        .poll-row select {
             color-scheme: dark;
         }
 
-        .form-group select option {
+        .form-group select option,
+        .poll-row select option {
             background: #121212;
             color: #ffffff;
         }
 
         .form-group input:focus,
         .form-group select:focus,
-        .form-group textarea:focus {
+        .form-group textarea:focus,
+        .poll-row select:focus,
+        .poll-custom input[type="number"]:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -215,11 +221,61 @@
             cursor: pointer;
         }
 
-        .checkbox-wrapper input {
-            width: 16px;
-            height: 16px;
+        /* Every on/off in the form is the same switch, whatever markup holds it. */
+        .checkbox-wrapper input[type="checkbox"],
+        .toggle-label input[type="checkbox"],
+        .poll-settle input[type="checkbox"],
+        .changed-only input[type="checkbox"] {
+            -webkit-appearance: none;
+            appearance: none;
+            position: relative;
+            flex: 0 0 36px;
+            width: 36px;
+            height: 20px;
+            margin: 0;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
             cursor: pointer;
-            accent-color: #667eea;
+            transition: background .2s;
+            vertical-align: middle;
+        }
+
+        .checkbox-wrapper input[type="checkbox"]::before,
+        .toggle-label input[type="checkbox"]::before,
+        .poll-settle input[type="checkbox"]::before,
+        .changed-only input[type="checkbox"]::before {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ccc;
+            transition: transform .2s;
+        }
+
+        .checkbox-wrapper input[type="checkbox"]:checked,
+        .toggle-label input[type="checkbox"]:checked,
+        .poll-settle input[type="checkbox"]:checked,
+        .changed-only input[type="checkbox"]:checked {
+            background: #667eea;
+        }
+
+        .checkbox-wrapper input[type="checkbox"]:checked::before,
+        .toggle-label input[type="checkbox"]:checked::before,
+        .poll-settle input[type="checkbox"]:checked::before,
+        .changed-only input[type="checkbox"]:checked::before {
+            transform: translateX(16px);
+            background: #fff;
+        }
+
+        .checkbox-wrapper input[type="checkbox"]:focus-visible,
+        .toggle-label input[type="checkbox"]:focus-visible,
+        .poll-settle input[type="checkbox"]:focus-visible,
+        .changed-only input[type="checkbox"]:focus-visible {
+            outline: 2px solid #aab4f5;
+            outline-offset: 2px;
         }
 
         .checkbox-wrapper label {
@@ -426,6 +482,137 @@
 
         .tab-panel.active {
             display: block;
+        }
+
+        /* Search and "only what I've changed" show matches from every tab. */
+        .settings-main.filtering .tab-panel {
+            display: block;
+        }
+
+        .settings-main.filtering .panel-intro {
+            display: none;
+        }
+
+        .panel-intro {
+            margin: 0 4px 14px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        .changed-only {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.75);
+            cursor: pointer;
+        }
+
+        .settings-legend {
+            margin: 10px 0 0;
+            font-size: 12px;
+            line-height: 1.45;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .restart-badge {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 1px 6px;
+            border: 1px solid rgba(255, 152, 0, 0.45);
+            border-radius: 999px;
+            color: #FFB74D;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+
+        .settings-legend .restart-badge {
+            margin: 0 4px 0 0;
+        }
+
+        .reset-default {
+            margin-left: 8px;
+            padding: 0;
+            border: none;
+            background: none;
+            color: #aab4f5;
+            font-size: 11px;
+            cursor: pointer;
+            text-decoration: underline;
+            vertical-align: middle;
+        }
+
+        .reset-default + .reset-default::before {
+            content: none;
+        }
+
+        .reset-default::before {
+            content: "● changed · ";
+            display: inline-block;
+            margin-right: 4px;
+            color: #8c9eff;
+            text-decoration: none;
+        }
+
+        .save-effect {
+            color: rgba(255, 255, 255, 0.55);
+            font-size: 13px;
+        }
+
+        .save-effect.warn {
+            color: #FF9800;
+            font-weight: 600;
+        }
+
+        /* Per-app check timers: one row per app instead of three fields each. */
+        .poll-row {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 190px 170px 1fr;
+            gap: 10px;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .poll-row[hidden] {
+            display: none;
+        }
+
+        .poll-name {
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .poll-custom {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .poll-custom input[type="number"] {
+            width: 90px;
+        }
+
+        .poll-settle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0 0 0 8px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 760px) {
+            .poll-row {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 760px) {
@@ -710,12 +897,19 @@
             <aside class="settings-sidebar">
                 <input type="search" id="settings_search" class="settings-search" placeholder="Find a setting…"
                     aria-label="Find a setting" autocomplete="off">
-                <button type="button" class="settings-tab active" data-tab="integrations" onclick="showSettingsTab('integrations')">🔌 Integrations</button>
-                <button type="button" class="settings-tab" data-tab="sync" onclick="showSettingsTab('sync')">🔄 Sync</button>
-                <button type="button" class="settings-tab" data-tab="features" onclick="showSettingsTab('features')">✨ Features</button>
+                <button type="button" class="settings-tab active" data-tab="integrations" onclick="showSettingsTab('integrations')">🔌 Services</button>
+                <button type="button" class="settings-tab" data-tab="sync" onclick="showSettingsTab('sync')">🔄 Reading &amp; Sync</button>
+                <button type="button" class="settings-tab" data-tab="library" onclick="showSettingsTab('library')">📚 Library &amp; Matching</button>
+                <button type="button" class="settings-tab" data-tab="alignment" onclick="showSettingsTab('alignment')">🎧 Alignment</button>
                 <button type="button" class="settings-tab" data-tab="ai" onclick="showSettingsTab('ai')">🤖 AI</button>
-                <button type="button" class="settings-tab" data-tab="system" onclick="showSettingsTab('system')">🛠️ System</button>
+                <button type="button" class="settings-tab" data-tab="system" onclick="showSettingsTab('system')">🛠️ Server</button>
+                <button type="button" class="settings-tab" data-tab="maintenance" onclick="showSettingsTab('maintenance')">🧰 Maintenance</button>
                 <button type="button" class="settings-tab" data-tab="users" onclick="showSettingsTab('users')">👥 Users</button>
+                <label class="changed-only">
+                    <input type="checkbox" id="changed_only"> Only what I've changed
+                </label>
+                <p class="settings-legend"><span class="restart-badge">restart</span> Saving a change to one of
+                    these restarts BookBridge. Everything else takes effect as soon as you save.</p>
             </aside>
             <div class="settings-main">
 
@@ -804,6 +998,29 @@
                         <small>When ebook reading advances the ABS position, save a recoverable listening-history
                             entry by adding one second of artificial listening time. This labels reading as listening
                             and slightly increases ABS listening statistics. Disabled by default.</small>
+                    </div>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="abs_ebook" name="SYNC_ABS_EBOOK" {% if get_bool('SYNC_ABS_EBOOK')
+                            %}checked{% endif %}>
+                        <label for="abs_ebook">Enable ABS Ebook Sync (Bi-directional)</label>
+                    </div>
+                    <div class="form-group" style="align-items: center;">
+                        <label>ABS Ebook Position Format</label>
+                        <select name="ABS_EBOOK_LOCATOR_FORMAT" id="abs_ebook_locator_format">
+                            <option value="cfi" {% if get_val('ABS_EBOOK_LOCATOR_FORMAT', 'cfi') == 'cfi' %}selected{% endif %}>CFI (recommended)</option>
+                            <option value="readium" {% if get_val('ABS_EBOOK_LOCATOR_FORMAT') == 'readium' %}selected{% endif %}>Readium locator</option>
+                            <option value="auto" {% if get_val('ABS_EBOOK_LOCATOR_FORMAT') == 'auto' %}selected{% endif %}>Auto (match your reader)</option>
+                        </select>
+                        <div class="help-text" style="display: block; width: 100%; margin-top: 5px;">
+                            Audiobookshelf stores one position field shared by every reader, but readers
+                            disagree on its format. <strong>CFI</strong> is read by all of them and is exact
+                            in the official ABS app and web reader; some third-party readers land in the
+                            right chapter but a little early. <strong>Readium locator</strong> is exact in
+                            third-party readers such as Audiobooth, but the official ABS app and web reader
+                            cannot restore it and will open at the cover. <strong>Auto</strong> writes back
+                            whichever format your reader last used &mdash; the most precise choice if you
+                            only ever use one reader, and the wrong one if you switch between them.
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1780,120 +1997,314 @@
 
             </div><!-- /integrations panel -->
 
-            <div class="tab-panel" data-panel="features">
+            <div class="tab-panel" data-panel="sync">
 
-            <!-- Shared library (multi-user) -->
+            <p class="panel-intro">How positions move between your apps. The defaults suit most libraries.</p>
+
             <div class="settings-section">
                 <div class="section-header">
-                    <h3>Shared Library</h3>
-                    <div class="header-tail">
-                        <div class="toggle-switch-wrapper">
-                            <span class="toggle-label">Enable</span>
-                            <label class="toggle-switch">
-                                <input type="checkbox" name="SHARE_ALL_BOOKS_WITH_ALL_USERS"
-                                    {% if get_bool('SHARE_ALL_BOOKS_WITH_ALL_USERS') %}checked{% endif %}>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
+                    <h3>When BookBridge syncs</h3>
                 </div>
                 <div class="section-body">
-                    <div class="form-group full-width">
-                        <div class="help-text">
-                            Every matched book becomes visible to every user, and new or re-enabled
-                            accounts start with the whole library — nobody has to re-match a book someone
-                            else already processed. For a household reading one shared library.
-                            <strong>Visibility only:</strong> reading progress, KOSync documents and
-                            stats stay per-user exactly as they are today, and removing a book still
-                            only drops the claim of the user who removed it. Leave off if each user
-                            curates their own library.
-                        </div>
+                    <div class="form-group">
+                        <label>Sync Period (Minutes)</label>
+                        <input type="number" name="SYNC_PERIOD_MINS" value="{{ get_val('SYNC_PERIOD_MINS') }}">
+                    </div>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="toggle_instant_sync" name="INSTANT_SYNC_ENABLED"
+                            {% if get_bool('INSTANT_SYNC_ENABLED') %}checked{% endif %}>
+                        <label for="toggle_instant_sync">Instant sync</label>
+                        <div class="help-text">Sync the moment Audiobookshelf playback or a KOReader page turn
+                            arrives, instead of waiting for the next scheduled sync. The per-app checks below run
+                            either way.</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Series display -->
             <div class="settings-section">
                 <div class="section-header">
-                    <h3>Series Display</h3>
+                    <h3>How often each app is checked</h3>
+                </div>
+                <div class="section-body">
+                    <div class="help-text full-width">Apps that cannot notify BookBridge are checked on every scheduled sync. Give one its own timer to pick up its changes sooner.</div>
+                    <div class="poll-row" {% if not get_bool('STORYTELLER_ENABLED') %}hidden{% endif %}>
+                        <span class="poll-name">Storyteller</span>
+                        <select name="STORYTELLER_POLL_MODE" id="storyteller_poll_mode" aria-label="Storyteller: when to check"
+                                onchange="togglePollSeconds('storyteller_poll_custom', this.value)">
+                            <option value="global" {% if get_val('STORYTELLER_POLL_MODE', 'global') == 'global' %}selected{% endif %}>With each sync</option>
+                            <option value="custom" {% if get_val('STORYTELLER_POLL_MODE') == 'custom' %}selected{% endif %}>On its own timer</option>
+                        </select>
+                        <span class="poll-custom" id="storyteller_poll_custom"
+                             {% if get_val('STORYTELLER_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
+                            every <input type="number" name="STORYTELLER_POLL_SECONDS" min="10" aria-label="Storyteller: seconds between checks"
+                                   value="{{ get_val('STORYTELLER_POLL_SECONDS', '45') }}"> s
+                            <label class="poll-settle"><input type="checkbox" name="STORYTELLER_POLL_WAIT_FOR_SETTLE"
+                                {% if get_bool('STORYTELLER_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}> wait until you pause</label>
+                        </span>
+                    </div>
+                    <div class="poll-row" {% if not get_bool('BOOKLORE_ENABLED') %}hidden{% endif %}>
+                        <span class="poll-name">Grimmory</span>
+                        <select name="BOOKLORE_POLL_MODE" id="booklore_poll_mode" aria-label="Grimmory: when to check"
+                                onchange="togglePollSeconds('booklore_poll_custom', this.value)">
+                            <option value="global" {% if get_val('BOOKLORE_POLL_MODE', 'global') == 'global' %}selected{% endif %}>With each sync</option>
+                            <option value="custom" {% if get_val('BOOKLORE_POLL_MODE') == 'custom' %}selected{% endif %}>On its own timer</option>
+                        </select>
+                        <span class="poll-custom" id="booklore_poll_custom"
+                             {% if get_val('BOOKLORE_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
+                            every <input type="number" name="BOOKLORE_POLL_SECONDS" min="10" aria-label="Grimmory: seconds between checks"
+                                   value="{{ get_val('BOOKLORE_POLL_SECONDS', '300') }}"> s
+                            <label class="poll-settle"><input type="checkbox" name="BOOKLORE_POLL_WAIT_FOR_SETTLE"
+                                {% if get_bool('BOOKLORE_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}> wait until you pause</label>
+                        </span>
+                    </div>
+                    <div class="poll-row" {% if not get_bool('BOOKLORE_ENABLED') %}hidden{% endif %}>
+                        <span class="poll-name">Grimmory audiobooks</span>
+                        <select name="BOOKLORE_AUDIO_POLL_MODE" id="booklore_audio_poll_mode" aria-label="Grimmory audiobooks: when to check"
+                                onchange="togglePollSeconds('booklore_audio_poll_custom', this.value)">
+                            <option value="global" {% if get_val('BOOKLORE_AUDIO_POLL_MODE', 'global') == 'global' %}selected{% endif %}>With each sync</option>
+                            <option value="custom" {% if get_val('BOOKLORE_AUDIO_POLL_MODE') == 'custom' %}selected{% endif %}>On its own timer</option>
+                        </select>
+                        <span class="poll-custom" id="booklore_audio_poll_custom"
+                             {% if get_val('BOOKLORE_AUDIO_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
+                            every <input type="number" name="BOOKLORE_AUDIO_POLL_SECONDS" min="10" aria-label="Grimmory audiobooks: seconds between checks"
+                                   value="{{ get_val('BOOKLORE_AUDIO_POLL_SECONDS', '300') }}"> s
+                            <label class="poll-settle"><input type="checkbox" name="BOOKLORE_AUDIO_POLL_WAIT_FOR_SETTLE"
+                                {% if get_bool('BOOKLORE_AUDIO_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}> wait until you pause</label>
+                        </span>
+                    </div>
+                    <div class="poll-row" {% if not get_bool('BOOKORBIT_ENABLED') %}hidden{% endif %}>
+                        <span class="poll-name">BookOrbit</span>
+                        <select name="BOOKORBIT_POLL_MODE" id="bookorbit_poll_mode" aria-label="BookOrbit: when to check"
+                                onchange="togglePollSeconds('bookorbit_poll_custom', this.value)">
+                            <option value="global" {% if get_val('BOOKORBIT_POLL_MODE', 'global') == 'global' %}selected{% endif %}>With each sync</option>
+                            <option value="custom" {% if get_val('BOOKORBIT_POLL_MODE') == 'custom' %}selected{% endif %}>On its own timer</option>
+                        </select>
+                        <span class="poll-custom" id="bookorbit_poll_custom"
+                             {% if get_val('BOOKORBIT_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
+                            every <input type="number" name="BOOKORBIT_POLL_SECONDS" min="10" aria-label="BookOrbit: seconds between checks"
+                                   value="{{ get_val('BOOKORBIT_POLL_SECONDS', '300') }}"> s
+                            <label class="poll-settle"><input type="checkbox" name="BOOKORBIT_POLL_WAIT_FOR_SETTLE"
+                                {% if get_bool('BOOKORBIT_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}> wait until you pause</label>
+                        </span>
+                    </div>
+                    <div class="poll-row" {% if not get_bool('BOOKORBIT_ENABLED') %}hidden{% endif %}>
+                        <span class="poll-name">BookOrbit audiobooks</span>
+                        <select name="BOOKORBIT_AUDIO_POLL_MODE" id="bookorbit_audio_poll_mode" aria-label="BookOrbit audiobooks: when to check"
+                                onchange="togglePollSeconds('bookorbit_audio_poll_custom', this.value)">
+                            <option value="global" {% if get_val('BOOKORBIT_AUDIO_POLL_MODE', 'global') == 'global' %}selected{% endif %}>With each sync</option>
+                            <option value="custom" {% if get_val('BOOKORBIT_AUDIO_POLL_MODE') == 'custom' %}selected{% endif %}>On its own timer</option>
+                        </select>
+                        <span class="poll-custom" id="bookorbit_audio_poll_custom"
+                             {% if get_val('BOOKORBIT_AUDIO_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
+                            every <input type="number" name="BOOKORBIT_AUDIO_POLL_SECONDS" min="10" aria-label="BookOrbit audiobooks: seconds between checks"
+                                   value="{{ get_val('BOOKORBIT_AUDIO_POLL_SECONDS', '300') }}"> s
+                            <label class="poll-settle"><input type="checkbox" name="BOOKORBIT_AUDIO_POLL_WAIT_FOR_SETTLE"
+                                {% if get_bool('BOOKORBIT_AUDIO_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}> wait until you pause</label>
+                        </span>
+                    </div>
+                    <div class="poll-row" {% if not get_bool('KAVITA_ENABLED') %}hidden{% endif %}>
+                        <span class="poll-name">Kavita</span>
+                        <select name="KAVITA_POLL_MODE" id="kavita_poll_mode" aria-label="Kavita: when to check"
+                                onchange="togglePollSeconds('kavita_poll_custom', this.value)">
+                            <option value="global" {% if get_val('KAVITA_POLL_MODE', 'global') == 'global' %}selected{% endif %}>With each sync</option>
+                            <option value="custom" {% if get_val('KAVITA_POLL_MODE') == 'custom' %}selected{% endif %}>On its own timer</option>
+                        </select>
+                        <span class="poll-custom" id="kavita_poll_custom"
+                             {% if get_val('KAVITA_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
+                            every <input type="number" name="KAVITA_POLL_SECONDS" min="10" aria-label="Kavita: seconds between checks"
+                                   value="{{ get_val('KAVITA_POLL_SECONDS', '300') }}"> s
+                            <label class="poll-settle"><input type="checkbox" name="KAVITA_POLL_WAIT_FOR_SETTLE"
+                                {% if get_bool('KAVITA_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}> wait until you pause</label>
+                        </span>
+                    </div>
+                    <div class="poll-row" {% if not get_bool('CWA_SYNC_ENABLED') %}hidden{% endif %}>
+                        <span class="poll-name">Calibre-Web Automated</span>
+                        <select name="CWA_SYNC_POLL_MODE" id="cwa_sync_poll_mode" aria-label="Calibre-Web Automated: when to check"
+                                onchange="togglePollSeconds('cwa_sync_poll_custom', this.value)">
+                            <option value="global" {% if get_val('CWA_SYNC_POLL_MODE', 'global') == 'global' %}selected{% endif %}>With each sync</option>
+                            <option value="custom" {% if get_val('CWA_SYNC_POLL_MODE') == 'custom' %}selected{% endif %}>On its own timer</option>
+                        </select>
+                        <span class="poll-custom" id="cwa_sync_poll_custom"
+                             {% if get_val('CWA_SYNC_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
+                            every <input type="number" name="CWA_SYNC_POLL_SECONDS" min="10" aria-label="Calibre-Web Automated: seconds between checks"
+                                   value="{{ get_val('CWA_SYNC_POLL_SECONDS', '300') }}"> s
+                            <label class="poll-settle"><input type="checkbox" name="CWA_SYNC_POLL_WAIT_FOR_SETTLE"
+                                {% if get_bool('CWA_SYNC_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}> wait until you pause</label>
+                        </span>
+                    </div>
+                    <div class="poll-row" {% if not get_bool('BOOKFUSION_ENABLED') %}hidden{% endif %}>
+                        <span class="poll-name">BookFusion</span>
+                        <select name="BOOKFUSION_POLL_MODE" id="bookfusion_poll_mode" aria-label="BookFusion: when to check"
+                                onchange="togglePollSeconds('bookfusion_poll_custom', this.value)">
+                            <option value="global" {% if get_val('BOOKFUSION_POLL_MODE', 'global') == 'global' %}selected{% endif %}>With each sync</option>
+                            <option value="custom" {% if get_val('BOOKFUSION_POLL_MODE') == 'custom' %}selected{% endif %}>On its own timer</option>
+                        </select>
+                        <span class="poll-custom" id="bookfusion_poll_custom"
+                             {% if get_val('BOOKFUSION_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
+                            every <input type="number" name="BOOKFUSION_POLL_SECONDS" min="10" aria-label="BookFusion: seconds between checks"
+                                   value="{{ get_val('BOOKFUSION_POLL_SECONDS', '300') }}"> s
+                            <label class="poll-settle"><input type="checkbox" name="BOOKFUSION_POLL_WAIT_FOR_SETTLE"
+                                {% if get_bool('BOOKFUSION_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}> wait until you pause</label>
+                        </span>
+                    </div>
+                    <div class="help-text full-width">Apps you have switched off are hidden here and keep
+                        their values. Suggested timers: Storyteller 30–60 s while reading, audiobooks 60 s
+                        while listening, everything else 300 s. <em>Wait until you pause</em> holds the sync
+                        while the position is still moving between checks and runs it once it stops.</div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Finished books</h3>
                 </div>
                 <div class="section-body">
                     <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="series_show_current_book_detail"
-                            name="SERIES_SHOW_CURRENT_BOOK_DETAIL" {% if
-                            get_bool('SERIES_SHOW_CURRENT_BOOK_DETAIL') %}checked{% endif %}>
-                        <label for="series_show_current_book_detail">Show each series as the book you're
-                            reading</label>
-                        <div class="help-text">The series appears as the full card of the book you are on (the
-                            one in progress, or the next unfinished), with the series name, how many are finished
-                            and the other books listed at its bottom; click the series line to open the rest.</div>
+                        <input type="checkbox" id="sync_completion_propagation" name="SYNC_COMPLETION_PROPAGATION" {% if
+                            get_bool('SYNC_COMPLETION_PROPAGATION') %}checked{% endif %}>
+                        <label for="sync_completion_propagation">Propagate Completion</label>
+                        <div class="help-text">When a book crosses the completion threshold on one service, mark it
+                            finished on the others instead of only pushing the position. Raw percentages cannot agree at
+                            the end of a book — an ebook's back matter is never narrated — so without this a title
+                            finished on one side can sit at 92-97% elsewhere and never register as read.</div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Telegram (Optional) -->
-            <div class="settings-section">
-                {% set telegram_configured = get_val('TELEGRAM_BOT_TOKEN') != '' %}
-                {% set telegram_enabled = get_bool('TELEGRAM_ENABLED') or (telegram_configured and
-                get_val('TELEGRAM_ENABLED') == '') %}
-                <div class="section-header">
-                    <h3>Telegram Notifications</h3>
-                    <button class="btn btn-sm" type="button" onclick="testConnection('telegram', this)">🔗 Test</button>
-                    <div class="toggle-switch-wrapper">
-                        <span class="toggle-label">Enable</span>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="toggle_telegram" name="TELEGRAM_ENABLED"
-                                onchange="toggleSection('telegram_body', this.checked)" {% if telegram_enabled
-                                %}checked{% endif %}>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                </div>
-                <div id="telegram_body" class="section-body {% if not telegram_enabled %}collapsed{% endif %}">
                     <div class="form-group full-width">
-                        <label>Bot Token</label>
-                        <input type="password" name="TELEGRAM_BOT_TOKEN" value="{{ get_val('TELEGRAM_BOT_TOKEN') }}">
-                    </div>
-                    <div class="form-group">
-                        <label>Chat ID</label>
-                        <input type="text" name="TELEGRAM_CHAT_ID" value="{{ get_val('TELEGRAM_CHAT_ID') }}">
-                    </div>
-                    <div class="form-group">
-                        <label>Min Log Level</label>
-                        <select name="TELEGRAM_LOG_LEVEL">
-                            {% for level in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'] %}
-                            <option value="{{ level }}" {% if get_val('TELEGRAM_LOG_LEVEL', 'ERROR' )==level
-                                %}selected{% endif %}>{{ level }}</option>
-                            {% endfor %}
-                        </select>
+                        <label>Completion Threshold (%)</label>
+                        <input type="number" min="1" max="100" step="0.5" name="SYNC_COMPLETION_THRESHOLD"
+                            value="{{ get_val('SYNC_COMPLETION_THRESHOLD') or '99' }}">
+                        <small>Percentage at which a book counts as finished for propagation.</small>
                     </div>
                 </div>
             </div>
 
-            <!-- Shelfmark (Optional) -->
             <div class="settings-section">
                 <div class="section-header">
-                    <h3>Shelfmark View</h3>
-                    <div class="toggle-switch-wrapper">
-                        <span class="toggle-label">Enable</span>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="toggle_shelfmark" aria-label="Enable Shelfmark"
-                                name="SHELFMARK_ENABLED" {% if get_bool('SHELFMARK_ENABLED') or
-                                (get_val('SHELFMARK_URL') !='' and get_val('SHELFMARK_ENABLED')=='' ) %}checked{% endif
-                                %}>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
+                    <h3>Protecting your place</h3>
                 </div>
                 <div class="section-body">
-                    <div class="form-group full-width">
-                        <label>Shelfmark URL</label>
-                        <input type="text" name="SHELFMARK_URL" value="{{ get_val('SHELFMARK_URL') }}">
-                        <div class="help-text">URL to display in the Shelfmark tab (e.g. your Shelfmark instance URL)
-                        </div>
+                    <div class="help-text full-width">Keep a stale device or a late echo from pulling your position backwards.</div>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="sync_freshness_guards" name="SYNC_FRESHNESS_GUARDS" {% if
+                            get_bool('SYNC_FRESHNESS_GUARDS') %}checked{% endif %}>
+                        <label for="sync_freshness_guards">Freshness Guards (recommended)</label>
+                        <div class="help-text">Use each service's own "position last changed" timestamp to (1) ignore
+                            stale re-readings that pretend to be fresh movement and (2) block a client that is
+                            materially behind a much newer position from rolling everyone back. Disable only to
+                            restore pure percentage-delta leader selection.</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Rollback Veto Tolerance (Seconds)</label>
+                        <input type="number" min="0" name="SYNC_ROLLBACK_VETO_SECONDS"
+                            value="{{ get_val('SYNC_ROLLBACK_VETO_SECONDS') or '600' }}">
+                        <small>A behind client is only vetoed when the peer's position is at least this much newer —
+                            keep generous to absorb clock differences between services.</small>
+                    </div>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="trust_corroborated_rewind" name="SYNC_TRUST_CORROBORATED_REWIND" {% if
+                            get_bool('SYNC_TRUST_CORROBORATED_REWIND') %}checked{% endif %}>
+                        <label for="trust_corroborated_rewind">Honor a Deliberate Rewind</label>
+                        <div class="help-text">When you go back in one app and keep reading from there, let that
+                            position win instead of being overwritten by the app that is furthest ahead. A single
+                            backward reading is ignored — it only counts once that app reports you moving on from
+                            the new spot, which is what separates a real rewind from a stale or echoed position.
+                            An app that jumps backwards and then goes quiet is held briefly rather than pushed to
+                            everything else, so one bad reading cannot drag your other apps back; if it stays quiet
+                            it is accepted anyway, so nothing ever gets stuck. Independent of "furthest wins",
+                            which protects you from a DIFFERENT device pulling you back. Turn off to always let the
+                            furthest position win.</div>
                     </div>
                 </div>
             </div>
+
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Reading sessions</h3>
+                </div>
+                <div class="section-body">
+                    <div class="form-group">
+                        <label>KOReader Session Gap (Minutes)</label>
+                        <input type="number" min="1" name="KOREADER_SESSION_GAP_MINUTES"
+                            value="{{ get_val('KOREADER_SESSION_GAP_MINUTES') or '30' }}">
+                        <small>Idle gap that splits KOReader page events into separate reading sessions on the stats page.</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Reading Session Merge Gap (Minutes)</label>
+                        <input type="number" min="1" name="READING_SESSION_MERGE_MINUTES"
+                            value="{{ get_val('READING_SESSION_MERGE_MINUTES') or '5' }}">
+                        <small>Groups progress updates into local and Grimmory sessions. Effective idle gap:
+                            <strong><span id="effective_session_gap">{{ [1, get_val('READING_SESSION_MERGE_MINUTES')|float(5), [2 * (get_val('SYNC_PERIOD_MINS')|float(5)), 30]|min]|max }}</span> minutes</strong>
+                            (at least twice the sync period, capped at 30), plus time until the next session check.
+                            Sessions also close on completion or at four hours. Estimated reading time appears after closure.
+                            BookOrbit and KOReader uploads keep their existing timing.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Fine tuning</h3>
+                </div>
+                <div class="section-body">
+                    <details class="advanced-sub full-width">
+                        <summary>Change-detection thresholds and fallbacks — leave at their defaults unless you are chasing a specific problem</summary>
+                        <div class="section-body" style="padding: 12px 0 0;">
+                    <div class="form-group">
+                        <label>Min ABS Change (Seconds)</label>
+                        <input type="number" name="SYNC_DELTA_ABS_SECONDS"
+                            value="{{ get_val('SYNC_DELTA_ABS_SECONDS') }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Min Ebook Change (%)</label>
+                        <input type="number" step="0.1" name="SYNC_DELTA_KOSYNC_PERCENT"
+                            value="{{ get_val('SYNC_DELTA_KOSYNC_PERCENT') }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Client Diff Threshold (%)</label>
+                        <input type="number" step="0.1" name="SYNC_DELTA_BETWEEN_CLIENTS_PERCENT"
+                            value="{{ get_val('SYNC_DELTA_BETWEEN_CLIENTS_PERCENT') }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Fuzzy Match Threshold</label>
+                        <input type="number" step="0.1" name="FUZZY_MATCH_THRESHOLD"
+                            value="{{ get_val('FUZZY_MATCH_THRESHOLD') }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Locator Round-Trip Tolerance (Seconds)</label>
+                        <input type="number" min="0" name="LOCATOR_ROUNDTRIP_TOLERANCE_SECONDS"
+                            value="{{ get_val('LOCATOR_ROUNDTRIP_TOLERANCE_SECONDS') or '30' }}">
+                        <small>When a book has an alignment map, a rebuilt xpath/CFI that is character-close can
+                            still be refused if its round-trip lands far away on the audio timeline — the signature
+                            of a segment seam in an out-of-order narration, where a couple of characters can be
+                            hours apart. Ordinary chapter joins measure up to ~28s, real seams start around ~38s,
+                            so the default sits between them; lower it much and correct locators start being
+                            refused. Audio time can only refuse a locator here, never approve a
+                            character-distant one. Books with no alignment map keep the character-based
+                            check.</small>
+                    </div>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="xpath_fallback" name="XPATH_FALLBACK_TO_PREVIOUS_SEGMENT" {% if
+                            get_bool('XPATH_FALLBACK_TO_PREVIOUS_SEGMENT') %}checked{% endif %}>
+                        <label for="xpath_fallback">XPath Fallback (Try previous segment if match fails)</label>
+                    </div>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="reprocess_on_clear" name="REPROCESS_ON_CLEAR_IF_NO_ALIGNMENT" {% if
+                            get_bool('REPROCESS_ON_CLEAR_IF_NO_ALIGNMENT') %}checked{% endif %}>
+                        <label for="reprocess_on_clear">Regenerate Missing Data on Reset</label>
+                        <div class="help-text" style="display: block; width: 100%; margin-top: 5px;">
+                            When resetting your progress, check for missing sync data. If found, the system will attempt
+                            to regenerate it (which may require re-transcription).
+                        </div>
+                    </div>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            </div><!-- /sync panel -->
+
+            <div class="tab-panel" data-panel="library">
+
+            <p class="panel-intro">Finding, matching and showing the books in your library.</p>
 
             <div class="settings-section">
                 <div class="section-header">
@@ -1972,6 +2383,15 @@
                         <input type="text" name="SUGGESTIONS_FULL_REFRESH_CRON" placeholder="20 4 * * sun"
                             value="{{ get_val('SUGGESTIONS_FULL_REFRESH_CRON') or legacy_cron }}">
                     </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Matching books you read</h3>
+                </div>
+                <div class="section-body">
+                    <div class="help-text full-width">How a book opened on a reader gets linked to the right audiobook and stays linked.</div>
                     <div class="checkbox-wrapper full-width">
                         <input type="checkbox" id="kosync_auto_map" name="KOSYNC_AUTO_MAP_ON_AGREEMENT"
                             {% if get_bool('KOSYNC_AUTO_MAP_ON_AGREEMENT') %}checked{% endif %}>
@@ -2024,7 +2444,447 @@
                 </div>
             </div>
 
-            </div><!-- /features panel -->
+            <!-- Shared library (multi-user) -->
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Shared Library</h3>
+                    <div class="header-tail">
+                        <div class="toggle-switch-wrapper">
+                            <span class="toggle-label">Enable</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" name="SHARE_ALL_BOOKS_WITH_ALL_USERS"
+                                    {% if get_bool('SHARE_ALL_BOOKS_WITH_ALL_USERS') %}checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-body">
+                    <div class="form-group full-width">
+                        <div class="help-text">
+                            Every matched book becomes visible to every user, and new or re-enabled
+                            accounts start with the whole library — nobody has to re-match a book someone
+                            else already processed. For a household reading one shared library.
+                            <strong>Visibility only:</strong> reading progress, KOSync documents and
+                            stats stay per-user exactly as they are today, and removing a book still
+                            only drops the claim of the user who removed it. Leave off if each user
+                            curates their own library.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Series display -->
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Series Display</h3>
+                </div>
+                <div class="section-body">
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="series_show_current_book_detail"
+                            name="SERIES_SHOW_CURRENT_BOOK_DETAIL" {% if
+                            get_bool('SERIES_SHOW_CURRENT_BOOK_DETAIL') %}checked{% endif %}>
+                        <label for="series_show_current_book_detail">Show each series as the book you're
+                            reading</label>
+                        <div class="help-text">The series appears as the full card of the book you are on (the
+                            one in progress, or the next unfinished), with the series name, how many are finished
+                            and the other books listed at its bottom; click the series line to open the rest.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shelfmark (Optional) -->
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Shelfmark View</h3>
+                    <div class="toggle-switch-wrapper">
+                        <span class="toggle-label">Enable</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggle_shelfmark" aria-label="Enable Shelfmark"
+                                name="SHELFMARK_ENABLED" {% if get_bool('SHELFMARK_ENABLED') or
+                                (get_val('SHELFMARK_URL') !='' and get_val('SHELFMARK_ENABLED')=='' ) %}checked{% endif
+                                %}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="section-body">
+                    <div class="form-group full-width">
+                        <label>Shelfmark URL</label>
+                        <input type="text" name="SHELFMARK_URL" value="{{ get_val('SHELFMARK_URL') }}">
+                        <div class="help-text">URL to display in the Shelfmark tab (e.g. your Shelfmark instance URL)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            </div><!-- /library panel -->
+
+            <div class="tab-panel" data-panel="alignment">
+
+            <p class="panel-intro">Lining up audiobooks with their ebooks.</p>
+
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Forced alignment</h3>
+                </div>
+                <div class="section-body">
+                    <div class="help-text full-width">The recommended way to line an audiobook up with its ebook, word by word.</div>
+                    <!-- Forced (CTC) alignment: the recommended alignment method. QuartzNet runs on
+                         the CPU in every image; MMS needs a local INSTALL_CTC=true build. -->
+                    <div class="form-group full-width">
+                        <label class="toggle-label">
+                            <input type="checkbox" name="CTC_ENABLED"
+                                {% if get_bool('CTC_ENABLED') %}checked{% endif %}>
+                            Use forced alignment (recommended)
+                        </label>
+                        <div class="help-text">Aligns each audiobook directly against its ebook's text, word by
+                            word, instead of transcribing it and matching the transcript back. It is more accurate,
+                            especially for readers that track exact positions (BookOrbit, KOReader, the ABS ebook
+                            reader, Grimmory), and it finds each chapter in the audio itself, so long books need no
+                            Whisper transcript. Runs on the CPU in every image: a few minutes per 10 hours of audio
+                            on a modern CPU. English books only; books in other languages, and books whose audio
+                            does not follow the text closely enough, use transcription automatically. Turn off to
+                            always use transcription.</div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="toggle-label">
+                            <input type="checkbox" name="SMIL_SKIP_CTC"
+                                {% if get_bool('SMIL_SKIP_CTC') %}checked{% endif %}>
+                            Use a read-along's own timings when they check out
+                        </label>
+                        <div class="help-text">When the ebook is a read-along (a Storyteller or StoryAlign EPUB
+                            with media overlays), uses the timings it already has instead of running forced
+                            alignment, as long as they match the text across the whole audiobook and never lose
+                            their place. That skips forced alignment's CPU time, which can be hours on a long
+                            book. A read-along whose timings fail the check is aligned as usual. Off: forced
+                            alignment runs first, and the read-along's timings are used only if it fails.</div>
+                    </div>
+                    <details class="advanced-sub full-width">
+                        <summary>Advanced — forced alignment model</summary>
+                    <div class="dynamic-group full-width" style="display:contents;">
+                        <div class="form-group">
+                            <label>CTC Model</label>
+                            <select name="CTC_MODEL">
+                                <option value="quartznet" {% if get_val('CTC_MODEL', 'quartznet') != 'mms_fa' %}selected{% endif %}>QuartzNet
+                                    (English, CPU, any image)</option>
+                                <option value="mms_fa" {% if get_val('CTC_MODEL', 'quartznet') == 'mms_fa' %}selected{% endif %}>MMS
+                                    (~1000 languages, needs the -ctc image)</option>
+                            </select>
+                            <div class="help-text">QuartzNet is NVIDIA's QuartzNet15x5 (the model Storyteller uses),
+                                downloaded once (77 MB) on first use. MMS needs a custom <code>-ctc</code> build
+                                (<code>INSTALL_CTC=true</code>, which bundles torch/torchaudio) and effectively an
+                                NVIDIA GPU; use it for books that are not in English.</div>
+                        </div>
+                        <div class="form-group">
+                            <label>QuartzNet model file</label>
+                            <input type="text" name="CTC_QUARTZNET_MODEL_PATH"
+                                value="{{ get_val('CTC_QUARTZNET_MODEL_PATH', '') }}"
+                                placeholder="/data/models/quartznet15x5-en/model.onnx" autocomplete="off">
+                            <div class="help-text">Optional. A local <code>model.onnx</code> (or the folder holding
+                                it), for example a copy from Storyteller's
+                                <code>ghost-story/models/quartznet15x5-en</code>. Leave empty to download it
+                                from Storyteller's package registry on first use; set it if that download fails.</div>
+                        </div>
+                        <div class="form-group">
+                            <label>CTC Device</label>
+                            <select name="CTC_DEVICE">
+                                <option value="auto" {% if get_val('CTC_DEVICE')=='auto' %}selected{% endif %}>Auto
+                                    (detect GPU)</option>
+                                <option value="cpu" {% if get_val('CTC_DEVICE')=='cpu' %}selected{% endif %}>CPU</option>
+                                <option value="cuda" {% if get_val('CTC_DEVICE')=='cuda' %}selected{% endif %}>GPU
+                                    (NVIDIA)</option>
+                            </select>
+                            <div class="help-text">MMS only (QuartzNet always runs on the CPU). Auto uses an NVIDIA
+                                GPU when available, otherwise CPU; MMS on CPU is slow for long audiobooks.</div>
+                        </div>
+                    </div>
+                    </details>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Transcription</h3>
+                </div>
+                <div class="section-body">
+                    <div class="help-text full-width">Used for books forced alignment cannot handle: other languages, or narration that strays too far from the text.</div>
+                    <!-- Transcription Settings -->
+                    <div class="form-group">
+                        <label>Transcription Provider</label>
+                        <select name="TRANSCRIPTION_PROVIDER">
+                            <option value="local" {% if get_val('TRANSCRIPTION_PROVIDER')=='local' %}selected{% endif
+                                %}>
+                                Local Whisper
+                            </option>
+
+                            <option value="deepgram" {% if get_val('TRANSCRIPTION_PROVIDER')=='deepgram' %}selected{%
+                                endif %}>
+                                Deepgram (Cloud)
+                            </option>
+
+                            <option value="whispercpp" {% if get_val('TRANSCRIPTION_PROVIDER')=='whispercpp'
+                                %}selected{% endif %}>
+                                Whisper.cpp (Server)
+                            </option>
+                        </select>
+
+                        <div class="help-text">
+                            Local = faster‑whisper. Deepgram = cloud. Whisper.cpp = external HTTP server (whisper.cpp, speaches, parakeet, or any OpenAI-compatible endpoint).
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Audio Split Length (minutes)</label>
+                        <input type="number" name="AUDIO_SPLIT_DURATION_MINUTES" value="{{ get_val('AUDIO_SPLIT_DURATION_MINUTES', '45') }}"
+                            min="1" max="120" step="1" placeholder="45" />
+                        <div class="help-text">Audio is normalized to WAV and split into chunks of this length before transcription. Lower it (e.g. 15) if a small GPU runs out of memory on long books. Ignored when <strong>Send Original Audio</strong> is enabled, since the server then does its own chunking.</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Minimum Transcript Coverage</label>
+                        <input type="number" name="TRANSCRIPT_MIN_COVERAGE" value="{{ get_val('TRANSCRIPT_MIN_COVERAGE', '0.85') }}"
+                            min="0" max="1" step="0.05" placeholder="0.85" />
+                        <div class="help-text">Fraction of the audiobook's known runtime a transcript must span before BookBridge will align it. A truncated download or a partly-decoded file still aligns cleanly against the ebook, so without this check every synced position ends up wrong by the shortfall. Set <code>0</code> to disable — needed only for genuinely abridged audio.</div>
+                    </div>
+                    <!-- Wrapper: Whisper.cpp -->
+                    <div id="group_whispercpp" class="dynamic-group full-width" style="display:contents;">
+                        <div class="form-group full-width">
+                            <label>Whisper.cpp Server URL</label>
+                            <input type="text" name="WHISPER_CPP_URL" value="{{ get_val('WHISPER_CPP_URL', '') }}"
+                                placeholder="http://192.168.178.132:8080/v1/audio/transcriptions" />
+                            <button class="btn btn-sm" type="button" onclick="testConnection('whispercpp', this)">🔗 Test</button>
+                            <div class="help-text">Full endpoint URL, including the path — e.g.
+                                <code>http://HOST:8080/v1/audio/transcriptions</code>. Works with whisper.cpp
+                                server and OpenAI-compatible ASR servers and proxies (speaches, parakeet, llama-swap). Inside Docker, do not use
+                                <code>localhost</code> — use the host's LAN IP or the whisper container's service name.
+                                Set this here in the UI: dashboard settings are stored in the database and take
+                                precedence over <code>docker-compose</code> environment variables.
+                            </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Split Uploads (minutes)</label>
+                            <input type="number" name="WHISPER_CPP_CHUNK_MINUTES" value="{{ get_val('WHISPER_CPP_CHUNK_MINUTES', '0') }}"
+                                min="0" max="60" step="1" placeholder="0" />
+                            <div class="help-text">Split each audio file into sub-uploads of this many minutes and offset the returned timestamps. Use for servers that return one merged segment per request (e.g. parakeet) — the value sets the sync alignment resolution, so keep it small (2–3). Leave at 0 for servers that return fine-grained segments (whisper.cpp, speaches).</div>
+                        </div>
+                        <div class="form-group full-width" style="align-items: center;">
+                            <label>Send Original Audio</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" name="WHISPER_CPP_SEND_ORIGINAL"
+                                    {% if get_bool('WHISPER_CPP_SEND_ORIGINAL') %}checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                            <div class="help-text">Upload the original audio files (mp3/m4b) instead of converting to WAV and splitting locally. Enable only when the server decodes any format and chunks long audio itself (e.g. parakeet with <code>-long-audio</code>). Skips minutes of local ffmpeg work per book. Leave off for whisper.cpp, which requires 16kHz WAV input.</div>
+                        </div>
+                    </div>
+
+                    <!-- Wrapper: Deepgram -->
+                    <div id="group_deepgram" class="dynamic-group full-width" style="display:contents;">
+                        <div class="form-group">
+                            <label>Deepgram API Key</label>
+                            <input type="password" name="DEEPGRAM_API_KEY" value="{{ get_val('DEEPGRAM_API_KEY') }}"
+                                placeholder="dg_...">
+                            <div class="help-text">Get your key at <a href="https://console.deepgram.com"
+                                    target="_blank" rel="noopener noreferrer">console.deepgram.com</a></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="deepgram_model">Deepgram Model</label>
+                            <select name="DEEPGRAM_MODEL" id="deepgram_model">
+                                <option value="nova-2" {% if get_val('DEEPGRAM_MODEL')=='nova-2' %}selected{% endif %}>
+                                    Nova-2 (Best accuracy)</option>
+                                <option value="nova-3" {% if get_val('DEEPGRAM_MODEL')=='nova-3' %}selected{% endif %}>
+                                    Nova-3 (Latest)</option>
+                                <option value="base" {% if get_val('DEEPGRAM_MODEL')=='base' %}selected{% endif %}>Base
+                                    (Fastest)</option>
+                                <option value="enhanced" {% if get_val('DEEPGRAM_MODEL')=='enhanced' %}selected{% endif
+                                    %}>
+                                    Enhanced</option>
+                            </select>
+                            <div class="help-text">Nova-2 recommended. See <a
+                                    href="https://developers.deepgram.com/docs/models" target="_blank"
+                                    rel="noopener noreferrer">Deepgram
+                                    Models</a>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Wrapper: Whisper Model (shared by Local + Whisper.cpp Server) -->
+                    <div id="group_whisper_model" class="dynamic-group full-width" style="display:contents;">
+                        <div class="form-group">
+                            <label>Whisper Model</label>
+                            <input type="text" name="WHISPER_MODEL" list="whisper-model-suggestions"
+                                value="{{ get_val('WHISPER_MODEL') }}" placeholder="tiny" autocomplete="off">
+                            <datalist id="whisper-model-suggestions">
+                                {% for model in ['tiny', 'base', 'small', 'medium', 'large-v2', 'large-v3'] %}
+                                <option value="{{ model }}"></option>
+                                {% endfor %}
+                            </datalist>
+                            <div class="help-text">Model name for Local Whisper and Whisper.cpp Server. Pick a common
+                                model from the suggestions or enter a custom whisper.cpp model name. Larger = better
+                                accuracy but slower. For the Whisper.cpp Server, this must match the model id the
+                                server (or llama-swap) exposes — a mismatched id makes the server reject the request.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wrapper: Local Whisper -->
+                    <div id="group_local" class="dynamic-group full-width" style="display:contents;">
+                        <div class="form-group">
+                            <label for="whisper_language">Whisper Language</label>
+                            <input type="text" id="whisper_language" name="WHISPER_LANGUAGE"
+                                value="{{ get_val('WHISPER_LANGUAGE', '') }}" placeholder="Auto-detect (e.g. ru, en)">
+                            <div class="help-text">Leave blank to detect each chunk's language, or enter a language
+                                code such as <code>ru</code> for Russian. Applies to new local transcriptions;
+                                saved transcripts are reused.</div>
+                        </div>
+                        <div class="form-group" style="align-items: center;">
+                            <label for="whisper_vad_filter">Filter Non-Speech Audio</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="whisper_vad_filter" name="WHISPER_VAD_FILTER"
+                                    {% if get_bool('WHISPER_VAD_FILTER') %}checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                            <div class="help-text">Use voice activity detection (VAD) to reduce transcription over
+                                music and silence. Off by default; check quiet narration before using it broadly.
+                                Audio timestamps are preserved. Applies to new local transcriptions.</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Whisper Device</label>
+                            <select name="WHISPER_DEVICE">
+                                <option value="auto" {% if get_val('WHISPER_DEVICE')=='auto' %}selected{% endif %}>Auto
+                                    (detect GPU)
+                                </option>
+                                <option value="cpu" {% if get_val('WHISPER_DEVICE')=='cpu' %}selected{% endif %}>CPU
+                                </option>
+                                <option value="cuda" {% if get_val('WHISPER_DEVICE')=='cuda' %}selected{% endif %}>GPU
+                                    (NVIDIA)
+                                </option>
+                            </select>
+                            <div class="help-text">Auto (default) uses an NVIDIA GPU when one is available, otherwise
+                                CPU. Requires the <code>-cuda</code> image.</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Whisper Compute Type</label>
+                            <select name="WHISPER_COMPUTE_TYPE">
+                                <option value="auto" {% if get_val('WHISPER_COMPUTE_TYPE')=='auto' %}selected{% endif
+                                    %}>
+                                    Auto (int8 CPU / float16 GPU)</option>
+                                <option value="int8" {% if get_val('WHISPER_COMPUTE_TYPE')=='int8' %}selected{% endif
+                                    %}>
+                                    int8 (Fast, CPU-optimized)</option>
+                                <option value="float16" {% if get_val('WHISPER_COMPUTE_TYPE')=='float16' %}selected{%
+                                    endif %}>
+                                    float16 (Fast, GPU-optimized)</option>
+                                <option value="float32" {% if get_val('WHISPER_COMPUTE_TYPE')=='float32' %}selected{%
+                                    endif %}>
+                                    float32 (Highest accuracy)</option>
+                            </select>
+                            <div class="help-text">Use int8 for CPU, float16 for GPU.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Safety checks</h3>
+                </div>
+                <div class="section-body">
+                    <div class="help-text full-width">Refuse an alignment that looks like the wrong book or a bad read-along.</div>
+                    <div class="form-group full-width" style="align-items: center;">
+                        <label>Content-Match Guard</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="CONTENT_MATCH_GUARD"
+                                {% if get_bool('CONTENT_MATCH_GUARD') %}checked{% endif %}>
+                            <span class="slider"></span>
+                        </label>
+                        <div class="help-text">Non-LLM guard: refuse to store an alignment when a
+                            direct word n-gram overlap check finds too little of the ebook text inside
+                            the transcript — a sign the audio and ebook are different content (wrong
+                            edition / abridged / different book). Runs whenever the semantic
+                            (Ollama) content-match guard above cannot give a verdict — because Ollama
+                            is not configured, or is configured but down — so an outage never leaves
+                            you unguarded. Leave on unless you are deliberately re-aligning a book you
+                            know is a rough match.</div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Content-Match Min Overlap (0-1)</label>
+                        <input type="number" step="0.01" min="0" max="1" name="CONTENT_MATCH_MIN_OVERLAP"
+                            value="{{ get_val('CONTENT_MATCH_MIN_OVERLAP') }}">
+                        <div class="help-text">Below this fraction of matched ebook n-grams, the
+                            Content-Match Guard refuses to store the map. The default 0.15 was
+                            measured across 28 real book/transcript pairs: correct pairings scored
+                            0.30-0.85 (never 1.0 — speech recognition never matches text verbatim),
+                            while a genuinely different book shares almost no phrases and scores near
+                            0. Raise it only if mismatches are slipping through.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>SMIL Validation Threshold (%)</label>
+                        <input type="number" step="1" min="0" max="100" name="SMIL_VALIDATION_THRESHOLD"
+                            value="{{ get_val('SMIL_VALIDATION_THRESHOLD', '60') }}">
+                        <div class="help-text">Minimum token match % to accept EPUB SMIL data. Lower = more lenient.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Experimental</h3>
+                </div>
+                <div class="section-body">
+                    <div class="help-text full-width">Off unless you know you need it.</div>
+                    <!-- Segmented alignment maps: fits each EPUB spine chapter to the audio
+                         independently instead of one global monotonic filter, so a book whose
+                         narration order differs from its spine order (issue #426) still places
+                         every chapter correctly. Only changes anything for books that are
+                         actually out of order; every other book's map is unaffected. -->
+                    <details class="advanced-sub full-width">
+                        <summary>Advanced · Experimental — Segmented alignment (out-of-order narration)</summary>
+                    <div class="form-group full-width" style="align-items: center;">
+                        <label>Segmented Alignment Maps</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="ALIGNMENT_SEGMENTED_MAPS"
+                                {% if get_bool('ALIGNMENT_SEGMENTED_MAPS') %}checked{% endif %}>
+                            <span class="slider"></span>
+                        </label>
+                        <div class="help-text"><strong>Experimental &mdash; leave off unless a book's
+                            audiobook narrates its sections in a different order than the EPUB spines
+                            them</strong> (e.g. a short-story or novella collection spined 2-4-3-1 but
+                            narrated 1-2-3-4, or acknowledgements that open the ebook but close the
+                            audiobook). When on, re-aligning such a book fits each EPUB chapter to the
+                            audio independently instead of forcing every anchor into one global
+                            increasing sequence, so out-of-order chapters are placed correctly instead
+                            of dropped. Books that are already in order are unaffected either way.</div>
+                    </div>
+                    </details>
+                </div>
+            </div>
+
+
+            <!-- Alignment Health -->
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Alignment Health</h3>
+                </div>
+                <div class="section-body">
+                    <div class="form-group full-width">
+                        <label>Pre-LLM / Linear / Low-Quality Alignment Maps</label>
+                        <div class="cleanup-group">
+                            <button type="button" class="btn btn-primary" id="realignAllBtn" onclick="realignAllNonLlm()">
+                                Re-align all pre-LLM / linear / low-quality maps
+                            </button>
+                            <p class="help-text flex-1 m-0" id="alignHealthSummary">Loading alignment health...</p>
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <div id="alignHealthList" style="display:flex;flex-direction:column;gap:6px;max-height:340px;overflow:auto;width:100%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            </div><!-- /alignment panel -->
 
             <div class="tab-panel" data-panel="ai">
 
@@ -2210,435 +3070,9 @@
 
             </div><!-- /ai panel -->
 
-            <div class="tab-panel" data-panel="sync">
-
-            <div class="settings-section">
-                <div class="section-header">
-                    <h3>Sync Behavior</h3>
-                </div>
-                <div class="section-body">
-                    <div class="form-group">
-                        <label>Sync Period (Minutes)</label>
-                        <input type="number" name="SYNC_PERIOD_MINS" value="{{ get_val('SYNC_PERIOD_MINS') }}">
-                    </div>
-                    <div class="form-group">
-                        <label>Min ABS Change (Seconds)</label>
-                        <input type="number" name="SYNC_DELTA_ABS_SECONDS"
-                            value="{{ get_val('SYNC_DELTA_ABS_SECONDS') }}">
-                    </div>
-                    <div class="form-group">
-                        <label>Min Ebook Change (%)</label>
-                        <input type="number" step="0.1" name="SYNC_DELTA_KOSYNC_PERCENT"
-                            value="{{ get_val('SYNC_DELTA_KOSYNC_PERCENT') }}">
-                    </div>
-                    <div class="form-group">
-                        <label>Client Diff Threshold (%)</label>
-                        <input type="number" step="0.1" name="SYNC_DELTA_BETWEEN_CLIENTS_PERCENT"
-                            value="{{ get_val('SYNC_DELTA_BETWEEN_CLIENTS_PERCENT') }}">
-                    </div>
-                    <div class="form-group">
-                        <label>KOReader Session Gap (Minutes)</label>
-                        <input type="number" min="1" name="KOREADER_SESSION_GAP_MINUTES"
-                            value="{{ get_val('KOREADER_SESSION_GAP_MINUTES') or '30' }}">
-                        <small>Idle gap that splits KOReader page events into separate reading sessions on the stats page.</small>
-                    </div>
-                    <div class="form-group">
-                        <label>Reading Session Merge Gap (Minutes)</label>
-                        <input type="number" min="1" name="READING_SESSION_MERGE_MINUTES"
-                            value="{{ get_val('READING_SESSION_MERGE_MINUTES') or '5' }}">
-                        <small>Groups progress updates into local and Grimmory sessions. Effective idle gap:
-                            <strong><span id="effective_session_gap">{{ [1, get_val('READING_SESSION_MERGE_MINUTES')|float(5), [2 * (get_val('SYNC_PERIOD_MINS')|float(5)), 30]|min]|max }}</span> minutes</strong>
-                            (at least twice the sync period, capped at 30), plus time until the next session check.
-                            Sessions also close on completion or at four hours. Estimated reading time appears after closure.
-                            BookOrbit and KOReader uploads keep their existing timing.</small>
-                    </div>
-                    <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="sync_completion_propagation" name="SYNC_COMPLETION_PROPAGATION" {% if
-                            get_bool('SYNC_COMPLETION_PROPAGATION') %}checked{% endif %}>
-                        <label for="sync_completion_propagation">Propagate Completion</label>
-                        <div class="help-text">When a book crosses the completion threshold on one service, mark it
-                            finished on the others instead of only pushing the position. Raw percentages cannot agree at
-                            the end of a book — an ebook's back matter is never narrated — so without this a title
-                            finished on one side can sit at 92-97% elsewhere and never register as read.</div>
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Completion Threshold (%)</label>
-                        <input type="number" min="1" max="100" step="0.5" name="SYNC_COMPLETION_THRESHOLD"
-                            value="{{ get_val('SYNC_COMPLETION_THRESHOLD') or '99' }}">
-                        <small>Percentage at which a book counts as finished for propagation.</small>
-                    </div>
-                    <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="sync_freshness_guards" name="SYNC_FRESHNESS_GUARDS" {% if
-                            get_bool('SYNC_FRESHNESS_GUARDS') %}checked{% endif %}>
-                        <label for="sync_freshness_guards">Freshness Guards (recommended)</label>
-                        <div class="help-text">Use each service's own "position last changed" timestamp to (1) ignore
-                            stale re-readings that pretend to be fresh movement and (2) block a client that is
-                            materially behind a much newer position from rolling everyone back. Disable only to
-                            restore pure percentage-delta leader selection.</div>
-                    </div>
-                    <div class="form-group">
-                        <label>Rollback Veto Tolerance (Seconds)</label>
-                        <input type="number" min="0" name="SYNC_ROLLBACK_VETO_SECONDS"
-                            value="{{ get_val('SYNC_ROLLBACK_VETO_SECONDS') or '600' }}">
-                        <small>A behind client is only vetoed when the peer's position is at least this much newer —
-                            keep generous to absorb clock differences between services.</small>
-                    </div>
-                    <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="trust_corroborated_rewind" name="SYNC_TRUST_CORROBORATED_REWIND" {% if
-                            get_bool('SYNC_TRUST_CORROBORATED_REWIND') %}checked{% endif %}>
-                        <label for="trust_corroborated_rewind">Honor a Deliberate Rewind</label>
-                        <div class="help-text">When you go back in one app and keep reading from there, let that
-                            position win instead of being overwritten by the app that is furthest ahead. A single
-                            backward reading is ignored — it only counts once that app reports you moving on from
-                            the new spot, which is what separates a real rewind from a stale or echoed position.
-                            An app that jumps backwards and then goes quiet is held briefly rather than pushed to
-                            everything else, so one bad reading cannot drag your other apps back; if it stays quiet
-                            it is accepted anyway, so nothing ever gets stuck. Independent of "furthest wins",
-                            which protects you from a DIFFERENT device pulling you back. Turn off to always let the
-                            furthest position win.</div>
-                    </div>
-                    <div class="form-group">
-                        <label>Locator Round-Trip Tolerance (Seconds)</label>
-                        <input type="number" min="0" name="LOCATOR_ROUNDTRIP_TOLERANCE_SECONDS"
-                            value="{{ get_val('LOCATOR_ROUNDTRIP_TOLERANCE_SECONDS') or '30' }}">
-                        <small>When a book has an alignment map, a rebuilt xpath/CFI that is character-close can
-                            still be refused if its round-trip lands far away on the audio timeline — the signature
-                            of a segment seam in an out-of-order narration, where a couple of characters can be
-                            hours apart. Ordinary chapter joins measure up to ~28s, real seams start around ~38s,
-                            so the default sits between them; lower it much and correct locators start being
-                            refused. Audio time can only refuse a locator here, never approve a
-                            character-distant one. Books with no alignment map keep the character-based
-                            check.</small>
-                    </div>
-                    <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="xpath_fallback" name="XPATH_FALLBACK_TO_PREVIOUS_SEGMENT" {% if
-                            get_bool('XPATH_FALLBACK_TO_PREVIOUS_SEGMENT') %}checked{% endif %}>
-                        <label for="xpath_fallback">XPath Fallback (Try previous segment if match fails)</label>
-                    </div>
-                    <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="abs_ebook" name="SYNC_ABS_EBOOK" {% if get_bool('SYNC_ABS_EBOOK')
-                            %}checked{% endif %}>
-                        <label for="abs_ebook">Enable ABS Ebook Sync (Bi-directional)</label>
-                    </div>
-                    <div class="form-group" style="align-items: center;">
-                        <label>ABS Ebook Position Format</label>
-                        <select name="ABS_EBOOK_LOCATOR_FORMAT" id="abs_ebook_locator_format">
-                            <option value="cfi" {% if get_val('ABS_EBOOK_LOCATOR_FORMAT', 'cfi') == 'cfi' %}selected{% endif %}>CFI (recommended)</option>
-                            <option value="readium" {% if get_val('ABS_EBOOK_LOCATOR_FORMAT') == 'readium' %}selected{% endif %}>Readium locator</option>
-                            <option value="auto" {% if get_val('ABS_EBOOK_LOCATOR_FORMAT') == 'auto' %}selected{% endif %}>Auto (match your reader)</option>
-                        </select>
-                        <div class="help-text" style="display: block; width: 100%; margin-top: 5px;">
-                            Audiobookshelf stores one position field shared by every reader, but readers
-                            disagree on its format. <strong>CFI</strong> is read by all of them and is exact
-                            in the official ABS app and web reader; some third-party readers land in the
-                            right chapter but a little early. <strong>Readium locator</strong> is exact in
-                            third-party readers such as Audiobooth, but the official ABS app and web reader
-                            cannot restore it and will open at the cover. <strong>Auto</strong> writes back
-                            whichever format your reader last used &mdash; the most precise choice if you
-                            only ever use one reader, and the wrong one if you switch between them.
-                        </div>
-                    </div>
-                    <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="reprocess_on_clear" name="REPROCESS_ON_CLEAR_IF_NO_ALIGNMENT" {% if
-                            get_bool('REPROCESS_ON_CLEAR_IF_NO_ALIGNMENT') %}checked{% endif %}>
-                        <label for="reprocess_on_clear">Regenerate Missing Data on Reset</label>
-                        <div class="help-text" style="display: block; width: 100%; margin-top: 5px;">
-                            When resetting your progress, check for missing sync data. If found, the system will attempt
-                            to regenerate it (which may require re-transcription).
-                        </div>
-                    </div>
-
-                    <!-- Instant Sync (slider reveals Per-Client Polling options) -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 20px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color, #ddd);">
-                        <div>
-                            <h4 style="margin: 0; font-size: 0.95rem; font-weight: 600;">Instant Sync</h4>
-                            <p class="help-text" style="margin: 4px 0 0 0;">Triggers immediate sync on ABS playback or KOReader progress. Disable to rely solely on polling.</p>
-                        </div>
-                        <div class="toggle-switch-wrapper">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="toggle_instant_sync" name="INSTANT_SYNC_ENABLED"
-                                    onchange="toggleSection('instant_sync_body', this.checked)"
-                                    {% if get_bool('INSTANT_SYNC_ENABLED') %}checked{% endif %}>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Advanced sync options (hidden when Instant Sync is off) -->
-                    <div id="instant_sync_body" class="section-body {% if not get_bool('INSTANT_SYNC_ENABLED') %}collapsed{% endif %}" style="grid-column: 1 / -1; padding: 16px 0 0 0;">
-
-                        <!-- Per-Client Polling -->
-                        <div style="width: 100%; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color, #ddd);">
-                            <h4 style="margin: 0; font-size: 0.9rem; font-weight: 600;">Per-Client Polling</h4>
-                            <p class="help-text" style="margin: 4px 0 0 0;">
-                                <em>Global</em> uses the main sync interval. <em>Custom</em> sets a separate check frequency per client.
-                            </p>
-                        </div>
-
-                        {% if get_bool('STORYTELLER_ENABLED') %}
-                        <div class="form-group" style="align-items: center;">
-                            <label>Storyteller Poll Mode</label>
-                            <select name="STORYTELLER_POLL_MODE" id="storyteller_poll_mode"
-                                    onchange="togglePollSeconds('storyteller_poll_seconds_row', this.value); togglePollSeconds('storyteller_poll_settle_row', this.value)">
-                                <option value="global" {% if get_val('STORYTELLER_POLL_MODE', 'global') == 'global' %}selected{% endif %}>Global</option>
-                                <option value="custom" {% if get_val('STORYTELLER_POLL_MODE') == 'custom' %}selected{% endif %}>Custom</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="storyteller_poll_seconds_row"
-                             {% if get_val('STORYTELLER_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            <label>Storyteller Poll Interval (seconds)</label>
-                            <input type="number" name="STORYTELLER_POLL_SECONDS" min="10"
-                                   value="{{ get_val('STORYTELLER_POLL_SECONDS', '45') }}">
-                            <div class="help-text">Recommended: 30–60s for Storyteller (active reading source).</div>
-                        </div>
-                        <div class="form-group" id="storyteller_poll_settle_row"
-                             {% if get_val('STORYTELLER_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            <label>Storyteller — Wait for Position to Settle</label>
-                            <div class="toggle-switch-wrapper">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" name="STORYTELLER_POLL_WAIT_FOR_SETTLE"
-                                        {% if get_bool('STORYTELLER_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                            <div class="help-text">Hold the sync while the position keeps changing between polls (actively reading); run it once a poll shows no further movement.</div>
-                        </div>
-                        {% endif %}
-
-                        {% if get_bool('BOOKLORE_ENABLED') %}
-                        <div class="form-group" style="align-items: center;">
-                            <label>Grimmory Poll Mode</label>
-                            <select name="BOOKLORE_POLL_MODE" id="booklore_poll_mode"
-                                    onchange="togglePollSeconds('booklore_poll_seconds_row', this.value); togglePollSeconds('booklore_poll_settle_row', this.value)">
-                                <option value="global" {% if get_val('BOOKLORE_POLL_MODE', 'global') == 'global' %}selected{% endif %}>Global</option>
-                                <option value="custom" {% if get_val('BOOKLORE_POLL_MODE') == 'custom' %}selected{% endif %}>Custom</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="booklore_poll_seconds_row"
-                             {% if get_val('BOOKLORE_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            <label>Grimmory Poll Interval (seconds)</label>
-                            <input type="number" name="BOOKLORE_POLL_SECONDS" min="10"
-                                   value="{{ get_val('BOOKLORE_POLL_SECONDS', '300') }}">
-                            <div class="help-text">Recommended: 300s for Grimmory.</div>
-                        </div>
-                        <div class="form-group" id="booklore_poll_settle_row"
-                             {% if get_val('BOOKLORE_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            <label>Grimmory — Wait for Position to Settle</label>
-                            <div class="toggle-switch-wrapper">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" name="BOOKLORE_POLL_WAIT_FOR_SETTLE"
-                                        {% if get_bool('BOOKLORE_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                            <div class="help-text">Hold the sync while the position keeps changing between polls (actively reading); run it once a poll shows no further movement.</div>
-                        </div>
-                        <div class="form-group" style="align-items: center;">
-                            <label>Grimmory Audiobook Poll Mode</label>
-                            <select name="BOOKLORE_AUDIO_POLL_MODE" id="booklore_audio_poll_mode"
-                                    onchange="togglePollSeconds('booklore_audio_poll_seconds_row', this.value); togglePollSeconds('booklore_audio_poll_settle_row', this.value)">
-                                <option value="global" {% if get_val('BOOKLORE_AUDIO_POLL_MODE', 'global') == 'global' %}selected{% endif %}>Global</option>
-                                <option value="custom" {% if get_val('BOOKLORE_AUDIO_POLL_MODE') == 'custom' %}selected{% endif %}>Custom</option>
-                            </select>
-                            <div class="help-text">Listening progress is read by a separate client from ebook progress, so the Grimmory poll above does not cover it.</div>
-                        </div>
-                        <div class="form-group" id="booklore_audio_poll_seconds_row"
-                             {% if get_val('BOOKLORE_AUDIO_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            <label>Grimmory Audiobook Poll Interval (seconds)</label>
-                            <input type="number" name="BOOKLORE_AUDIO_POLL_SECONDS" min="10"
-                                   value="{{ get_val('BOOKLORE_AUDIO_POLL_SECONDS', '300') }}">
-                            <div class="help-text">Recommended: 60s while listening.</div>
-                        </div>
-                        <div class="form-group" id="booklore_audio_poll_settle_row"
-                             {% if get_val('BOOKLORE_AUDIO_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            <label>Grimmory Audiobook — Wait for Position to Settle</label>
-                            <div class="toggle-switch-wrapper">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" name="BOOKLORE_AUDIO_POLL_WAIT_FOR_SETTLE"
-                                        {% if get_bool('BOOKLORE_AUDIO_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                            <div class="help-text">Hold the sync while playback keeps advancing between polls; run it once a poll shows no further movement, i.e. you paused or finished listening.</div>
-                        </div>
-                        {% endif %}
-
-                        {% if get_bool('BOOKORBIT_ENABLED') %}
-                        <div class="form-group" style="align-items: center;">
-                            <label>BookOrbit Poll Mode</label>
-                            <select name="BOOKORBIT_POLL_MODE" id="bookorbit_poll_mode"
-                                    onchange="togglePollSeconds('bookorbit_poll_seconds_row', this.value); togglePollSeconds('bookorbit_poll_settle_row', this.value)">
-                                <option value="global" {% if get_val('BOOKORBIT_POLL_MODE', 'global') == 'global' %}selected{% endif %}>Global</option>
-                                <option value="custom" {% if get_val('BOOKORBIT_POLL_MODE') == 'custom' %}selected{% endif %}>Custom</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="bookorbit_poll_seconds_row"
-                             {% if get_val('BOOKORBIT_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            <label>BookOrbit Poll Interval (seconds)</label>
-                            <input type="number" name="BOOKORBIT_POLL_SECONDS" min="10"
-                                   value="{{ get_val('BOOKORBIT_POLL_SECONDS', '300') }}">
-                            <div class="help-text">Recommended: 300s for BookOrbit.</div>
-                        </div>
-                        <div class="form-group" id="bookorbit_poll_settle_row"
-                             {% if get_val('BOOKORBIT_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            <label>BookOrbit — Wait for Position to Settle</label>
-                            <div class="toggle-switch-wrapper">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" name="BOOKORBIT_POLL_WAIT_FOR_SETTLE"
-                                        {% if get_bool('BOOKORBIT_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                            <div class="help-text">Hold the sync while the position keeps changing between polls (actively reading); run it once a poll shows no further movement.</div>
-                        </div>
-                        <div class="form-group" style="align-items: center;">
-                            <label>BookOrbit Audiobook Poll Mode</label>
-                            <select name="BOOKORBIT_AUDIO_POLL_MODE" id="bookorbit_audio_poll_mode"
-                                    onchange="togglePollSeconds('bookorbit_audio_poll_seconds_row', this.value); togglePollSeconds('bookorbit_audio_poll_settle_row', this.value)">
-                                <option value="global" {% if get_val('BOOKORBIT_AUDIO_POLL_MODE', 'global') == 'global' %}selected{% endif %}>Global</option>
-                                <option value="custom" {% if get_val('BOOKORBIT_AUDIO_POLL_MODE') == 'custom' %}selected{% endif %}>Custom</option>
-                            </select>
-                            <div class="help-text">Listening progress is read by a separate client from ebook progress, so the BookOrbit poll above does not cover it.</div>
-                        </div>
-                        <div class="form-group" id="bookorbit_audio_poll_seconds_row"
-                             {% if get_val('BOOKORBIT_AUDIO_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            <label>BookOrbit Audiobook Poll Interval (seconds)</label>
-                            <input type="number" name="BOOKORBIT_AUDIO_POLL_SECONDS" min="10"
-                                   value="{{ get_val('BOOKORBIT_AUDIO_POLL_SECONDS', '300') }}">
-                            <div class="help-text">Recommended: 60s while listening.</div>
-                        </div>
-                        <div class="form-group" id="bookorbit_audio_poll_settle_row"
-                             {% if get_val('BOOKORBIT_AUDIO_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            <label>BookOrbit Audiobook — Wait for Position to Settle</label>
-                            <div class="toggle-switch-wrapper">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" name="BOOKORBIT_AUDIO_POLL_WAIT_FOR_SETTLE"
-                                        {% if get_bool('BOOKORBIT_AUDIO_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                            <div class="help-text">Hold the sync while playback keeps advancing between polls; run it once a poll shows no further movement, i.e. you paused or finished listening.</div>
-                        </div>
-                        {% endif %}
-
-                        {% if get_bool('KAVITA_ENABLED') %}
-                        <div class="form-group" style="align-items: center;">
-                            <label>Kavita Poll Mode</label>
-                            <select name="KAVITA_POLL_MODE" id="kavita_poll_mode"
-                                    onchange="togglePollSeconds('kavita_poll_seconds_row', this.value); togglePollSeconds('kavita_poll_settle_row', this.value)">
-                                <option value="global" {% if get_val('KAVITA_POLL_MODE', 'global') == 'global' %}selected{% endif %}>Global</option>
-                                <option value="custom" {% if get_val('KAVITA_POLL_MODE') == 'custom' %}selected{% endif %}>Custom</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="kavita_poll_seconds_row"
-                             {% if get_val('KAVITA_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            <label>Kavita Poll Interval (seconds)</label>
-                            <input type="number" name="KAVITA_POLL_SECONDS" min="10"
-                                   value="{{ get_val('KAVITA_POLL_SECONDS', '300') }}">
-                            <div class="help-text">Recommended: 300s for Kavita.</div>
-                        </div>
-                        <div class="form-group" id="kavita_poll_settle_row"
-                             {% if get_val('KAVITA_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            <label>Kavita — Wait for Position to Settle</label>
-                            <div class="toggle-switch-wrapper">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" name="KAVITA_POLL_WAIT_FOR_SETTLE"
-                                        {% if get_bool('KAVITA_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                            <div class="help-text">Hold the sync while the position keeps changing between polls (actively reading); run it once a poll shows no further movement.</div>
-                        </div>
-                        {% endif %}
-
-                        {% if get_bool('CWA_SYNC_ENABLED') %}
-                        <div class="form-group" style="align-items: center;">
-                            <label>Calibre-Web Automated Poll Mode</label>
-                            <select name="CWA_SYNC_POLL_MODE" id="cwa_sync_poll_mode"
-                                    onchange="togglePollSeconds('cwa_sync_poll_seconds_row', this.value); togglePollSeconds('cwa_sync_poll_settle_row', this.value)">
-                                <option value="global" {% if get_val('CWA_SYNC_POLL_MODE', 'global') == 'global' %}selected{% endif %}>Global</option>
-                                <option value="custom" {% if get_val('CWA_SYNC_POLL_MODE') == 'custom' %}selected{% endif %}>Custom</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="cwa_sync_poll_seconds_row"
-                             {% if get_val('CWA_SYNC_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            <label>Calibre-Web Automated Poll Interval (seconds)</label>
-                            <input type="number" name="CWA_SYNC_POLL_SECONDS" min="10"
-                                   value="{{ get_val('CWA_SYNC_POLL_SECONDS', '300') }}">
-                            <div class="help-text">Recommended: 300s for CWA.</div>
-                        </div>
-                        <div class="form-group" id="cwa_sync_poll_settle_row"
-                             {% if get_val('CWA_SYNC_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            <label>Calibre-Web Automated — Wait for Position to Settle</label>
-                            <div class="toggle-switch-wrapper">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" name="CWA_SYNC_POLL_WAIT_FOR_SETTLE"
-                                        {% if get_bool('CWA_SYNC_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                            <div class="help-text">Hold the sync while the position keeps changing between polls (actively reading); run it once a poll shows no further movement.</div>
-                        </div>
-                        {% endif %}
-
-                        {% if get_bool('BOOKFUSION_ENABLED') %}
-                        <div class="form-group" style="align-items: center;">
-                            <label>BookFusion Poll Mode</label>
-                            <select name="BOOKFUSION_POLL_MODE" id="bookfusion_poll_mode"
-                                    onchange="togglePollSeconds('bookfusion_poll_seconds_row', this.value); togglePollSeconds('bookfusion_poll_settle_row', this.value)">
-                                <option value="global" {% if get_val('BOOKFUSION_POLL_MODE', 'global') == 'global' %}selected{% endif %}>Global</option>
-                                <option value="custom" {% if get_val('BOOKFUSION_POLL_MODE') == 'custom' %}selected{% endif %}>Custom</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="bookfusion_poll_seconds_row"
-                             {% if get_val('BOOKFUSION_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            <label>BookFusion Poll Interval (seconds)</label>
-                            <input type="number" name="BOOKFUSION_POLL_SECONDS" min="10"
-                                   value="{{ get_val('BOOKFUSION_POLL_SECONDS', '300') }}">
-                            <div class="help-text">Recommended: 300s for BookFusion.</div>
-                        </div>
-                        <div class="form-group" id="bookfusion_poll_settle_row"
-                             {% if get_val('BOOKFUSION_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            <label>BookFusion — Wait for Position to Settle</label>
-                            <div class="toggle-switch-wrapper">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" name="BOOKFUSION_POLL_WAIT_FOR_SETTLE"
-                                        {% if get_bool('BOOKFUSION_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                            <div class="help-text">Hold the sync while the position keeps changing between polls (actively reading); run it once a poll shows no further movement.</div>
-                        </div>
-                        {% endif %}
-
-                    </div>
-                </div>
-            </div>
-
-            <!-- Alignment Health -->
-            <div class="settings-section">
-                <div class="section-header">
-                    <h3>Alignment Health</h3>
-                </div>
-                <div class="section-body">
-                    <div class="form-group full-width">
-                        <label>Pre-LLM / Linear / Low-Quality Alignment Maps</label>
-                        <div class="cleanup-group">
-                            <button type="button" class="btn btn-primary" id="realignAllBtn" onclick="realignAllNonLlm()">
-                                Re-align all pre-LLM / linear / low-quality maps
-                            </button>
-                            <p class="help-text flex-1 m-0" id="alignHealthSummary">Loading alignment health...</p>
-                        </div>
-                    </div>
-                    <div class="form-group full-width">
-                        <div id="alignHealthList" style="display:flex;flex-direction:column;gap:6px;max-height:340px;overflow:auto;width:100%;"></div>
-                    </div>
-                </div>
-            </div>
-
-            </div><!-- /sync panel -->
-
             <div class="tab-panel" data-panel="system">
+
+            <p class="panel-intro">Running BookBridge itself: time, logs, notifications, sign-in, folders and diagnostics.</p>
 
             <div class="settings-section">
                 <div class="section-header">
@@ -2655,6 +3089,45 @@
                             {% for level in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'] %}
                             <option value="{{ level }}" {% if get_val('LOG_LEVEL')==level %}selected{% endif %}>{{ level
                                 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Telegram (Optional) -->
+            <div class="settings-section">
+                {% set telegram_configured = get_val('TELEGRAM_BOT_TOKEN') != '' %}
+                {% set telegram_enabled = get_bool('TELEGRAM_ENABLED') or (telegram_configured and
+                get_val('TELEGRAM_ENABLED') == '') %}
+                <div class="section-header">
+                    <h3>Telegram Notifications</h3>
+                    <button class="btn btn-sm" type="button" onclick="testConnection('telegram', this)">🔗 Test</button>
+                    <div class="toggle-switch-wrapper">
+                        <span class="toggle-label">Enable</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggle_telegram" name="TELEGRAM_ENABLED"
+                                onchange="toggleSection('telegram_body', this.checked)" {% if telegram_enabled
+                                %}checked{% endif %}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div id="telegram_body" class="section-body {% if not telegram_enabled %}collapsed{% endif %}">
+                    <div class="form-group full-width">
+                        <label>Bot Token</label>
+                        <input type="password" name="TELEGRAM_BOT_TOKEN" value="{{ get_val('TELEGRAM_BOT_TOKEN') }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Chat ID</label>
+                        <input type="text" name="TELEGRAM_CHAT_ID" value="{{ get_val('TELEGRAM_CHAT_ID') }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Min Log Level</label>
+                        <select name="TELEGRAM_LOG_LEVEL">
+                            {% for level in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'] %}
+                            <option value="{{ level }}" {% if get_val('TELEGRAM_LOG_LEVEL', 'ERROR' )==level
+                                %}selected{% endif %}>{{ level }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -2749,14 +3222,11 @@
                 </div>
             </div>
 
-            <!-- Advanced -->
             <div class="settings-section">
                 <div class="section-header">
-                    <h3>Advanced Options</h3>
+                    <h3>Background jobs</h3>
                 </div>
                 <div class="section-body">
-                    <!-- System Settings (Moved to Top) -->
-
                     <div class="form-group">
                         <label>Job Max Retries</label>
                         <input type="number" name="JOB_MAX_RETRIES" value="{{ get_val('JOB_MAX_RETRIES') }}">
@@ -2765,20 +3235,72 @@
                         <label>Job Retry Delay (Mins)</label>
                         <input type="number" name="JOB_RETRY_DELAY_MINS" value="{{ get_val('JOB_RETRY_DELAY_MINS') }}">
                     </div>
+                </div>
+            </div>
 
-                    <div class="form-group">
-                        <label>Fuzzy Match Threshold</label>
-                        <input type="number" step="0.1" name="FUZZY_MATCH_THRESHOLD"
-                            value="{{ get_val('FUZZY_MATCH_THRESHOLD') }}">
+            <!-- Diagnostics -->
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Diagnostics</h3>
+                    <div class="toggle-switch-wrapper">
+                        <span class="toggle-label">Enable</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggle_diagnostics" name="DIAGNOSTICS_OPT_IN"
+                                onchange="toggleSection('diagnostics_body', this.checked)"
+                                {% if get_bool('DIAGNOSTICS_OPT_IN') %}checked{% endif %}>
+                            <span class="slider"></span>
+                        </label>
                     </div>
-                    <div class="form-group">
-                        <label>SMIL Validation Threshold (%)</label>
-                        <input type="number" step="1" min="0" max="100" name="SMIL_VALIDATION_THRESHOLD"
-                            value="{{ get_val('SMIL_VALIDATION_THRESHOLD', '60') }}">
-                        <div class="help-text">Minimum token match % to accept EPUB SMIL data. Lower = more lenient.
+                </div>
+                <div id="diagnostics_body" class="section-body {% if not get_bool('DIAGNOSTICS_OPT_IN') %}collapsed{% endif %}">
+                    <p style="color:rgba(255,255,255,0.6); font-size:0.85rem; margin:0 0 12px;">
+                        Share anonymous diagnostics to help find and fix bugs faster.
+                        Reports contain scrubbed warning log lines &mdash; never library contents or credentials.
+                    </p>
+                    <input type="hidden" name="DIAGNOSTICS_PROMPTED" value="true">
+                    <div class="form-group full-width">
+                        <label for="diag-problem-message">What went wrong? (optional)</label>
+                        <textarea id="diag-problem-message" maxlength="2000"
+                            placeholder="Tell us what you were doing and what you expected to happen."></textarea>
+                        <div class="help-text">Up to 200 recent scrubbed INFO-and-higher log lines are included automatically.</div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Maximum Report Size (bytes)</label>
+                        <input type="number" name="DIAGNOSTICS_MAX_PAYLOAD_BYTES" value="{{ get_val('DIAGNOSTICS_MAX_PAYLOAD_BYTES', '800000') }}" min="0" step="10000" placeholder="800000">
+                        <div class="help-text">Reports larger than this are trimmed before sending &mdash; the least frequent warnings lose their context first, then get deferred to the next report. The receiver rejects oversized bodies outright, and a rejected report is never cleared, so without trimming the same report would be retried forever. Set <code>0</code> to disable trimming.</div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Last automatic report</label>
+                        <div style="padding:8px 12px; background:rgba(255,255,255,0.05); border-radius:6px; font-size:0.85rem; color:rgba(255,255,255,0.65);">
+                            {% set _last = get_val('DIAGNOSTICS_LAST_SENT') %}
+                            {% if _last %}{{ _last }}{% else %}never{% endif %}
                         </div>
                     </div>
+                    <div class="form-group full-width">
+                        <button class="btn btn-primary btn-sm" type="button" onclick="_sendDiagnosticsNow(this)">Send bug report</button>
+                        <span id="diag-send-status" role="status" aria-live="polite"
+                            style="margin-left:10px; font-size:0.85rem; color:rgba(255,255,255,0.65);"></span>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Recent submitted reports</label>
+                        <div id="diag-submission-history" class="diagnostics-history" role="status"
+                            aria-live="polite" aria-busy="true">Loading reports...</div>
+                    </div>
+                </div>
+            </div>
 
+            </div><!-- /system panel -->
+
+            <div class="tab-panel" data-panel="maintenance">
+
+            <p class="panel-intro">Clean-ups and backfills you run by hand.</p>
+
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Maintenance</h3>
+                </div>
+                <div class="section-body">
+                    <div class="help-text full-width">One-off actions. Nothing here is a setting, and nothing needs saving.</div>
                     <div class="form-group full-width mt-20">
                         <label>Suggestion Cleanup</label>
                         <div class="cleanup-group">
@@ -2878,365 +3400,15 @@
                             </p>
                         </div>
                     </div>
-
-                    <hr style="margin: 20px 0; border-color: var(--border-color); opacity: 0.3; grid-column: span 2;">
-
-                    <!-- Transcription Settings -->
-                    <div class="form-group">
-                        <label>Transcription Provider</label>
-                        <select name="TRANSCRIPTION_PROVIDER">
-                            <option value="local" {% if get_val('TRANSCRIPTION_PROVIDER')=='local' %}selected{% endif
-                                %}>
-                                Local Whisper
-                            </option>
-
-                            <option value="deepgram" {% if get_val('TRANSCRIPTION_PROVIDER')=='deepgram' %}selected{%
-                                endif %}>
-                                Deepgram (Cloud)
-                            </option>
-
-                            <option value="whispercpp" {% if get_val('TRANSCRIPTION_PROVIDER')=='whispercpp'
-                                %}selected{% endif %}>
-                                Whisper.cpp (Server)
-                            </option>
-                        </select>
-
-                        <div class="help-text">
-                            Local = faster‑whisper. Deepgram = cloud. Whisper.cpp = external HTTP server (whisper.cpp, speaches, parakeet, or any OpenAI-compatible endpoint).
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Audio Split Length (minutes)</label>
-                        <input type="number" name="AUDIO_SPLIT_DURATION_MINUTES" value="{{ get_val('AUDIO_SPLIT_DURATION_MINUTES', '45') }}"
-                            min="1" max="120" step="1" placeholder="45" />
-                        <div class="help-text">Audio is normalized to WAV and split into chunks of this length before transcription. Lower it (e.g. 15) if a small GPU runs out of memory on long books. Ignored when <strong>Send Original Audio</strong> is enabled, since the server then does its own chunking.</div>
-                    </div>
-                    <div class="form-group">
-                        <label>Minimum Transcript Coverage</label>
-                        <input type="number" name="TRANSCRIPT_MIN_COVERAGE" value="{{ get_val('TRANSCRIPT_MIN_COVERAGE', '0.85') }}"
-                            min="0" max="1" step="0.05" placeholder="0.85" />
-                        <div class="help-text">Fraction of the audiobook's known runtime a transcript must span before BookBridge will align it. A truncated download or a partly-decoded file still aligns cleanly against the ebook, so without this check every synced position ends up wrong by the shortfall. Set <code>0</code> to disable — needed only for genuinely abridged audio.</div>
-                    </div>
-                    <!-- Wrapper: Whisper.cpp -->
-                    <div id="group_whispercpp" class="dynamic-group full-width" style="display:contents;">
-                        <div class="form-group full-width">
-                            <label>Whisper.cpp Server URL</label>
-                            <input type="text" name="WHISPER_CPP_URL" value="{{ get_val('WHISPER_CPP_URL', '') }}"
-                                placeholder="http://192.168.178.132:8080/v1/audio/transcriptions" />
-                            <button class="btn btn-sm" type="button" onclick="testConnection('whispercpp', this)">🔗 Test</button>
-                            <div class="help-text">Full endpoint URL, including the path — e.g.
-                                <code>http://HOST:8080/v1/audio/transcriptions</code>. Works with whisper.cpp
-                                server and OpenAI-compatible ASR servers and proxies (speaches, parakeet, llama-swap). Inside Docker, do not use
-                                <code>localhost</code> — use the host's LAN IP or the whisper container's service name.
-                                Set this here in the UI: dashboard settings are stored in the database and take
-                                precedence over <code>docker-compose</code> environment variables.
-                            </div>
-                        </div>
-                        <div class="form-group full-width">
-                            <label>Split Uploads (minutes)</label>
-                            <input type="number" name="WHISPER_CPP_CHUNK_MINUTES" value="{{ get_val('WHISPER_CPP_CHUNK_MINUTES', '0') }}"
-                                min="0" max="60" step="1" placeholder="0" />
-                            <div class="help-text">Split each audio file into sub-uploads of this many minutes and offset the returned timestamps. Use for servers that return one merged segment per request (e.g. parakeet) — the value sets the sync alignment resolution, so keep it small (2–3). Leave at 0 for servers that return fine-grained segments (whisper.cpp, speaches).</div>
-                        </div>
-                        <div class="form-group full-width" style="align-items: center;">
-                            <label>Send Original Audio</label>
-                            <label class="toggle-switch">
-                                <input type="checkbox" name="WHISPER_CPP_SEND_ORIGINAL"
-                                    {% if get_bool('WHISPER_CPP_SEND_ORIGINAL') %}checked{% endif %}>
-                                <span class="slider"></span>
-                            </label>
-                            <div class="help-text">Upload the original audio files (mp3/m4b) instead of converting to WAV and splitting locally. Enable only when the server decodes any format and chunks long audio itself (e.g. parakeet with <code>-long-audio</code>). Skips minutes of local ffmpeg work per book. Leave off for whisper.cpp, which requires 16kHz WAV input.</div>
-                        </div>
-                    </div>
-
-                    <!-- Wrapper: Deepgram -->
-                    <div id="group_deepgram" class="dynamic-group full-width" style="display:contents;">
-                        <div class="form-group">
-                            <label>Deepgram API Key</label>
-                            <input type="password" name="DEEPGRAM_API_KEY" value="{{ get_val('DEEPGRAM_API_KEY') }}"
-                                placeholder="dg_...">
-                            <div class="help-text">Get your key at <a href="https://console.deepgram.com"
-                                    target="_blank" rel="noopener noreferrer">console.deepgram.com</a></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="deepgram_model">Deepgram Model</label>
-                            <select name="DEEPGRAM_MODEL" id="deepgram_model">
-                                <option value="nova-2" {% if get_val('DEEPGRAM_MODEL')=='nova-2' %}selected{% endif %}>
-                                    Nova-2 (Best accuracy)</option>
-                                <option value="nova-3" {% if get_val('DEEPGRAM_MODEL')=='nova-3' %}selected{% endif %}>
-                                    Nova-3 (Latest)</option>
-                                <option value="base" {% if get_val('DEEPGRAM_MODEL')=='base' %}selected{% endif %}>Base
-                                    (Fastest)</option>
-                                <option value="enhanced" {% if get_val('DEEPGRAM_MODEL')=='enhanced' %}selected{% endif
-                                    %}>
-                                    Enhanced</option>
-                            </select>
-                            <div class="help-text">Nova-2 recommended. See <a
-                                    href="https://developers.deepgram.com/docs/models" target="_blank"
-                                    rel="noopener noreferrer">Deepgram
-                                    Models</a>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!-- Wrapper: Whisper Model (shared by Local + Whisper.cpp Server) -->
-                    <div id="group_whisper_model" class="dynamic-group full-width" style="display:contents;">
-                        <div class="form-group">
-                            <label>Whisper Model</label>
-                            <input type="text" name="WHISPER_MODEL" list="whisper-model-suggestions"
-                                value="{{ get_val('WHISPER_MODEL') }}" placeholder="tiny" autocomplete="off">
-                            <datalist id="whisper-model-suggestions">
-                                {% for model in ['tiny', 'base', 'small', 'medium', 'large-v2', 'large-v3'] %}
-                                <option value="{{ model }}"></option>
-                                {% endfor %}
-                            </datalist>
-                            <div class="help-text">Model name for Local Whisper and Whisper.cpp Server. Pick a common
-                                model from the suggestions or enter a custom whisper.cpp model name. Larger = better
-                                accuracy but slower. For the Whisper.cpp Server, this must match the model id the
-                                server (or llama-swap) exposes — a mismatched id makes the server reject the request.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Wrapper: Local Whisper -->
-                    <div id="group_local" class="dynamic-group full-width" style="display:contents;">
-                        <div class="form-group">
-                            <label for="whisper_language">Whisper Language</label>
-                            <input type="text" id="whisper_language" name="WHISPER_LANGUAGE"
-                                value="{{ get_val('WHISPER_LANGUAGE', '') }}" placeholder="Auto-detect (e.g. ru, en)">
-                            <div class="help-text">Leave blank to detect each chunk's language, or enter a language
-                                code such as <code>ru</code> for Russian. Applies to new local transcriptions;
-                                saved transcripts are reused.</div>
-                        </div>
-                        <div class="form-group" style="align-items: center;">
-                            <label for="whisper_vad_filter">Filter Non-Speech Audio</label>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="whisper_vad_filter" name="WHISPER_VAD_FILTER"
-                                    {% if get_bool('WHISPER_VAD_FILTER') %}checked{% endif %}>
-                                <span class="slider"></span>
-                            </label>
-                            <div class="help-text">Use voice activity detection (VAD) to reduce transcription over
-                                music and silence. Off by default; check quiet narration before using it broadly.
-                                Audio timestamps are preserved. Applies to new local transcriptions.</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Whisper Device</label>
-                            <select name="WHISPER_DEVICE">
-                                <option value="auto" {% if get_val('WHISPER_DEVICE')=='auto' %}selected{% endif %}>Auto
-                                    (detect GPU)
-                                </option>
-                                <option value="cpu" {% if get_val('WHISPER_DEVICE')=='cpu' %}selected{% endif %}>CPU
-                                </option>
-                                <option value="cuda" {% if get_val('WHISPER_DEVICE')=='cuda' %}selected{% endif %}>GPU
-                                    (NVIDIA)
-                                </option>
-                            </select>
-                            <div class="help-text">Auto (default) uses an NVIDIA GPU when one is available, otherwise
-                                CPU. Requires the <code>-cuda</code> image.</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Whisper Compute Type</label>
-                            <select name="WHISPER_COMPUTE_TYPE">
-                                <option value="auto" {% if get_val('WHISPER_COMPUTE_TYPE')=='auto' %}selected{% endif
-                                    %}>
-                                    Auto (int8 CPU / float16 GPU)</option>
-                                <option value="int8" {% if get_val('WHISPER_COMPUTE_TYPE')=='int8' %}selected{% endif
-                                    %}>
-                                    int8 (Fast, CPU-optimized)</option>
-                                <option value="float16" {% if get_val('WHISPER_COMPUTE_TYPE')=='float16' %}selected{%
-                                    endif %}>
-                                    float16 (Fast, GPU-optimized)</option>
-                                <option value="float32" {% if get_val('WHISPER_COMPUTE_TYPE')=='float32' %}selected{%
-                                    endif %}>
-                                    float32 (Highest accuracy)</option>
-                            </select>
-                            <div class="help-text">Use int8 for CPU, float16 for GPU.</div>
-                        </div>
-                    </div>
-
-                    <div class="form-group full-width" style="align-items: center;">
-                        <label>Content-Match Guard</label>
-                        <label class="toggle-switch">
-                            <input type="checkbox" name="CONTENT_MATCH_GUARD"
-                                {% if get_bool('CONTENT_MATCH_GUARD') %}checked{% endif %}>
-                            <span class="slider"></span>
-                        </label>
-                        <div class="help-text">Non-LLM guard: refuse to store an alignment when a
-                            direct word n-gram overlap check finds too little of the ebook text inside
-                            the transcript — a sign the audio and ebook are different content (wrong
-                            edition / abridged / different book). Runs whenever the semantic
-                            (Ollama) content-match guard above cannot give a verdict — because Ollama
-                            is not configured, or is configured but down — so an outage never leaves
-                            you unguarded. Leave on unless you are deliberately re-aligning a book you
-                            know is a rough match.</div>
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Content-Match Min Overlap (0-1)</label>
-                        <input type="number" step="0.01" min="0" max="1" name="CONTENT_MATCH_MIN_OVERLAP"
-                            value="{{ get_val('CONTENT_MATCH_MIN_OVERLAP') }}">
-                        <div class="help-text">Below this fraction of matched ebook n-grams, the
-                            Content-Match Guard refuses to store the map. The default 0.15 was
-                            measured across 28 real book/transcript pairs: correct pairings scored
-                            0.30-0.85 (never 1.0 — speech recognition never matches text verbatim),
-                            while a genuinely different book shares almost no phrases and scores near
-                            0. Raise it only if mismatches are slipping through.</div>
-                    </div>
-
-                    <!-- Forced (CTC) alignment: the recommended alignment method. QuartzNet runs on
-                         the CPU in every image; MMS needs a local INSTALL_CTC=true build. -->
-                    <div class="form-group full-width">
-                        <label class="toggle-label">
-                            <input type="checkbox" name="CTC_ENABLED"
-                                {% if get_bool('CTC_ENABLED') %}checked{% endif %}>
-                            Use forced alignment (recommended)
-                        </label>
-                        <div class="help-text">Aligns each audiobook directly against its ebook's text, word by
-                            word, instead of transcribing it and matching the transcript back. It is more accurate,
-                            especially for readers that track exact positions (BookOrbit, KOReader, the ABS ebook
-                            reader, Grimmory), and it finds each chapter in the audio itself, so long books need no
-                            Whisper transcript. Runs on the CPU in every image: a few minutes per 10 hours of audio
-                            on a modern CPU. English books only; books in other languages, and books whose audio
-                            does not follow the text closely enough, use transcription automatically. Turn off to
-                            always use transcription.</div>
-                    </div>
-                    <div class="form-group full-width">
-                        <label class="toggle-label">
-                            <input type="checkbox" name="SMIL_SKIP_CTC"
-                                {% if get_bool('SMIL_SKIP_CTC') %}checked{% endif %}>
-                            Use a read-along's own timings when they check out
-                        </label>
-                        <div class="help-text">When the ebook is a read-along (a Storyteller or StoryAlign EPUB
-                            with media overlays), uses the timings it already has instead of running forced
-                            alignment, as long as they match the text across the whole audiobook and never lose
-                            their place. That skips forced alignment's CPU time, which can be hours on a long
-                            book. A read-along whose timings fail the check is aligned as usual. Off: forced
-                            alignment runs first, and the read-along's timings are used only if it fails.</div>
-                    </div>
-                    <details class="advanced-sub full-width">
-                        <summary>Advanced — forced alignment model</summary>
-                    <div class="dynamic-group full-width" style="display:contents;">
-                        <div class="form-group">
-                            <label>CTC Model</label>
-                            <select name="CTC_MODEL">
-                                <option value="quartznet" {% if get_val('CTC_MODEL', 'quartznet') != 'mms_fa' %}selected{% endif %}>QuartzNet
-                                    (English, CPU, any image)</option>
-                                <option value="mms_fa" {% if get_val('CTC_MODEL', 'quartznet') == 'mms_fa' %}selected{% endif %}>MMS
-                                    (~1000 languages, needs the -ctc image)</option>
-                            </select>
-                            <div class="help-text">QuartzNet is NVIDIA's QuartzNet15x5 (the model Storyteller uses),
-                                downloaded once (77 MB) on first use. MMS needs a custom <code>-ctc</code> build
-                                (<code>INSTALL_CTC=true</code>, which bundles torch/torchaudio) and effectively an
-                                NVIDIA GPU; use it for books that are not in English.</div>
-                        </div>
-                        <div class="form-group">
-                            <label>QuartzNet model file</label>
-                            <input type="text" name="CTC_QUARTZNET_MODEL_PATH"
-                                value="{{ get_val('CTC_QUARTZNET_MODEL_PATH', '') }}"
-                                placeholder="/data/models/quartznet15x5-en/model.onnx" autocomplete="off">
-                            <div class="help-text">Optional. A local <code>model.onnx</code> (or the folder holding
-                                it), for example a copy from Storyteller's
-                                <code>ghost-story/models/quartznet15x5-en</code>. Leave empty to download it
-                                from Storyteller's package registry on first use; set it if that download fails.</div>
-                        </div>
-                        <div class="form-group">
-                            <label>CTC Device</label>
-                            <select name="CTC_DEVICE">
-                                <option value="auto" {% if get_val('CTC_DEVICE')=='auto' %}selected{% endif %}>Auto
-                                    (detect GPU)</option>
-                                <option value="cpu" {% if get_val('CTC_DEVICE')=='cpu' %}selected{% endif %}>CPU</option>
-                                <option value="cuda" {% if get_val('CTC_DEVICE')=='cuda' %}selected{% endif %}>GPU
-                                    (NVIDIA)</option>
-                            </select>
-                            <div class="help-text">MMS only (QuartzNet always runs on the CPU). Auto uses an NVIDIA
-                                GPU when available, otherwise CPU; MMS on CPU is slow for long audiobooks.</div>
-                        </div>
-                    </div>
-                    </details>
-
-                    <!-- Segmented alignment maps: fits each EPUB spine chapter to the audio
-                         independently instead of one global monotonic filter, so a book whose
-                         narration order differs from its spine order (issue #426) still places
-                         every chapter correctly. Only changes anything for books that are
-                         actually out of order; every other book's map is unaffected. -->
-                    <details class="advanced-sub full-width">
-                        <summary>Advanced · Experimental — Segmented alignment (out-of-order narration)</summary>
-                    <div class="form-group full-width" style="align-items: center;">
-                        <label>Segmented Alignment Maps</label>
-                        <label class="toggle-switch">
-                            <input type="checkbox" name="ALIGNMENT_SEGMENTED_MAPS"
-                                {% if get_bool('ALIGNMENT_SEGMENTED_MAPS') %}checked{% endif %}>
-                            <span class="slider"></span>
-                        </label>
-                        <div class="help-text"><strong>Experimental &mdash; leave off unless a book's
-                            audiobook narrates its sections in a different order than the EPUB spines
-                            them</strong> (e.g. a short-story or novella collection spined 2-4-3-1 but
-                            narrated 1-2-3-4, or acknowledgements that open the ebook but close the
-                            audiobook). When on, re-aligning such a book fits each EPUB chapter to the
-                            audio independently instead of forcing every anchor into one global
-                            increasing sequence, so out-of-order chapters are placed correctly instead
-                            of dropped. Books that are already in order are unaffected either way.</div>
-                    </div>
-                    </details>
                 </div>
             </div>
 
-            <!-- Diagnostics -->
-            <div class="settings-section">
-                <div class="section-header">
-                    <h3>Diagnostics</h3>
-                    <div class="toggle-switch-wrapper">
-                        <span class="toggle-label">Enable</span>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="toggle_diagnostics" name="DIAGNOSTICS_OPT_IN"
-                                onchange="toggleSection('diagnostics_body', this.checked)"
-                                {% if get_bool('DIAGNOSTICS_OPT_IN') %}checked{% endif %}>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                </div>
-                <div id="diagnostics_body" class="section-body {% if not get_bool('DIAGNOSTICS_OPT_IN') %}collapsed{% endif %}">
-                    <p style="color:rgba(255,255,255,0.6); font-size:0.85rem; margin:0 0 12px;">
-                        Share anonymous diagnostics to help find and fix bugs faster.
-                        Reports contain scrubbed warning log lines &mdash; never library contents or credentials.
-                    </p>
-                    <input type="hidden" name="DIAGNOSTICS_PROMPTED" value="true">
-                    <div class="form-group full-width">
-                        <label for="diag-problem-message">What went wrong? (optional)</label>
-                        <textarea id="diag-problem-message" maxlength="2000"
-                            placeholder="Tell us what you were doing and what you expected to happen."></textarea>
-                        <div class="help-text">Up to 200 recent scrubbed INFO-and-higher log lines are included automatically.</div>
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Maximum Report Size (bytes)</label>
-                        <input type="number" name="DIAGNOSTICS_MAX_PAYLOAD_BYTES" value="{{ get_val('DIAGNOSTICS_MAX_PAYLOAD_BYTES', '800000') }}" min="0" step="10000" placeholder="800000">
-                        <div class="help-text">Reports larger than this are trimmed before sending &mdash; the least frequent warnings lose their context first, then get deferred to the next report. The receiver rejects oversized bodies outright, and a rejected report is never cleared, so without trimming the same report would be retried forever. Set <code>0</code> to disable trimming.</div>
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Last automatic report</label>
-                        <div style="padding:8px 12px; background:rgba(255,255,255,0.05); border-radius:6px; font-size:0.85rem; color:rgba(255,255,255,0.65);">
-                            {% set _last = get_val('DIAGNOSTICS_LAST_SENT') %}
-                            {% if _last %}{{ _last }}{% else %}never{% endif %}
-                        </div>
-                    </div>
-                    <div class="form-group full-width">
-                        <button class="btn btn-primary btn-sm" type="button" onclick="_sendDiagnosticsNow(this)">Send bug report</button>
-                        <span id="diag-send-status" role="status" aria-live="polite"
-                            style="margin-left:10px; font-size:0.85rem; color:rgba(255,255,255,0.65);"></span>
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Recent submitted reports</label>
-                        <div id="diag-submission-history" class="diagnostics-history" role="status"
-                            aria-live="polite" aria-busy="true">Loading reports...</div>
-                    </div>
-                </div>
-            </div>
+            </div><!-- /maintenance panel -->
 
-            </div><!-- /system panel -->
-
+            <input type="hidden" name="return_tab" id="return_tab" value="">
             <div class="submit-bar">
                 <span class="dirty-note" id="dirty_note" style="display:none;"></span>
-                <span class="restart-warn">⚠️ Application will restart instantly</span>
+                <span class="save-effect" id="save_effect">Changes take effect as soon as you save</span>
                 <button type="submit" class="btn btn-primary">💾 Save Settings</button>
             </div>
         </form>
@@ -4339,9 +4511,13 @@
     </script>
     <script>
         // --- Settings sidebar tabs ---
-        const SETTINGS_TABS = ['integrations', 'sync', 'features', 'ai', 'system', 'users'];
+        const SETTINGS_TABS = ['integrations', 'sync', 'library', 'alignment', 'ai', 'system', 'maintenance', 'users'];
         // Old tab names (bookmarks / external links) map onto the new grouping.
-        const LEGACY_TAB_ALIASES = { general: 'integrations', reading_apps: 'integrations', trackers: 'integrations', tools: 'features' };
+        const LEGACY_TAB_ALIASES = { general: 'integrations', reading_apps: 'integrations', trackers: 'integrations', features: 'library', tools: 'maintenance' };
+        // Settings captured at startup: saving a change to one restarts the app.
+        const RESTART_KEYS = new Set({{ (restart_keys or [])|tojson }});
+        const SETTING_DEFAULTS = {{ (setting_defaults or {})|tojson }};
+        const TRUTHY = ['true', '1', 'yes', 'on'];
         // Guard to ensure alignment health loads at most once per page load
         let alignHealthLoaded = false;
 
@@ -4355,16 +4531,21 @@
                 p.classList.toggle('active', p.dataset.panel === name);
             });
             // The Users panel lives outside the application form; hide the
-            // form (and its Save bar) while it is showing.
+            // form (and its Save bar) while it is showing. Maintenance has
+            // nothing to save, so it hides only the Save bar.
             const form = document.getElementById('settingsForm');
             if (form) form.style.display = (name === 'users') ? 'none' : '';
+            const bar = document.querySelector('.submit-bar');
+            if (bar) bar.style.display = (name === 'maintenance') ? 'none' : '';
+            const returnTab = document.getElementById('return_tab');
+            if (returnTab) returnTab.value = name;
             if (history.replaceState) {
                 history.replaceState(null, '', '#' + name);
             } else {
                 location.hash = name;
             }
-            // Lazy-load alignment health when the sync tab is activated
-            if (name === 'sync' && !alignHealthLoaded) {
+            // Lazy-load alignment health when the alignment tab is activated
+            if (name === 'alignment' && !alignHealthLoaded) {
                 alignHealthLoaded = true;
                 if (typeof loadAlignmentHealth === 'function') {
                     loadAlignmentHealth();
@@ -4372,9 +4553,121 @@
             }
         }
 
+        // --- Per-field markers: restart badge, "changed from default" + reset ---
+        function fieldContainer(field) {
+            return field.closest('.poll-row, .checkbox-wrapper, .form-group, .toggle-switch-wrapper, .section-header');
+        }
+
+        function fieldLabel(container) {
+            return container.querySelector('.poll-name, label:not(.toggle-switch):not(.poll-settle), .toggle-label, h3') || container;
+        }
+
+        function fieldValue(field) {
+            return field.type === 'checkbox' ? String(field.checked) : field.value.trim();
+        }
+
+        function defaultValue(field) {
+            const value = String(SETTING_DEFAULTS[field.name]);
+            return field.type === 'checkbox' ? String(TRUTHY.indexOf(value.toLowerCase()) !== -1) : value;
+        }
+
+        function isChanged(field) {
+            if (!(field.name in SETTING_DEFAULTS) || field.type === 'password') return false;
+            const value = fieldValue(field);
+            // A blank field means "use the default" for every non-checkbox setting.
+            return value !== defaultValue(field) && (field.type === 'checkbox' || value !== '');
+        }
+
+        function updateChangedMarker(field) {
+            const container = fieldContainer(field);
+            if (!container) return;
+            const changed = isChanged(field);
+            container.classList.toggle('is-changed', changed);
+            let reset = container.querySelector('.reset-default[data-for="' + field.name + '"]');
+            if (changed && !reset) {
+                reset = document.createElement('button');
+                reset.type = 'button';
+                reset.className = 'reset-default';
+                reset.dataset.for = field.name;
+                reset.title = 'Default: ' + (SETTING_DEFAULTS[field.name] || '(blank)');
+                reset.textContent = 'reset';
+                reset.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (field.type === 'checkbox') field.checked = defaultValue(field) === 'true';
+                    else field.value = SETTING_DEFAULTS[field.name];
+                    field.dispatchEvent(new Event('input', { bubbles: true }));
+                    field.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+                fieldLabel(container).appendChild(reset);
+            } else if (!changed && reset) {
+                reset.remove();
+            }
+            const section = container.closest('.settings-section');
+            if (section) section.classList.toggle('has-changed', !!section.querySelector('.is-changed'));
+        }
+
+        function updateSaveEffect() {
+            const note = document.getElementById('save_effect');
+            if (!note || typeof dirtyFields === 'undefined') return;
+            const restarts = Array.from(dirtyFields).some(function (f) { return RESTART_KEYS.has(f.name); });
+            note.classList.toggle('warn', restarts);
+            note.textContent = restarts
+                ? '⟳ Saving restarts BookBridge (about 10 seconds)'
+                : 'Changes take effect as soon as you save';
+        }
+
+        function setupFieldMarkers() {
+            document.querySelectorAll('#settingsForm [name]').forEach(function (field) {
+                if (field.type === 'hidden' || !field.name) return;
+                const container = fieldContainer(field);
+                if (container && RESTART_KEYS.has(field.name) && !container.querySelector('.restart-badge[data-for="' + field.name + '"]')) {
+                    const badge = document.createElement('span');
+                    badge.className = 'restart-badge';
+                    badge.dataset.for = field.name;
+                    badge.title = 'Saving a change to this restarts BookBridge';
+                    badge.textContent = 'restart';
+                    fieldLabel(container).appendChild(badge);
+                }
+                updateChangedMarker(field);
+            });
+            const form = document.getElementById('settingsForm');
+            ['input', 'change'].forEach(function (type) {
+                form.addEventListener(type, function (e) {
+                    if (e.target.name && e.target.name in SETTING_DEFAULTS) updateChangedMarker(e.target);
+                    updateSaveEffect();
+                });
+            });
+        }
+
+        // Search and the changed-only filter both look across every tab at once.
+        function applySettingsFilter() {
+            const main = document.querySelector('.settings-main');
+            const search = document.getElementById('settings_search');
+            const q = (search ? search.value : '').trim().toLowerCase();
+            const changedOnly = document.getElementById('changed_only').checked;
+            const filtering = !!q || changedOnly;
+            main.classList.toggle('filtering', filtering);
+            if (filtering) {
+                const form = document.getElementById('settingsForm');
+                if (form) form.style.display = '';
+            } else {
+                showSettingsTab((location.hash || '').replace('#', '') || 'integrations');
+            }
+            document.querySelectorAll('.settings-main .settings-section').forEach(function (card) {
+                const text = ((card.dataset.svc || '') + ' ' + card.textContent).toLowerCase();
+                const hit = (!q || text.indexOf(q) !== -1) && (!changedOnly || card.classList.contains('has-changed'));
+                card.style.display = hit ? '' : 'none';
+                if (hit && q) card.querySelectorAll('details').forEach(function (d) {
+                    if (d.textContent.toLowerCase().indexOf(q) !== -1) d.open = true;
+                });
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             const fromHash = (location.hash || '').replace('#', '');
             showSettingsTab(fromHash || 'integrations');
+            setupFieldMarkers();
 
             const sessionGap = document.querySelector('[name="READING_SESSION_MERGE_MINUTES"]');
             const syncPeriod = document.querySelector('[name="SYNC_PERIOD_MINS"]');
@@ -4404,21 +4697,9 @@
                 });
             });
 
-            // Sidebar search filters the Integrations service cards by name or
-            // any text on the card (field labels, help text).
-            const svcSearch = document.getElementById('settings_search');
-            if (svcSearch) {
-                svcSearch.addEventListener('input', function () {
-                    const q = svcSearch.value.trim().toLowerCase();
-                    if (q) showSettingsTab('integrations');
-                    document.querySelectorAll('.settings-section[data-svc]').forEach(function (card) {
-                        const hit = !q
-                            || card.dataset.svc.indexOf(q) !== -1
-                            || card.textContent.toLowerCase().indexOf(q) !== -1;
-                        card.style.display = hit ? '' : 'none';
-                    });
-                });
-            }
+            const search = document.getElementById('settings_search');
+            if (search) search.addEventListener('input', applySettingsFilter);
+            document.getElementById('changed_only').addEventListener('change', applySettingsFilter);
         });
     </script>
 {% endblock %}

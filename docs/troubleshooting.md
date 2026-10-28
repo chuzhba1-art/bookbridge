@@ -15,7 +15,7 @@ as a bonus alignment source.
 - Confirm that the selected ebook and audiobook are the same edition. The
   **Content-Match Guard** deliberately refuses maps with too little shared wording;
   leave it enabled unless you know the pairing is a rough but intended match.
-- Open **Settings -> Sync -> Alignment Health**. A low-quality map can be rebuilt with
+- Open **Settings -> Alignment -> Alignment Health**. A low-quality map can be rebuilt with
   **Remap alignment**, and **Restore previous** returns to the last saved map if the
   replacement is worse.
 - If a collection's audiobook narrates chapters in a different order from the EPUB,
@@ -57,7 +57,7 @@ are renamed, replaced or removed.
 
 ### A deliberate rewind does not stick
 
-- Confirm **Honor a Deliberate Rewind** is enabled under **Settings -> Sync**.
+- Confirm **Honor a Deliberate Rewind** is enabled under **Settings -> Reading & Sync**.
 - After going back, make some forward progress in the same app. One isolated backward
   report is intentionally held so a stale or echoed position cannot pull every reader
   backward.
@@ -67,7 +67,7 @@ are renamed, replaced or removed.
 
 - Make sure your `/books` volume is mounted correctly in `docker-compose.yml`.
 - Check file permissions for the user running the container.
-- If the missing books should come from Grimmory, run **Settings -> System -> Advanced -> Refresh Grimmory Cache**.
+- If the missing books should come from Grimmory, run **Settings -> Maintenance -> Refresh Grimmory Cache**.
 - If the missing books should come from BookOrbit, confirm BookOrbit is enabled, test the connection, and retry the matching flow.
 - If the missing books should come from CWA, confirm CWA is enabled, test the connection, and make sure the book is visible in Calibre-Web Automated.
 
@@ -161,7 +161,7 @@ New progress posts after the usual cooldown once the book is matched.
 
 - Update the **Bridge Sync** KOReader plugin to the current release or newer on every KOReader device that should sync annotations.
 - Plain KOReader/KOSync progress sync does not sync annotations. In KOReader, use **Tools -> Bridge Sync -> Sync Highlights** or **Sweep All Highlights**.
-- Make sure **Highlight Sync** is enabled on the **Settings -> Integrations -> KOReader / KoSync** card.
+- Make sure **Highlight Sync** is enabled on the **Settings -> Services -> KOReader / KoSync** card.
 - For Grimmory web-reader annotations, enable **Highlight Sync** in that reader's Grimmory integration.
 - For BookOrbit web-reader highlights, fill in the BookOrbit KOReader sync username/password in that reader's Integrations and make sure the owner matches the BookOrbit user.
 - For BookFusion, enable **BookFusion -> Highlight Sync** in that reader's Integrations and confirm the book is linked to BookFusion.
@@ -275,7 +275,7 @@ Work through it in this order:
 - These features need the **BridgeSync 0.9.6** plugin (or newer) on every device involved —
   older plugin versions do not send or receive the extra data.
 - Status (reading / finished / abandoned) is shared through **Sync reading status between
-  devices** under **Settings -> Integrations -> KOReader / KoSync**. It is on by default.
+  devices** under **Settings -> Services -> KOReader / KoSync**. It is on by default.
   When two devices disagree, the one whose status changed most recently wins, and
   "finished" breaks a same-day tie.
 - Sharing History between devices is a separate, **off by default** switch — **Share

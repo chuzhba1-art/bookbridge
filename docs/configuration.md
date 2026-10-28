@@ -6,7 +6,7 @@
 
 ## Web UI Settings
 
-The **Settings** page is the easiest way to manage the bridge. Saving settings restarts the app automatically and brings you back to the dashboard when it is ready.
+The **Settings** page is the easiest way to manage the bridge. Most changes take effect as soon as you save. A setting marked **restart** is read once at startup, so saving a change to it restarts the app and brings you back to the dashboard when it is ready. **Only what I've changed** in the sidebar lists every setting that differs from its default, each with a **reset** link.
 
 The Settings sidebar is organized into:
 
@@ -284,7 +284,7 @@ Storyteller notes:
 - Storyteller edition uploads use the Storyteller REST/TUS API directly. A Storyteller library mount is optional unless you want local fallback access to generated artifacts.
 - If you mount `/path/to/storyteller/assets:/storyteller/assets`, set **Storyteller Assets Path** to `/storyteller`.
 - Storyteller timing data stays the preferred alignment source whenever valid transcript assets are available.
-- **Settings -> System -> Advanced -> Storyteller Backfill** rechecks existing Storyteller-linked books and rebuilds their alignment data without rerunning Whisper.
+- **Settings -> Maintenance -> Storyteller Backfill** rechecks existing Storyteller-linked books and rebuilds their alignment data without rerunning Whisper.
 
 #### Grimmory
 
@@ -316,7 +316,7 @@ Grimmory notes:
 - The dashboard shows **BL Audio** progress when a mapping is driven by Grimmory audio.
 - When **Record Reading Sessions** is enabled, Grimmory gets session updates as you make progress.
 - Enable **Highlight Sync** in each reader's Grimmory integration if you want Grimmory web-reader highlights and notes to round-trip through the bridge.
-- **Settings -> System -> Advanced -> Refresh Grimmory Cache** forces a fresh cache rebuild after imports, removals, or large metadata changes.
+- **Settings -> Maintenance -> Refresh Grimmory Cache** forces a fresh cache rebuild after imports, removals, or large metadata changes.
 - Use **Find IDs** next to **Library ID** in Settings to load your available Grimmory libraries and fill the field from a dropdown.
 - The **KOReader Collections** settings only matter if you use the optional **Bridge Sync** KOReader plugin.
 - KOReader collections are configured per reader under **Account -> My Integrations -> KOReader Collections**.
@@ -520,7 +520,7 @@ StoryGraph notes:
 #### Progress Trackers
 
 Hardcover and StoryGraph are independent - enable either or both on their cards in
-**Settings -> Integrations**. Each reader then picks which they use, and supplies their own
+**Settings -> Services**. Each reader then picks which they use, and supplies their own
 token/cookies, under **Account -> My Integrations**. Admins can also manage those values under
 **Settings -> Users -> Integrations**.
 
@@ -532,7 +532,7 @@ passed. See [troubleshooting](troubleshooting.md#hardcover-or-storygraph-gets-ma
 
 #### Telegram Notifications
 
-Found under **Settings -> Features**.
+Found under **Settings -> Server**.
 
 | Setting | Env Var | Default | Notes |
 | --- | --- | --- | --- |
@@ -543,7 +543,7 @@ Found under **Settings -> Features**.
 
 #### Shelfmark
 
-Found under **Settings -> Features**.
+Found under **Settings -> Library & Matching**.
 
 | Setting | Env Var | Default | Notes |
 | --- | --- | --- | --- |
@@ -551,7 +551,7 @@ Found under **Settings -> Features**.
 
 #### Series Display
 
-Found under **Settings -> Features**.
+Found under **Settings -> Library & Matching**.
 
 | Setting | Env Var | Default | Notes |
 | --- | --- | --- | --- |
@@ -603,7 +603,7 @@ Ollama notes:
 
 ### Suggestions
 
-Enabled under **Settings -> Features**. The Suggestions page is a review workspace: it waits for your approval before creating mappings unless you turn on auto-match.
+Enabled under **Settings -> Library & Matching**. The Suggestions page is a review workspace: it waits for your approval before creating mappings unless you turn on auto-match.
 
 | Setting | Env Var | Default | Notes |
 | --- | --- | --- | --- |
@@ -629,7 +629,7 @@ Suggestions notes:
 
 ### Transcription Settings
 
-Found under **Settings -> System -> Advanced Options**. Transcription powers the bridge's own
+Found under **Settings -> Alignment**. Transcription powers the bridge's own
 audio ↔ text alignment; it runs locally by default and needs no external services.
 
 > [!TIP]
@@ -673,7 +673,7 @@ Transcription notes:
 
 ### Sync Tuning
 
-Found under **Settings -> Sync**, alongside instant-sync options and Alignment Health.
+Found under **Settings -> Reading & Sync**. Each app that cannot notify BookBridge has one row in **How often each app is checked**; Alignment Health is under **Settings -> Alignment**.
 
 | Setting | Env Var | Default | Notes |
 | --- | --- | --- | --- |
@@ -703,7 +703,7 @@ Found under **Settings -> Sync**, alongside instant-sync options and Alignment H
 
 ### Paths and System
 
-Found under **Settings -> System**.
+Found under **Settings -> Server**.
 
 | Setting | Env Var | Default | Notes |
 | --- | --- | --- | --- |

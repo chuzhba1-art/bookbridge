@@ -184,7 +184,9 @@ class TestSettingsComprehensive(unittest.TestCase):
                 response = self.client.post('/settings', data={
                     'SYNC_PERIOD_MINS': '5', key: checked,
                 })
-                self.assertEqual(response.status_code, 200)
+                # 200 = restart page (a startup setting changed), 302 = saved live;
+                # which one is pinned in tests/test_settings_live_save.py.
+                self.assertIn(response.status_code, (200, 302))
                 self.assertEqual(self.settings_store[key], 'true')
                 self.assertEqual(os.environ[key], 'true')
                 os.environ.pop(key, None)
@@ -206,7 +208,9 @@ class TestSettingsComprehensive(unittest.TestCase):
                 response = self.client.post('/settings', data={
                     'SYNC_PERIOD_MINS': '5', key: checked,
                 })
-                self.assertEqual(response.status_code, 200)
+                # 200 = restart page (a startup setting changed), 302 = saved live;
+                # which one is pinned in tests/test_settings_live_save.py.
+                self.assertIn(response.status_code, (200, 302))
                 self.assertEqual(self.settings_store[key], 'true')
                 self.assertEqual(os.environ[key], 'true')
                 os.environ.pop(key, None)
