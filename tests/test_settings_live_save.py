@@ -121,6 +121,42 @@ class TestSettingsSaveRestartsOnlyWhenNeeded(unittest.TestCase):
             self.assertNotIn(merged, self.store)
         self.assertEqual(self.store['KAVITA_POLL_WAIT_FOR_SETTLE'], 'true')
 
+    def test_the_aligner_model_and_device_restart(self):
+        """The forced aligner keeps the model and device it loaded first."""
+        for key, value in (('CTC_DEVICE', 'cuda'), ('CTC_QUARTZNET_MODEL_PATH', '/data/models/other')):
+            self.assertIn(b'Restarting the application', self._post(**{key: value}).data, key)
+
+    def test_an_untouched_merged_control_keeps_each_apps_own_value(self):
+        """An unchanged Save used to copy BookOrbit's shelf watch and poll timer into
+        every app, switching on Grimmory's and Kavita's watches behind the admin's back."""
+        from src.utils.config_loader import MERGED_SETTINGS, merged_setting_values
+        mixed = {'BOOKORBIT_SHELF_WATCH_ENABLED': 'true', 'BOOKORBIT_SHELF_WATCH_NAME': 'Next audio',
+                 'BOOKLORE_SHELF_WATCH_ENABLED': 'false', 'BOOKLORE_SHELF_WATCH_NAME': 'Manual only',
+                 'KAVITA_SHELF_WATCH_ENABLED': 'false',
+                 'BOOKORBIT_POLL_MODE': 'custom', 'BOOKORBIT_POLL_SECONDS': '60',
+                 'CWA_SYNC_POLL_MODE': 'global', 'CWA_SYNC_POLL_SECONDS': '300'}
+        os.environ.update(mixed)
+        self.store.update(mixed)
+        shown = merged_setting_values(os.environ)
+        page = {k: ['off', 'on'] if v == 'true' else ('off' if v == 'false' else v)
+                for k, v in shown.items() if k in MERGED_SETTINGS}
+        self.assertEqual(self._post(**page).status_code, 302)
+        self.assertEqual(self.store['BOOKORBIT_SHELF_WATCH_ENABLED'], 'true')
+        self.assertEqual(self.store['BOOKLORE_SHELF_WATCH_ENABLED'], 'false')
+        self.assertEqual(self.store['KAVITA_SHELF_WATCH_ENABLED'], 'false')
+        self.assertEqual(self.store['BOOKLORE_SHELF_WATCH_NAME'], 'Manual only')
+        self.assertEqual(self.store['CWA_SYNC_POLL_MODE'], 'global')
+        self.assertEqual(self.store['CWA_SYNC_POLL_SECONDS'], '300')
+
+        self._post(**{**page, 'ALL_APPS_SHELF_WATCH_NAME': 'Queue'})
+        self.assertEqual(self.store['BOOKLORE_SHELF_WATCH_NAME'], 'Queue')
+        self.assertEqual(self.store['BOOKLORE_SHELF_WATCH_ENABLED'], 'false')
+
+    def test_the_page_says_when_apps_differ(self):
+        self.assertNotIn('merged-mixed-note">', self.client.get('/settings').get_data(as_text=True))
+        os.environ.update({'BOOKORBIT_POLL_MODE': 'custom', 'CWA_SYNC_POLL_MODE': 'global'})
+        self.assertIn('merged-mixed-note">', self.client.get('/settings').get_data(as_text=True))
+
     def test_an_unticked_merged_switch_turns_every_app_off(self):
         self._post(ALL_APPS_POLL_WAIT_FOR_SETTLE=['off', 'on'])
         self._post(ALL_APPS_POLL_WAIT_FOR_SETTLE='off')

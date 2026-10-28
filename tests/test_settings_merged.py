@@ -98,6 +98,40 @@ class TestMergedValues(unittest.TestCase):
         self.assertEqual(merged_setting_values({**DEFAULT_CONFIG, **off})['ALL_APPS_ANNOTATION_SYNC_MINUTES'], '0')
 
 
+class TestZeroHighlightIntervalStopsCopying(unittest.TestCase):
+    """The Readest upload sweep shares the highlight daemon, so the daemon still woke
+    with every highlight interval at 0 and copied highlights on its way past."""
+
+    def setUp(self):
+        self._saved_env = dict(os.environ)
+        self.addCleanup(lambda: (os.environ.clear(), os.environ.update(self._saved_env)))
+
+    def _cycle(self):
+        from unittest.mock import MagicMock, patch
+        from src.services.annotation_sync_service import AnnotationSyncService
+        service = AnnotationSyncService(MagicMock())
+        service._enumerate_users = lambda: [(1, {'READEST_ANNOTATION_SYNC': 'true', 'READEST_UPLOAD_READING': 'true',
+                                                 'HARDCOVER_ANNOTATION_SYNC': 'true'})]
+        service._readest_sync = MagicMock()
+        service._hardcover_sync = MagicMock()
+        with patch('src.services.readest_upload_service.ReadestUploadService') as upload:
+            upload.return_value.publish_reading_books.return_value = {'uploaded': 0}
+            service.run_cycle()
+        return service, upload
+
+    def test_zero_skips_highlights_but_keeps_readest_uploads(self):
+        os.environ.update({k: '0' for k in MERGED_SETTINGS['ALL_APPS_ANNOTATION_SYNC_MINUTES']})
+        os.environ['READEST_ENABLED'] = 'true'
+        service, upload = self._cycle()
+        service._readest_sync.sync_user.assert_not_called()
+        service._hardcover_sync.sync_user.assert_not_called()
+        upload.return_value.publish_reading_books.assert_called_once()
+
+        os.environ['READEST_ANNOTATION_SYNC_MINUTES'] = '15'
+        service, _ = self._cycle()
+        service._readest_sync.sync_user.assert_called_once()
+
+
 class TestEnvOnlySettingsNowOnThePage(unittest.TestCase):
     NEW = {'AUTO_CREATE_EBOOK_MAPPING': 'true', 'STORYTELLER_COLLECTION_NAME': 'Synced with KOReader',
            'KOREADER_COMBINE_DEVICE_STATS': 'true', 'WHISPER_CPP_TIMEOUT': None}

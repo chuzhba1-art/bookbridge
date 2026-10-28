@@ -134,6 +134,30 @@ class TestConsumersHonourTheReader(_EnvCase):
             reset_current_user_credentials(token)
         self.assertFalse(SyncManager._completion_propagation_enabled(Mock()))
 
+    def test_sync_cycles_carry_the_readers_choices(self):
+        """sync_cycle installs the registry bundle's credentials as the ambient ones;
+        that bundle used to keep only account keys, so every saved preference was
+        dropped and the server default applied during sync."""
+        from src.services.user_client_registry import UserClientRegistry
+        from src.sync_manager import SyncManager
+        os.environ.update({'SYNC_COMPLETION_PROPAGATION': 'false', 'STORYTELLER_LISTENING_SESSIONS': 'true',
+                           'KOREADER_STATUS_SYNC_ENABLED': 'true'})
+        db = Mock()
+        db.get_user_credentials.return_value = {
+            'SYNC_COMPLETION_PROPAGATION': 'true', 'STORYTELLER_LISTENING_SESSIONS': 'false',
+            'KOREADER_STATUS_SYNC_ENABLED': 'false', 'NOT_A_SETTING': 'x',
+        }
+        db.get_user.return_value = Mock(role='user')
+        credentials = UserClientRegistry(db, Mock(), Mock()).get_clients(7).credentials
+        self.assertNotIn('NOT_A_SETTING', credentials)
+        token = set_current_user_credentials(credentials)
+        try:
+            self.assertTrue(SyncManager._completion_propagation_enabled(Mock()))
+            self.assertFalse(user_preference_enabled('STORYTELLER_LISTENING_SESSIONS', 'true'))
+            self.assertFalse(user_preference_enabled('KOREADER_STATUS_SYNC_ENABLED', 'true', db))
+        finally:
+            reset_current_user_credentials(token)
+
 
 class TestReadingPreferencesPage(_EnvCase):
     """A regular reader picks On/Off/Server default on My Integrations."""

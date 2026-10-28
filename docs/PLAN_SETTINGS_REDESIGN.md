@@ -43,8 +43,8 @@ timer*, the seconds, and *wait until you pause*. Rows for apps that are switched
 not omitted. This also fixes a bug: their *wait until you pause* box was missing from the form, so
 every save reset it to off.
 
-**Find things.** The search box now searches every tab, not only service cards. **Only what I've
-changed** shows every card holding a value that differs from its default, and each such field has
+**Find things.** The search box now searches every tab, not only service cards. **Different from
+defaults** shows every card holding a value that differs from its default, and each such field has
 a *reset* link.
 
 ## Phase 2 — per-user reading preferences (done, adjust to taste)
@@ -87,6 +87,14 @@ apps disagree. Highlights, reading history and the shelf each got a card. Four e
 the page: `AUTO_CREATE_EBOOK_MAPPING`, `STORYTELLER_COLLECTION_NAME`, `KOREADER_COMBINE_DEVICE_STATS`,
 `WHISPER_CPP_TIMEOUT`. Kept separate on purpose: the KOReader and ABS debounces (different event rhythms; the
 ABS one is env-only) and the reading-history switches (four different behaviours).
+
+Review fixes (2026-10-28): a merged control posted unchanged keeps each app's own value (only a changed one
+fans out), and the card shows a note while its apps differ (`merged_mixed_settings()`; not on the highlight
+card, where only the shortest interval was ever used). The sync-cycle client bundle now carries reading
+preferences. A highlight interval of 0 stops highlight copying even when the Readest upload sweep wakes the
+daemon. `CTC_QUARTZNET_MODEL_PATH` / `CTC_DEVICE` restart (the loaded aligner keeps them). Search shows Save
+from Maintenance and opens a collapsed card that matches. KOReader's page-turn wait, backward-progress choice
+and history/stats switches, the tracker card and the hosted-ebook cache timer moved to their purpose cards.
 
 Dev port: drop `GOODREADS_UPDATE_COOLDOWN_MINS` from `ALL_APPS_TRACKER_COOLDOWN_MINS`.
 

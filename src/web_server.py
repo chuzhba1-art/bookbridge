@@ -42,7 +42,7 @@ from src.utils.user_config import SERVICE_ENABLE_KEYS
 from src.utils.kosync_url import is_builtin_kosync_url
 
 from src.utils.config_loader import (
-    ConfigLoader, DEFAULT_CONFIG, KNOWN_SETTING_KEYS, MERGED_BOOL_SETTINGS, MERGED_SETTINGS,
+    ConfigLoader, DEFAULT_CONFIG, KNOWN_SETTING_KEYS, MERGED_BOOL_SETTINGS, MERGED_SETTINGS, merged_mixed_settings,
     RESTART_REQUIRED_SETTINGS, env_truthy, merged_setting_values,
 )
 from src.utils.cache_paths import safe_cache_path, safe_library_path, is_plain_basename, contained_library_file
@@ -5049,17 +5049,26 @@ def settings():
 
         # A merged control (one field standing for several apps) saves its value
         # into each app's own setting. A checkbox posts a hidden 'off' plus 'on'
-        # when checked, so an unchecked one still reaches every app.
+        # when checked, so an unchecked one still reaches every app. A control left
+        # as the page showed it keeps each app's own value, so apps that used to
+        # differ are not evened out by a save that never touched the choice.
         form = request.form.copy()
+        shown = merged_setting_values(os.environ)
         for merged, targets in MERGED_SETTINGS.items():
             if merged not in form:
                 continue
             values = form.poplist(merged)
+            is_bool = merged in MERGED_BOOL_SETTINGS
+            posted = ('true' if 'on' in values else 'false') if is_bool else values[-1].strip()
+            unchanged = posted == shown[merged]
             for target in targets:
                 form.poplist(target)
-                if merged not in MERGED_BOOL_SETTINGS:
-                    form[target] = values[-1]
-                elif 'on' in values:
+                if unchanged:
+                    if is_bool and env_truthy(target):
+                        form[target] = 'on'
+                elif not is_bool:
+                    form[target] = posted
+                elif posted == 'true':
                     form[target] = 'on'
 
         bool_keys = [
@@ -5298,6 +5307,7 @@ def settings():
                          restart_keys=sorted(RESTART_REQUIRED_SETTINGS),
                          reader_pref_keys=sorted(PER_USER_PREFERENCE_KEYS),
                          merged_values=merged_setting_values(os.environ),
+                         merged_mixed=merged_mixed_settings(os.environ),
                          setting_defaults={**{k: DEFAULT_CONFIG.get(k, '') for k in sorted(KNOWN_SETTING_KEYS)},
                                            **merged_setting_values(DEFAULT_CONFIG)}))
     response.headers['Cache-Control'] = 'no-store, max-age=0'

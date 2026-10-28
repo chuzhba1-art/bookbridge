@@ -559,6 +559,20 @@ def _as_int(value, default: int) -> int:
         return default
 
 
+def _stored(settings: dict, key: str) -> str:
+    value = settings.get(key)
+    return str(value if value is not None else DEFAULT_CONFIG.get(key, '')).strip()
+
+
+def merged_mixed_settings(settings: dict) -> frozenset:
+    """The merged controls whose apps currently hold different values."""
+    def value(merged: str, key: str) -> str:
+        raw = _stored(settings, key)
+        return str(raw.lower() in _TRUTHY) if merged in MERGED_BOOL_SETTINGS else raw
+    return frozenset(merged for merged, targets in MERGED_SETTINGS.items()
+                     if len({value(merged, t) for t in targets}) > 1)
+
+
 def merged_setting_values(settings: dict) -> dict:
     """The value each merged control shows, from the per-app values in ``settings``.
 
@@ -566,7 +580,7 @@ def merged_setting_values(settings: dict) -> dict:
     the fastest custom timer, any app's "on", the shortest highlight interval (what
     the daemon uses today) and the longest tracker cooldown (fewest public posts).
     """
-    get = lambda key: str(settings.get(key) if settings.get(key) is not None else DEFAULT_CONFIG.get(key, '')).strip()
+    get = lambda key: _stored(settings, key)
     on = lambda key: get(key).lower() in _TRUTHY
     custom = [p for p in _POLL_PREFIXES if get(f'{p}_POLL_MODE').lower() == 'custom']
     poll_pool = custom or list(_POLL_PREFIXES)
@@ -606,6 +620,8 @@ RESTART_REQUIRED_SETTINGS = frozenset({
     'SYNC_DELTA_ABS_SECONDS', 'SYNC_DELTA_KOSYNC_PERCENT', 'SYNC_DELTA_BETWEEN_CLIENTS_PERCENT',
     'ABS_PROGRESS_OFFSET_SECONDS', 'LLM_PROVIDER',
     'STORYTELLER_RECOVERY_MAX_WAIT_MINUTES', 'STORYTELLER_RECOVERY_POLL_INTERVAL_MINUTES',
+    # Kept by the forced aligner once it has loaded its model
+    'CTC_QUARTZNET_MODEL_PATH', 'CTC_DEVICE',
     # Server connections held by the global clients and module globals
     'ABS_ENABLED', 'ABS_SERVER', 'ABS_KEY', 'ABS_LIBRARY_ID', 'ABS_COLLECTION_NAME',
     'BOOKLORE_SERVER', 'BOOKLORE_USER', 'BOOKLORE_PASSWORD', 'BOOKLORE_SHELF_NAME',

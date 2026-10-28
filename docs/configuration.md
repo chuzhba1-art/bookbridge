@@ -6,7 +6,7 @@
 
 ## Web UI Settings
 
-The **Settings** page is the easiest way to manage the bridge. Most changes take effect as soon as you save. A setting marked **restart** is read once at startup, so saving a change to it restarts the app and brings you back to the dashboard when it is ready. **Only what I've changed** in the sidebar lists every setting that differs from its default, each with a **reset** link.
+The **Settings** page is the easiest way to manage the bridge. Most changes take effect as soon as you save. A setting marked **restart** is read once at startup, so saving a change to it restarts the app and brings you back to the dashboard when it is ready. **Different from defaults** in the sidebar lists every setting that differs from its default, each with a **reset** link.
 
 The Settings sidebar is organized into:
 
@@ -176,11 +176,11 @@ The bridge **is** a KoSync server — KOReader devices sync directly with it. De
 | Enable | `KOSYNC_ENABLED` | `false` | Turns on KOSync support. |
 | How devices recognise a book | `KOSYNC_HASH_METHOD` | `content` | `content` is safest. `filename` is faster but less reliable. |
 | Take each reader's sync login from Grimmory | `KOSYNC_CREDENTIALS_FROM_GRIMMORY` | `false` | Global. At startup and each sync cycle, an active reader's KoSync username and password are taken from the KOReader login of their Grimmory account, and keep following it when it changes there. A reader who already has a different KoSync login set in BookBridge keeps it — clear their KoSync username to switch to the Grimmory one. A Grimmory username that another BookBridge user already has is skipped. Both cases are logged as warnings; readers without a Grimmory KOReader login are left alone. |
-| PUT Debounce | `KOSYNC_PUT_DEBOUNCE_SECONDS` | `300` | Wait this long after KOReader stops pushing before running the sync cycle. |
+| KOReader: wait after the last page turn | `KOSYNC_PUT_DEBOUNCE_SECONDS` | `300` | Under **Reading & Sync → When BookBridge syncs**. Wait this long after KOReader stops pushing before running the sync cycle. |
 | Use Percentage from Server | `KOSYNC_USE_PERCENTAGE_FROM_SERVER` | `false` | Uses raw percentage instead of text matching. |
 | Highlight Sync | `KOREADER_ANNOTATION_SYNC` | `true` | Enables bridge-side annotation exchange for the Bridge Sync KOReader plugin. Requires the current Bridge Sync plugin on each device. |
 | Sync Reading Status Between Devices | `KOREADER_STATUS_SYNC_ENABLED` | `true` | Shares each book's KOReader status (reading / finished / abandoned) across your devices — including filling it in from your reading position, marking a book finished when the bridge decides it is complete, and clearing it when you clear progress. Requires the **BridgeSync 0.9.6** plugin (or newer) on each device. |
-| Share Recently-Read Books Between Devices | `KOREADER_SYNC_READ_HISTORY` | `false` | Adds a book you read on one device into KOReader's History on your others, so views built from History (like a "Recent" shelf) look the same everywhere. Bounded per sync: only books whose file is already on the device, nothing read more than 30 days ago, and at most 25 books. Requires the **BridgeSync 0.9.6** plugin (or newer) on each device. |
+| KOReader: share recently-read books between devices | `KOREADER_SYNC_READ_HISTORY` | `false` | Under **Reading & Sync → Reading history & stats**. Adds a book you read on one device into KOReader's History on your others, so views built from History (like a "Recent" shelf) look the same everywhere. Bounded per sync: only books whose file is already on the device, nothing read more than 30 days ago, and at most 25 books. Requires the **BridgeSync 0.9.6** plugin (or newer) on each device. |
 | Target KOSync URL | `KOSYNC_SERVER` | empty | Under **Advanced** on the card. An empty value uses the built-in server at `http://127.0.0.1:<KOSYNC_PORT or 5757>`, including installs configured only through environment variables. Set another URL only to relay through a separate external KoSync instance. |
 | Split-Port Listener | `KOSYNC_PORT` | empty | Optional dedicated KOSync port for internet-safe exposure. |
 | Trusted Proxy Addresses | `KOSYNC_TRUSTED_PROXIES` | empty | Under **Advanced — behind a reverse proxy**. Comma-separated IPs or CIDR ranges of the proxy or tunnel in front of the KoSync port. Requests from them are rate-limited under the client address in `X-Forwarded-For`. Empty trusts only localhost. List only your proxy: any address covered here can claim to be any client. |
@@ -676,14 +676,15 @@ Transcription notes:
 A few choices that used to be repeated on every service card are now one control each
 on the Settings page. Saving copies the value into every service's own setting, so the
 per-service environment variables in the tables above still work and still seed a first
-boot; the first save from the Settings page evens them out.
+boot. Where the services currently hold different values, the card says so and each service
+keeps its own value until you change that control; the changed value then goes to all of them.
 
 | Settings control | Where | Saves into |
 | --- | --- | --- |
 | When to check / Check every / Wait until you pause | Reading & Sync → How often each app is checked | `*_POLL_MODE`, `*_POLL_SECONDS`, `*_POLL_WAIT_FOR_SETTLE` for Storyteller, Grimmory (+ audiobooks), BookOrbit (+ audiobooks), Kavita, CWA Kobo sync and BookFusion |
 | Sync highlights every (minutes) | Reading & Sync → Highlights & notes | `BOOKORBIT_`, `BOOKLORE_`, `READEST_` and `HARDCOVER_ANNOTATION_SYNC_MINUTES` (the highlight timer always ran on the shortest of these) |
 | "Up Next" shelf | Library & Matching → "Up Next" shelf | `BOOKORBIT_`, `BOOKLORE_` and `KAVITA_SHELF_WATCH_ENABLED` / `_NAME` / `_THRESHOLD` / `_RESCAN_HOURS` |
-| Wait before posting progress (minutes) | Services → Posting to trackers | `HARDCOVER_`, `STORYGRAPH_` and `GOODREADS_UPDATE_COOLDOWN_MINS` |
+| Wait before posting progress (minutes) | Reading & Sync → Posting to trackers | `HARDCOVER_`, `STORYGRAPH_` and `GOODREADS_UPDATE_COOLDOWN_MINS` |
 
 When the services currently disagree, the control shows the fastest custom check timer,
 "on" if any service has a switch on, the shortest highlight interval and the longest tracker

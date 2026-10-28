@@ -17,12 +17,15 @@ All notable changes to BookBridge will be documented in this file.
   home of their own. The clean-up and backfill buttons live on **Maintenance**. Every on/off is now the same switch.
 - **One choice instead of one per app.** How often apps are checked, how often highlights sync, the "Up Next" shelf
   that auto-matches books you put on it, and how long to wait before posting progress to Hardcover, StoryGraph and
-  Goodreads are each a single setting now, applied to every app you use. Highlights, reading-history switches and the
-  "Up Next" shelf each have their own card instead of being spread across the service cards.
+  Goodreads are each a single setting now, applied to every app you use. Apps you had set differently keep their own
+  values until you change that choice, and the card tells you they differ. Setting highlights to 0 now stops highlight
+  copying even while Readest uploads keep running. Highlights, reading history, the "Up Next" shelf and posting to
+  trackers each have their own card, and KOReader's page-turn wait, backward-progress protection and history
+  switches sit beside the matching settings for every app under **Reading & Sync**.
 - **More of BookBridge is in Settings.** Identifying books a KOReader device opens that BookBridge doesn't know yet,
   the Storyteller collection for synced books, combining KOReader statistics across your devices, and the Whisper.cpp
   server timeout used to be environment variables only.
-- **Find a setting searches every tab, and "Only what I've changed" lists your changes.** Each changed setting has a
+- **Find a setting searches every tab, and "Different from defaults" lists your customised settings.** Each changed setting has a
   **reset** link back to its default.
 - **Each reader chooses their own reading preferences.** Highlight, reading-status and History sharing between
   KOReader devices, protection from an out-of-date device, marking a finished book finished everywhere, Audiobookshelf

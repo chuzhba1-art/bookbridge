@@ -199,7 +199,7 @@ The **Settings** page is where you connect your services and adjust how the brid
 - **My Integrations** cards have **Test** buttons so you can check a login before saving; Audiobookshelf and Grimmory library ID fields include **Find IDs** helpers so you can pick from a dropdown instead of pasting blindly.
 - Every integration card has an **Enable** switch, Audiobookshelf included, so an ebook-only or maintenance-focused setup is a matter of switching off what you are not using. Switching a service off here switches it off for everyone on the install.
 - **Save Settings** applies your changes straight away. Only a setting marked **restart** (server addresses, folders, the sync period and a few others read at startup) restarts the app; the Save bar tells you before you press it, and you are sent back to the dashboard when the restart finishes.
-- **Only what I've changed** lists every setting that differs from its default, with a **reset** link on each.
+- **Different from defaults** lists every setting that differs from its default, with a **reset** link on each.
 
 If you use Whisper.cpp with a custom model name, you can type that model directly into the **Whisper Model** field.
 
@@ -276,7 +276,8 @@ status shown in the file browser is shared; your reading position is never affec
 
 ### Recently-read History
 
-**Share recently-read books between devices**, on the same card, is **off by default** — it
+**KOReader: share recently-read books between devices**, under **Settings → Reading & Sync →
+Reading history & stats**, is **off by default** — it
 changes what KOReader's History means. KOReader only ever writes History for a book you
 opened *on that device*, so a book you read on the Kobo never showed up in the Kindle's
 History, even after its progress and status had synced — and anything built from History,

@@ -575,6 +575,10 @@
         }
 
         /* Per-app check timers: one row per app instead of three fields each. */
+        .merged-mixed-note {
+            color: var(--warning);
+        }
+
         .poll-row {
             grid-column: 1 / -1;
             display: grid;
@@ -912,7 +916,7 @@
                 <button type="button" class="settings-tab" data-tab="maintenance" onclick="showSettingsTab('maintenance')">🧰 Maintenance</button>
                 <button type="button" class="settings-tab" data-tab="users" onclick="showSettingsTab('users')">👥 Users</button>
                 <label class="changed-only">
-                    <input type="checkbox" id="changed_only"> Only what I've changed
+                    <input type="checkbox" id="changed_only"> Different from defaults
                 </label>
                 <p class="settings-legend"><span class="restart-badge">restart</span> Saving a change to one of
                     these restarts BookBridge. Everything else takes effect as soon as you save.</p>
@@ -1080,12 +1084,6 @@
                         <label for="kosync_creds_from_grimmory">Take each reader's sync login from Grimmory</label>
                         <div class="help-text">Each reader's KoSync login is copied from their Grimmory account's KOReader login on every sync, so they manage it in Grimmory. A reader who already has a different login here keeps it. Readers without a Grimmory KOReader login are not affected.</div>
                     </div>
-                    <div class="form-group full-width">
-                        <label>Wait after the last page turn (seconds)</label>
-                        <input type="number" min="0" name="KOSYNC_PUT_DEBOUNCE_SECONDS"
-                            value="{{ get_val('KOSYNC_PUT_DEBOUNCE_SECONDS') or '300' }}">
-                        <div class="help-text">Once a KOReader device has stopped sending updates for this long, BookBridge syncs the book to your other apps. Lower syncs sooner; higher waits until you have stopped reading. Default 300.</div>
-                    </div>
                     <div class="checkbox-wrapper full-width">
                         <input type="checkbox" id="koreader_status_sync" name="KOREADER_STATUS_SYNC_ENABLED" {% if
                             get_bool('KOREADER_STATUS_SYNC_ENABLED') %}checked{% endif %}>
@@ -1095,25 +1093,6 @@
                             (BridgeSync plugin required on each device). Reading <em>position</em> is unaffected —
                             only the status shown in the file browser is shared. When two devices disagree, the one
                             whose status changed most recently wins, and "finished" breaks a same-day tie.</div>
-                    </div>
-                    <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="koreader_sync_read_history" name="KOREADER_SYNC_READ_HISTORY" {% if
-                            get_bool('KOREADER_SYNC_READ_HISTORY') %}checked{% endif %}>
-                        <label for="koreader_sync_read_history">Share recently-read books between devices</label>
-                        <div class="help-text">A book you read on one device also appears in KOReader's History on
-                            your others, so views built from it — such as a "Recent" shelf — look the same
-                            everywhere. Without this, History stays strictly per-device: it records only books you
-                            opened <em>on that device</em>, so a book read elsewhere never shows up there even when
-                            its progress and status have synced. Only books whose file is already on the device are
-                            added, nothing read more than 30 days ago, and at most 25 per sync so a first run cannot
-                            bury your existing history.</div>
-                    </div>
-                    <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="koreader_combine_stats" name="KOREADER_COMBINE_DEVICE_STATS"
-                            {% if get_bool('KOREADER_COMBINE_DEVICE_STATS') %}checked{% endif %}>
-                        <label for="koreader_combine_stats">Combine reading statistics from all my devices</label>
-                        <div class="help-text">KOReader's statistics on each device (time read, pages) also count what you read on
-                            your other devices (BridgeSync plugin required on each device).</div>
                     </div>
                     <div class="checkbox-wrapper full-width">
                         <input type="checkbox" id="kosync_pct" name="KOSYNC_USE_PERCENTAGE_FROM_SERVER" {% if
@@ -1154,26 +1133,6 @@
                     <details class="advanced-sub full-width">
                         <summary>Advanced — cross-device progress</summary>
                         <div class="section-body" style="padding: 12px 0 0;">
-                            <div class="form-group full-width">
-                                <label>Backward progress from another device</label>
-                                <select name="KOSYNC_FURTHEST_WINS">
-                                    <option value="true" {% if get_val('KOSYNC_FURTHEST_WINS', 'true')|lower == 'true' %}selected{% endif %}>
-                                        Protect current progress (recommended)
-                                    </option>
-                                    <option value="false" {% if get_val('KOSYNC_FURTHEST_WINS', 'true')|lower != 'true' %}selected{% endif %}>
-                                        Allow the backward move
-                                    </option>
-                                </select>
-                                <div class="help-text"
-                                    style="background:rgba(255,152,0,.10);border:1px solid rgba(255,152,0,.35);border-radius:8px;padding:10px 12px;margin-top:8px;">
-                                    A backward move from the same reader is accepted when KoSync can identify it by its device ID.
-                                    The recommended protection blocks a lower position arriving from a <strong>different</strong>
-                                    reader, so merely opening a stale Kindle/Kobo after listening cannot pull your progress
-                                    backwards. Choose <em>Allow the backward move</em> if you intentionally switch readers and need
-                                    that newer action to move everyone back — for example after a sleep timer. With that option,
-                                    simply opening an out-of-date second reader can also become the new position.
-                                </div>
-                            </div>
                             <div class="form-group full-width">
                                 <label>When two KOReader devices disagree</label>
                                 <select name="KOSYNC_ACTIVE_DEVICE_WINS">
@@ -1353,16 +1312,6 @@
                         <div class="help-text">Comma-separated list of Grimmory shelf names to skip when creating KOReader collections.</div>
                     </div>
 
-                    <!-- Separator -->
-                    <div class="full-width" style="margin: 10px 0; border-top: 1px solid rgba(255,255,255,0.1);"></div>
-                    <h4 class="full-width" style="font-size: 14px; color: #fff; margin-bottom: -10px;">Device Sync Delivery</h4>
-
-                    <div class="form-group">
-                        <label>Hosted Ebook Cache TTL (minutes)</label>
-                        <input type="number" name="DEVICE_SYNC_EBOOK_CACHE_TTL_MINUTES" min="0"
-                            value="{{ get_val('DEVICE_SYNC_EBOOK_CACHE_TTL_MINUTES', '360') }}">
-                        <div class="help-text">Ebooks downloaded from a library app (BookOrbit, Grimmory, Audiobookshelf, CWA, Kavita) are kept here and downloaded again once they are this old, so changes you make in your library reach your devices. 0 means never download again. Books in your books folder are always current.</div>
-                    </div>
                 </div>
             </div>
 
@@ -1828,20 +1777,6 @@
                 </div>
             </div>
 
-            <div class="settings-section">
-                <div class="section-header">
-                    <h3>Posting to trackers</h3>
-                </div>
-                <div class="section-body">
-                    <div class="form-group full-width">
-                        <label>Wait before posting progress (minutes)</label>
-                        <input type="number" name="ALL_APPS_TRACKER_COOLDOWN_MINS" min="0" value="{{ merged_values.ALL_APPS_TRACKER_COOLDOWN_MINS }}">
-                        <div class="help-text">Hardcover, StoryGraph and Goodreads get your progress once you have made no new progress for
-                            this long; new progress restarts the wait. Finishing a book posts straight away. 0 posts on every sync.</div>
-                    </div>
-                </div>
-            </div>
-
             </div><!-- /integrations panel -->
 
             <div class="tab-panel" data-panel="sync">
@@ -1864,6 +1799,12 @@
                         <label for="toggle_instant_sync">Instant sync</label>
                         <div class="help-text">Sync as soon as you play in Audiobookshelf or turn pages in KOReader, instead of waiting for the next scheduled sync. The per-app checks below run either way.</div>
                     </div>
+                    <div class="form-group full-width">
+                        <label>KOReader: wait after the last page turn (seconds)</label>
+                        <input type="number" min="0" name="KOSYNC_PUT_DEBOUNCE_SECONDS"
+                            value="{{ get_val('KOSYNC_PUT_DEBOUNCE_SECONDS') or '300' }}">
+                        <div class="help-text">Once a KOReader device has stopped sending updates for this long, BookBridge syncs the book to your other apps. Lower syncs sooner; higher waits until you have stopped reading. Default 300.</div>
+                    </div>
                 </div>
             </div>
 
@@ -1873,6 +1814,10 @@
                 </div>
                 <div class="section-body">
                     <div class="help-text full-width">Apps that cannot tell BookBridge when you move are checked on every scheduled sync. Give them their own timer to pick up changes sooner.</div>
+                    {% if merged_mixed|select('in', ['ALL_APPS_POLL_MODE', 'ALL_APPS_POLL_WAIT_FOR_SETTLE'])|first %}
+                    <div class="help-text full-width merged-mixed-note">Your apps are set differently here right now. Each keeps
+                        its own setting until you change a choice below; that choice then applies to all of them.</div>
+                    {% endif %}
                     <div class="form-group">
                         <label for="all_apps_poll_mode">When to check</label>
                         <select name="ALL_APPS_POLL_MODE" id="all_apps_poll_mode"
@@ -1901,6 +1846,24 @@
 
             <div class="settings-section">
                 <div class="section-header">
+                    <h3>Posting to trackers</h3>
+                </div>
+                <div class="section-body">
+                    {% if merged_mixed|select('in', ['ALL_APPS_TRACKER_COOLDOWN_MINS'])|first %}
+                    <div class="help-text full-width merged-mixed-note">Your apps are set differently here right now. Each keeps
+                        its own setting until you change a choice below; that choice then applies to all of them.</div>
+                    {% endif %}
+                    <div class="form-group full-width">
+                        <label>Wait before posting progress (minutes)</label>
+                        <input type="number" name="ALL_APPS_TRACKER_COOLDOWN_MINS" min="0" value="{{ merged_values.ALL_APPS_TRACKER_COOLDOWN_MINS }}">
+                        <div class="help-text">Hardcover, StoryGraph and Goodreads get your progress once you have made no new progress for
+                            this long; new progress restarts the wait. Finishing a book posts straight away. 0 posts on every sync.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="section-header">
                     <h3>Highlights &amp; notes</h3>
                 </div>
                 <div class="section-body">
@@ -1915,8 +1878,8 @@
                     <div class="form-group">
                         <label>Sync highlights every (minutes)</label>
                         <input type="number" min="0" name="ALL_APPS_ANNOTATION_SYNC_MINUTES" value="{{ merged_values.ALL_APPS_ANNOTATION_SYNC_MINUTES }}">
-                        <div class="help-text">How often highlights and notes are copied to and from BookOrbit, Grimmory, Readest and
-                            Hardcover. 0 turns that off; copying between your own KOReader devices is not affected.</div>
+                        <div class="help-text">How often highlights and notes are copied to and from BookOrbit, Grimmory, Readest,
+                            BookFusion and Hardcover. 0 turns that off; copying between your own KOReader devices is not affected.</div>
                     </div>
                     <div class="checkbox-wrapper full-width">
                         <input type="checkbox" id="hardcover_ann_sync" name="HARDCOVER_ANNOTATION_SYNC"
@@ -1971,6 +1934,26 @@
                         <label for="trust_corroborated_rewind">Honor a Deliberate Rewind</label>
                         <div class="help-text">If you go back to an earlier spot in one app and keep reading from there, that becomes your place everywhere. A single jump backwards is ignored until you carry on from the new spot, so an out-of-date app cannot drag you back by accident. Turn off to always use whichever app is furthest ahead.</div>
                     </div>
+                    <div class="form-group full-width">
+                        <label>KOReader: backward progress from another device</label>
+                        <select name="KOSYNC_FURTHEST_WINS">
+                            <option value="true" {% if get_val('KOSYNC_FURTHEST_WINS', 'true')|lower == 'true' %}selected{% endif %}>
+                                Protect current progress (recommended)
+                            </option>
+                            <option value="false" {% if get_val('KOSYNC_FURTHEST_WINS', 'true')|lower != 'true' %}selected{% endif %}>
+                                Allow the backward move
+                            </option>
+                        </select>
+                        <div class="help-text"
+                            style="background:rgba(255,152,0,.10);border:1px solid rgba(255,152,0,.35);border-radius:8px;padding:10px 12px;margin-top:8px;">
+                            A backward move from the same reader is accepted when KoSync can identify it by its device ID.
+                            The recommended protection blocks a lower position arriving from a <strong>different</strong>
+                            reader, so merely opening a stale Kindle/Kobo after listening cannot pull your progress
+                            backwards. Choose <em>Allow the backward move</em> if you intentionally switch readers and need
+                            that newer action to move everyone back — for example after a sleep timer. With that option,
+                            simply opening an out-of-date second reader can also become the new position.
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -2023,6 +2006,25 @@
                             {% if get_bool('BOOKORBIT_READING_SESSIONS') %}checked{% endif %}>
                         <label for="bookorbit_sessions">BookOrbit: record my reading sessions</label>
                         <div class="help-text">Send reading sessions to BookOrbit so its reading stats include them.</div>
+                    </div>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="koreader_sync_read_history" name="KOREADER_SYNC_READ_HISTORY" {% if
+                            get_bool('KOREADER_SYNC_READ_HISTORY') %}checked{% endif %}>
+                        <label for="koreader_sync_read_history">KOReader: share recently-read books between devices</label>
+                        <div class="help-text">A book you read on one device also appears in KOReader's History on
+                            your others, so views built from it — such as a "Recent" shelf — look the same
+                            everywhere. Without this, History stays strictly per-device: it records only books you
+                            opened <em>on that device</em>, so a book read elsewhere never shows up there even when
+                            its progress and status have synced. Only books whose file is already on the device are
+                            added, nothing read more than 30 days ago, and at most 25 per sync so a first run cannot
+                            bury your existing history.</div>
+                    </div>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="koreader_combine_stats" name="KOREADER_COMBINE_DEVICE_STATS"
+                            {% if get_bool('KOREADER_COMBINE_DEVICE_STATS') %}checked{% endif %}>
+                        <label for="koreader_combine_stats">KOReader: combine reading statistics from all my devices</label>
+                        <div class="help-text">KOReader's statistics on each device (time read, pages) also count what you read on
+                            your other devices (BridgeSync plugin required on each device).</div>
                     </div>
                 </div>
             </div>
@@ -2227,6 +2229,10 @@
                 </div>
                 <div class="section-body">
                     <div class="help-text full-width">Put a book on this shelf in Grimmory, BookOrbit or Kavita and BookBridge finds its audiobook, links them, and moves the book to your synced shelf.</div>
+                    {% if merged_mixed|select('in', ['ALL_APPS_SHELF_WATCH_ENABLED', 'ALL_APPS_SHELF_WATCH_NAME', 'ALL_APPS_SHELF_WATCH_THRESHOLD', 'ALL_APPS_SHELF_WATCH_RESCAN_HOURS'])|first %}
+                    <div class="help-text full-width merged-mixed-note">Your apps are set differently here right now. Each keeps
+                        its own setting until you change a choice below; that choice then applies to all of them.</div>
+                    {% endif %}
                     <div class="checkbox-wrapper full-width">
                         <input type="hidden" name="ALL_APPS_SHELF_WATCH_ENABLED" value="off">
                         <input type="checkbox" id="all_apps_shelf_watch" name="ALL_APPS_SHELF_WATCH_ENABLED" value="on"
@@ -2944,6 +2950,12 @@
                         <label>Data Directory</label>
                         <input type="text" name="DATA_DIR" value="{{ get_val('DATA_DIR') }}">
                         <div class="help-text">Where BookBridge keeps its database and caches. It must match your Docker volume, so change it only if you moved that.</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Download library ebooks again after (minutes)</label>
+                        <input type="number" name="DEVICE_SYNC_EBOOK_CACHE_TTL_MINUTES" min="0"
+                            value="{{ get_val('DEVICE_SYNC_EBOOK_CACHE_TTL_MINUTES', '360') }}">
+                        <div class="help-text">Ebooks downloaded from a library app (BookOrbit, Grimmory, Audiobookshelf, CWA, Kavita) are kept here and downloaded again once they are this old, so changes you make in your library reach your devices. 0 means never download again. Books in your books folder are always current.</div>
                     </div>
                     <div class="form-group">
                         <label>Books Directory</label>
@@ -4433,8 +4445,11 @@
             const filtering = !!q || changedOnly;
             main.classList.toggle('filtering', filtering);
             if (filtering) {
+                // Results come from every tab, so Save is needed even from Maintenance.
                 const form = document.getElementById('settingsForm');
                 if (form) form.style.display = '';
+                const bar = document.querySelector('.submit-bar');
+                if (bar) bar.style.display = '';
             } else {
                 showSettingsTab((location.hash || '').replace('#', '') || 'integrations');
             }
@@ -4445,6 +4460,8 @@
                 if (hit && q) card.querySelectorAll('details').forEach(function (d) {
                     if (d.textContent.toLowerCase().indexOf(q) !== -1) d.open = true;
                 });
+                const body = hit && q && card.querySelector(':scope > .section-body.collapsed');
+                if (body && body.textContent.toLowerCase().indexOf(q) !== -1) body.classList.remove('collapsed');
             });
         }
 
