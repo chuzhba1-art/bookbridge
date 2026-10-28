@@ -58,9 +58,11 @@ class SettingsFormCoverageTestCase(unittest.TestCase):
     CONTROL_FIELDS = {'action', 'user_id', 'username', 'password', 'role', 'csrf_token', 'return_tab'}
 
     def test_every_settings_field_in_the_template_is_savable(self):
+        from src.utils.config_loader import MERGED_SETTINGS
         unknown = sorted(
             name for name in _settings_form_field_names()
             if name not in self.CONTROL_FIELDS and name not in KNOWN_SETTING_KEYS
+            and name not in MERGED_SETTINGS
         )
         self.assertFalse(
             unknown,

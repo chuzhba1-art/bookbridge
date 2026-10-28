@@ -280,11 +280,11 @@ class TestSettingsComprehensive(unittest.TestCase):
         ConfigLoader.load_settings(self.mock_container.mock_database_service)
 
         html = self._render_settings_template_source()
-        self.assertIn('name="BOOKFUSION_POLL_WAIT_FOR_SETTLE"', html)
+        # Polling is one control for every app now; it reflects BookFusion's saved choice.
         self.assertRegex(
             html,
             re.compile(
-                r'<input type="checkbox" name="BOOKFUSION_POLL_WAIT_FOR_SETTLE"[\s\S]*?checked',
+                r'<input type="checkbox" id="all_apps_poll_settle" name="ALL_APPS_POLL_WAIT_FOR_SETTLE" value="on"\s*checked',
                 re.IGNORECASE,
             ),
         )
@@ -363,7 +363,7 @@ class TestSettingsComprehensive(unittest.TestCase):
         # Server URLs and engine settings stay global.
         self.assertIn('name="ABS_SERVER"', html)
         self.assertIn('name="BOOKLORE_SERVER"', html)
-        self.assertIn('name="BOOKLORE_SHELF_WATCH_NAME"', html)
+        self.assertIn('name="ALL_APPS_SHELF_WATCH_NAME"', html)
 
     def test_settings_get_points_device_sync_collections_to_user_integrations(self):
         html = self._render_settings_template_source()

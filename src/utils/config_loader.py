@@ -42,7 +42,7 @@ ALL_SETTINGS = [
     'KOSYNC_XPATH_ORDER_ENABLED', 'KOSYNC_FURTHEST_WINS',
     'KOSYNC_ACTIVE_DEVICE_WINS', 'KOSYNC_TRUSTED_PROXIES',
     'KOSYNC_PUT_DEBOUNCE_SECONDS',
-    'KOSYNC_BOOKORBIT_DISCOVERY_LIMIT',
+    'KOSYNC_BOOKORBIT_DISCOVERY_LIMIT', 'AUTO_CREATE_EBOOK_MAPPING',
     'KOREADER_COMBINE_DEVICE_STATS',
     'KOREADER_ANNOTATION_SYNC',
     'KOREADER_STATUS_SYNC_ENABLED',
@@ -50,6 +50,7 @@ ALL_SETTINGS = [
 
     # Storyteller
     'STORYTELLER_ENABLED', 'STORYTELLER_API_URL', 'STORYTELLER_USER', 'STORYTELLER_PASSWORD', 'STORYTELLER_AUTO_LINK',
+    'STORYTELLER_COLLECTION_NAME',
     
     # Grimmory
     'BOOKLORE_ENABLED', 'BOOKLORE_SERVER', 'BOOKLORE_WEB_URL', 'BOOKLORE_USER', 'BOOKLORE_PASSWORD', 'BOOKLORE_SHELF_NAME', 'BOOKLORE_LIBRARY_ID',
@@ -328,8 +329,10 @@ DEFAULT_CONFIG = {
     'KOSYNC_ACTIVE_DEVICE_WINS': 'shadow',
     'KOSYNC_HASH_RECONCILE_MINUTES': '360',
     'KOSYNC_BOOKORBIT_DISCOVERY_LIMIT': '40',
+    'AUTO_CREATE_EBOOK_MAPPING': 'true',
     'STORYTELLER_ENABLED': 'false',
     'STORYTELLER_AUTO_LINK': 'false',
+    'STORYTELLER_COLLECTION_NAME': 'Synced with KOReader',
     'BOOKLORE_ENABLED': 'false',
     'BOOKLORE_LIBRARY_ID': '',
     'GRIMMORY_READING_SESSIONS': 'true',
@@ -523,6 +526,67 @@ DEFAULT_CONFIG = {
 # settings and must never reach the settings table. Union of both registries so a
 # key registered in only one of them still saves.
 KNOWN_SETTING_KEYS = frozenset(ALL_SETTINGS) | frozenset(DEFAULT_CONFIG)
+
+# One Settings control for a choice several apps share: the page shows a single
+# field (name = the key here) and saving copies its value into each app's own
+# setting (the values). shortcut: the per-app keys stay the storage every consumer
+# reads; fold each group into one real key when those consumers are next reworked.
+_POLL_PREFIXES = ('STORYTELLER', 'BOOKLORE', 'BOOKFUSION', 'BOOKLORE_AUDIO',
+                  'BOOKORBIT', 'BOOKORBIT_AUDIO', 'KAVITA', 'CWA_SYNC')
+_SHELF_WATCH_PREFIXES = ('BOOKORBIT', 'BOOKLORE', 'KAVITA')
+MERGED_SETTINGS = {
+    'ALL_APPS_POLL_MODE': tuple(f'{p}_POLL_MODE' for p in _POLL_PREFIXES),
+    'ALL_APPS_POLL_SECONDS': tuple(f'{p}_POLL_SECONDS' for p in _POLL_PREFIXES),
+    'ALL_APPS_POLL_WAIT_FOR_SETTLE': tuple(f'{p}_POLL_WAIT_FOR_SETTLE' for p in _POLL_PREFIXES),
+    'ALL_APPS_SHELF_WATCH_ENABLED': tuple(f'{p}_SHELF_WATCH_ENABLED' for p in _SHELF_WATCH_PREFIXES),
+    'ALL_APPS_SHELF_WATCH_NAME': tuple(f'{p}_SHELF_WATCH_NAME' for p in _SHELF_WATCH_PREFIXES),
+    'ALL_APPS_SHELF_WATCH_THRESHOLD': tuple(f'{p}_SHELF_WATCH_THRESHOLD' for p in _SHELF_WATCH_PREFIXES),
+    'ALL_APPS_SHELF_WATCH_RESCAN_HOURS': tuple(f'{p}_SHELF_WATCH_RESCAN_HOURS' for p in _SHELF_WATCH_PREFIXES),
+    # The highlight daemon already runs on the shortest of these, so one value
+    # changes nothing but the page.
+    'ALL_APPS_ANNOTATION_SYNC_MINUTES': ('BOOKORBIT_ANNOTATION_SYNC_MINUTES', 'BOOKLORE_ANNOTATION_SYNC_MINUTES',
+                                         'READEST_ANNOTATION_SYNC_MINUTES', 'HARDCOVER_ANNOTATION_SYNC_MINUTES'),
+    'ALL_APPS_TRACKER_COOLDOWN_MINS': ('HARDCOVER_UPDATE_COOLDOWN_MINS', 'STORYGRAPH_UPDATE_COOLDOWN_MINS',
+                                       'GOODREADS_UPDATE_COOLDOWN_MINS'),
+}
+MERGED_BOOL_SETTINGS = frozenset({'ALL_APPS_POLL_WAIT_FOR_SETTLE', 'ALL_APPS_SHELF_WATCH_ENABLED'})
+
+
+def _as_int(value, default: int) -> int:
+    try:
+        return int(float(str(value).strip()))
+    except (TypeError, ValueError):
+        return default
+
+
+def merged_setting_values(settings: dict) -> dict:
+    """The value each merged control shows, from the per-app values in ``settings``.
+
+    Where the apps currently disagree this picks what saving would least surprise:
+    the fastest custom timer, any app's "on", the shortest highlight interval (what
+    the daemon uses today) and the longest tracker cooldown (fewest public posts).
+    """
+    get = lambda key: str(settings.get(key) if settings.get(key) is not None else DEFAULT_CONFIG.get(key, '')).strip()
+    on = lambda key: get(key).lower() in _TRUTHY
+    custom = [p for p in _POLL_PREFIXES if get(f'{p}_POLL_MODE').lower() == 'custom']
+    poll_pool = custom or list(_POLL_PREFIXES)
+    watching = [p for p in _SHELF_WATCH_PREFIXES if on(f'{p}_SHELF_WATCH_ENABLED')] or list(_SHELF_WATCH_PREFIXES)
+    lead = watching[0]
+    intervals = [_as_int(get(k), 0) for k in MERGED_SETTINGS['ALL_APPS_ANNOTATION_SYNC_MINUTES']]
+    positive = [i for i in intervals if i > 0]
+    cooldowns = [_as_int(get(k), 60) for k in MERGED_SETTINGS['ALL_APPS_TRACKER_COOLDOWN_MINS']]
+    return {
+        'ALL_APPS_POLL_MODE': 'custom' if custom else 'global',
+        'ALL_APPS_POLL_SECONDS': str(min(_as_int(get(f'{p}_POLL_SECONDS'), 300) for p in custom) if custom else 300),
+        'ALL_APPS_POLL_WAIT_FOR_SETTLE': 'true' if any(on(f'{p}_POLL_WAIT_FOR_SETTLE') for p in poll_pool) else 'false',
+        'ALL_APPS_SHELF_WATCH_ENABLED': 'true' if any(on(f'{p}_SHELF_WATCH_ENABLED') for p in _SHELF_WATCH_PREFIXES) else 'false',
+        'ALL_APPS_SHELF_WATCH_NAME': get(f'{lead}_SHELF_WATCH_NAME') or 'Up Next',
+        'ALL_APPS_SHELF_WATCH_THRESHOLD': get(f'{lead}_SHELF_WATCH_THRESHOLD') or '95',
+        'ALL_APPS_SHELF_WATCH_RESCAN_HOURS': get(f'{lead}_SHELF_WATCH_RESCAN_HOURS') or '24',
+        'ALL_APPS_ANNOTATION_SYNC_MINUTES': str(min(positive) if positive else 0),
+        'ALL_APPS_TRACKER_COOLDOWN_MINS': str(max(cooldowns)),
+    }
+
 
 # Settings captured once at startup: the scheduler and socket listener, module
 # globals, singleton __init__s, logging and paths. Saving a change to one of these

@@ -41,7 +41,10 @@ from src.utils.user_config import global_fallback_allowed as _global_fallback_al
 from src.utils.user_config import SERVICE_ENABLE_KEYS
 from src.utils.kosync_url import is_builtin_kosync_url
 
-from src.utils.config_loader import ConfigLoader, DEFAULT_CONFIG, KNOWN_SETTING_KEYS, RESTART_REQUIRED_SETTINGS, env_truthy
+from src.utils.config_loader import (
+    ConfigLoader, DEFAULT_CONFIG, KNOWN_SETTING_KEYS, MERGED_BOOL_SETTINGS, MERGED_SETTINGS,
+    RESTART_REQUIRED_SETTINGS, env_truthy, merged_setting_values,
+)
 from src.utils.cache_paths import safe_cache_path, safe_library_path, is_plain_basename, contained_library_file
 from src.utils.ebook_utils import (
     LINKABLE_EBOOK_EXTENSIONS,
@@ -5044,6 +5047,21 @@ def settings():
             session['user_error'] = u_error
             return redirect(url_for('settings') + '#users')
 
+        # A merged control (one field standing for several apps) saves its value
+        # into each app's own setting. A checkbox posts a hidden 'off' plus 'on'
+        # when checked, so an unchecked one still reaches every app.
+        form = request.form.copy()
+        for merged, targets in MERGED_SETTINGS.items():
+            if merged not in form:
+                continue
+            values = form.poplist(merged)
+            for target in targets:
+                form.poplist(target)
+                if merged not in MERGED_BOOL_SETTINGS:
+                    form[target] = values[-1]
+                elif 'on' in values:
+                    form[target] = 'on'
+
         bool_keys = [
             'KOSYNC_CREDENTIALS_FROM_GRIMMORY',
             'KOSYNC_USE_PERCENTAGE_FROM_SERVER',
@@ -5122,6 +5140,8 @@ def settings():
             'SHARE_ALL_BOOKS_WITH_ALL_USERS',
             'REMOTE_AUTH_ENABLED',
             'SERIES_SHOW_CURRENT_BOOK_DETAIL',
+            'AUTO_CREATE_EBOOK_MAPPING',
+            'KOREADER_COMBINE_DEVICE_STATS',
         ]
 
         # Current settings in DB
@@ -5145,8 +5165,8 @@ def settings():
         ]
 
         def _normalized_form_value(key):
-            if key in request.form:
-                raw_value = request.form.get(key, '')
+            if key in form:
+                raw_value = form.get(key, '')
             else:
                 raw_value = current_settings.get(key, '')
 
@@ -5163,7 +5183,7 @@ def settings():
         # 1. Handle Boolean Toggles (Checkbox logic)
         # Checkboxes are NOT sent if unchecked, so we must check every known bool key
         for key in bool_keys:
-            is_checked = (key in request.form)
+            is_checked = (key in form)
             # Save "true" or "false"
             val_str = str(is_checked).lower()
             database_service.set_setting(key, val_str)
@@ -5172,7 +5192,7 @@ def settings():
 
         # 2. Handle Text Inputs
         # Iterate over form to find other keys
-        for key, value in request.form.items():
+        for key, value in form.items():
             if key in bool_keys: continue
 
             # Only recognized settings are persisted. The posted form also carries
@@ -5235,7 +5255,7 @@ def settings():
         if not restart_changes:
             logger.info("⚙️ Settings saved and applied without a restart")
             session['message'] = "Settings saved. Your changes are already in effect."
-            return_tab = request.form.get('return_tab', '')
+            return_tab = form.get('return_tab', '')
             return redirect(url_for('settings') + (f"#{return_tab}" if return_tab.isidentifier() else ''))
         logger.info("⚙️ Settings saved; restarting to apply %s", ", ".join(restart_changes))
 
@@ -5277,7 +5297,9 @@ def settings():
                          user_error=user_error,
                          restart_keys=sorted(RESTART_REQUIRED_SETTINGS),
                          reader_pref_keys=sorted(PER_USER_PREFERENCE_KEYS),
-                         setting_defaults={k: DEFAULT_CONFIG.get(k, '') for k in sorted(KNOWN_SETTING_KEYS)}))
+                         merged_values=merged_setting_values(os.environ),
+                         setting_defaults={**{k: DEFAULT_CONFIG.get(k, '') for k in sorted(KNOWN_SETTING_KEYS)},
+                                           **merged_setting_values(DEFAULT_CONFIG)}))
     response.headers['Cache-Control'] = 'no-store, max-age=0'
     return response
 

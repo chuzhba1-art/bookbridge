@@ -1001,12 +1001,6 @@
                         <div class="help-text">Moves the position BookBridge sends to Audiobookshelf. A negative number such as <code>-60</code> starts playback a minute earlier, so you hear the end of what you just read.</div>
                     </div>
                     <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="abs_reading_checkpoints" name="ABS_READING_CHECKPOINTS"
-                            {% if get_bool('ABS_READING_CHECKPOINTS') %}checked{% endif %}>
-                        <label for="abs_reading_checkpoints">Save reading checkpoints in ABS listening history</label>
-                        <small>When reading an ebook moves your Audiobookshelf position, also save an entry in Audiobookshelf's listening history, so you can jump back to it there. Each entry adds one second of listening time to your stats.</small>
-                    </div>
-                    <div class="checkbox-wrapper full-width">
                         <input type="checkbox" id="abs_ebook" name="SYNC_ABS_EBOOK" {% if get_bool('SYNC_ABS_EBOOK')
                             %}checked{% endif %}>
                         <label for="abs_ebook">Sync with Audiobookshelf's own ebook reader</label>
@@ -1093,13 +1087,6 @@
                         <div class="help-text">Once a KOReader device has stopped sending updates for this long, BookBridge syncs the book to your other apps. Lower syncs sooner; higher waits until you have stopped reading. Default 300.</div>
                     </div>
                     <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="koreader_annotation_sync" name="KOREADER_ANNOTATION_SYNC" {% if
-                            get_bool('KOREADER_ANNOTATION_SYNC') %}checked{% endif %}>
-                        <label for="koreader_annotation_sync">Sync highlights &amp; notes between devices</label>
-                        <div class="help-text">Relay KOReader highlights/notes between your devices through the bridge
-                            (BridgeSync plugin required on each device). Deletions and note edits propagate too.</div>
-                    </div>
-                    <div class="checkbox-wrapper full-width">
                         <input type="checkbox" id="koreader_status_sync" name="KOREADER_STATUS_SYNC_ENABLED" {% if
                             get_bool('KOREADER_STATUS_SYNC_ENABLED') %}checked{% endif %}>
                         <label for="koreader_status_sync">Sync reading status between devices</label>
@@ -1120,6 +1107,13 @@
                             its progress and status have synced. Only books whose file is already on the device are
                             added, nothing read more than 30 days ago, and at most 25 per sync so a first run cannot
                             bury your existing history.</div>
+                    </div>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="koreader_combine_stats" name="KOREADER_COMBINE_DEVICE_STATS"
+                            {% if get_bool('KOREADER_COMBINE_DEVICE_STATS') %}checked{% endif %}>
+                        <label for="koreader_combine_stats">Combine reading statistics from all my devices</label>
+                        <div class="help-text">KOReader's statistics on each device (time read, pages) also count what you read on
+                            your other devices (BridgeSync plugin required on each device).</div>
                     </div>
                     <div class="checkbox-wrapper full-width">
                         <input type="checkbox" id="kosync_pct" name="KOSYNC_USE_PERCENTAGE_FROM_SERVER" {% if
@@ -1244,6 +1238,12 @@
                         <input type="text" name="STORYTELLER_API_URL" value="{{ get_val('STORYTELLER_API_URL') }}">
                     </div>
                     <div class="form-group full-width">
+                        <label>Collection for synced books</label>
+                        <input type="text" name="STORYTELLER_COLLECTION_NAME"
+                            value="{{ get_val('STORYTELLER_COLLECTION_NAME', 'Synced with KOReader') }}">
+                        <div class="help-text">The Storyteller collection that matched books are added to.</div>
+                    </div>
+                    <div class="form-group full-width">
                         <div class="help-text" style="background:rgba(102,126,234,.08);border:1px solid rgba(102,126,234,.25);border-radius:8px;padding:10px 12px;">
                             🔒 <strong>Per-user login.</strong> Each user's Storyteller username &amp; password are set per user in
                             <a href="{{ url_for('settings') }}#users" style="color:#aab4f5;">Settings → Users → (user) → Integrations</a>
@@ -1265,15 +1265,6 @@
                             <span class="slider"></span>
                         </label>
                         <div class="help-text">When BookBridge needs a book's text, use your own EPUB instead of downloading Storyteller's read-aloud copy. Your EPUB must be in the books folder.</div>
-                    </div>
-                    <div class="form-group" style="align-items: center;">
-                        <label>Count as Listening Time</label>
-                        <label class="toggle-switch">
-                            <input type="checkbox" name="STORYTELLER_LISTENING_SESSIONS"
-                                {% if get_bool('STORYTELLER_LISTENING_SESSIONS') %}checked{% endif %}>
-                            <span class="slider"></span>
-                        </label>
-                        <div class="help-text">When you move forward in Storyteller, add that time to your Audiobookshelf listening stats. Turn on if you listen in Storyteller; turn off if you only read there.</div>
                     </div>
                 </div>
             </div>
@@ -1320,13 +1311,8 @@
                         <div class="help-text" style="background:rgba(102,126,234,.08);border:1px solid rgba(102,126,234,.25);border-radius:8px;padding:10px 12px;">
                             🔒 <strong>Per-user account.</strong> Each user's Grimmory login, Shelf name &amp; Library ID are set per user in
                             <a href="{{ url_for('settings') }}#users" style="color:#aab4f5;">Settings → Users → (user) → Integrations</a>
-                            (including your own). The server URL, shelf-watch and device-sync settings here stay global.
+                            (including your own). The server URL and device-sync settings here stay global.
                         </div>
-                    </div>
-                    <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="grimmory_sessions" name="GRIMMORY_READING_SESSIONS"
-                            {% if get_bool('GRIMMORY_READING_SESSIONS') %}checked{% endif %}>
-                        <label for="grimmory_sessions">Record Reading Sessions</label>
                     </div>
 
                     <!-- Highlight sync is per-user: Settings → Users → (user) → Integrations → Grimmory. -->
@@ -1345,46 +1331,6 @@
                             adds the waiting books, to the global shelf name, and removes such a book when its match
                             is deleted. Use the account that owns the shelf in Grimmory when readers share one shelf;
                             blank uses each reader's own login and shelf.</div>
-                    </div>
-
-                    <!-- Separator -->
-                    <div class="full-width" style="margin: 10px 0; border-top: 1px solid rgba(255,255,255,0.1);"></div>
-                    <h4 class="full-width" style="font-size: 14px; color: #fff; margin-bottom: -10px;">"Up Next" Shelf Auto-Match</h4>
-
-                    <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="booklore_shelf_watch" name="BOOKLORE_SHELF_WATCH_ENABLED"
-                            onchange="toggleSection('shelf_watch_body', this.checked)"
-                            {% if get_bool('BOOKLORE_SHELF_WATCH_ENABLED') %}checked{% endif %}>
-                        <label for="booklore_shelf_watch">Watch a Grimmory shelf for auto-matching</label>
-                    </div>
-                    <div id="shelf_watch_body" class="full-width section-body{% if not get_bool('BOOKLORE_SHELF_WATCH_ENABLED') %} collapsed{% endif %}" style="padding: 0;">
-                        <div class="form-group full-width">
-                            <label>Watch Shelf Name</label>
-                            <div style="display: flex; gap: 10px;">
-                                <input type="text" name="BOOKLORE_SHELF_WATCH_NAME"
-                                    value="{{ get_val('BOOKLORE_SHELF_WATCH_NAME', 'Up Next') }}"
-                                    placeholder="Up Next" style="flex:1;">
-                                <button class="btn" type="button" onclick="checkBookloreWatchShelf()">🔍 Find Shelves</button>
-                            </div>
-                            <select id="booklore_watch_shelf_picker" style="display:none; margin-top:10px;"
-                                onchange="applyShelfPickerSelection('BOOKLORE_SHELF_WATCH_NAME', 'booklore_watch_shelf_picker', true)">
-                                <option value="">Select a shelf...</option>
-                            </select>
-                            <div id="booklore_watch_shelf_picker_status" class="help-text" style="display:none; margin-top:6px;"></div>
-                            <div class="help-text">Create a shelf in <b>Grimmory</b> (pick any icon you like there), then use <b>Find Shelves</b> above to select it here. Books placed on this shelf are auto-matched on each poll cycle and moved to <code>{{ get_val('BOOKLORE_SHELF_NAME', 'Kobo') }}</code> on success.</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Auto-Match Threshold (%)</label>
-                            <input type="number" name="BOOKLORE_SHELF_WATCH_THRESHOLD" min="60" max="100"
-                                value="{{ get_val('BOOKLORE_SHELF_WATCH_THRESHOLD', '95') }}">
-                            <div class="help-text">Matches at or above this score auto-create a mapping. Lower-scoring matches become pending Suggestions.</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Rescan Cooldown (hours)</label>
-                            <input type="number" name="BOOKLORE_SHELF_WATCH_RESCAN_HOURS" min="1"
-                                value="{{ get_val('BOOKLORE_SHELF_WATCH_RESCAN_HOURS', '24') }}">
-                            <div class="help-text">Books on the watch shelf with no audio candidate are re-scanned no more often than this.</div>
-                        </div>
                     </div>
 
                     <!-- Separator -->
@@ -1508,48 +1454,6 @@
                             (including your own). The server URL and engine settings here stay global.
                         </div>
                     </div>
-                    <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="bookorbit_sessions" name="BOOKORBIT_READING_SESSIONS"
-                            {% if get_bool('BOOKORBIT_READING_SESSIONS') %}checked{% endif %}>
-                        <label for="bookorbit_sessions">Record Reading Sessions</label>
-                    </div>
-
-                    <!-- Separator -->
-                    <div class="full-width" style="margin: 10px 0; border-top: 1px solid rgba(255,255,255,0.1);"></div>
-                    <h4 class="full-width" style="font-size: 14px; color: #fff; margin-bottom: -10px;">"Up Next" Collection Auto-Match</h4>
-
-                    <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="bookorbit_shelf_watch" name="BOOKORBIT_SHELF_WATCH_ENABLED"
-                            onchange="toggleSection('bookorbit_shelf_watch_body', this.checked)"
-                            {% if get_bool('BOOKORBIT_SHELF_WATCH_ENABLED') %}checked{% endif %}>
-                        <label for="bookorbit_shelf_watch">Watch a BookOrbit collection for auto-matching</label>
-                    </div>
-                    <div id="bookorbit_shelf_watch_body" class="full-width section-body{% if not get_bool('BOOKORBIT_SHELF_WATCH_ENABLED') %} collapsed{% endif %}" style="padding: 0;">
-                        <div class="form-group full-width">
-                            <label>Watch Collection Name</label>
-                            <input type="text" name="BOOKORBIT_SHELF_WATCH_NAME"
-                                value="{{ get_val('BOOKORBIT_SHELF_WATCH_NAME', 'Up Next') }}"
-                                placeholder="Up Next">
-                            <div class="help-text">Create a collection in <b>BookOrbit</b> with this name. Books placed on it are auto-matched on each poll cycle and moved to <code>{{ get_val('BOOKORBIT_SHELF_NAME', 'Kobo') }}</code> on success.</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Auto-Match Threshold (%)</label>
-                            <input type="number" name="BOOKORBIT_SHELF_WATCH_THRESHOLD" min="60" max="100"
-                                value="{{ get_val('BOOKORBIT_SHELF_WATCH_THRESHOLD', '95') }}">
-                            <div class="help-text">Matches at or above this score auto-create a mapping. Lower-scoring matches become pending Suggestions.</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Rescan Cooldown (hours)</label>
-                            <input type="number" name="BOOKORBIT_SHELF_WATCH_RESCAN_HOURS" min="1"
-                                value="{{ get_val('BOOKORBIT_SHELF_WATCH_RESCAN_HOURS', '24') }}">
-                            <div class="help-text">Books on the watch collection with no audio candidate are re-scanned no more often than this.</div>
-                        </div>
-                        <div class="checkbox-wrapper full-width">
-                            <input type="checkbox" id="bookorbit_shelf_watch_readalong" name="BOOKORBIT_SHELF_WATCH_READALONG"
-                                {% if get_bool('BOOKORBIT_SHELF_WATCH_READALONG') %}checked{% endif %}>
-                            <label for="bookorbit_shelf_watch_readalong">Also generate a read-along EPUB for auto-matched books</label>
-                        </div>
-                    </div>
 
                     <!-- Separator -->
                     <div class="full-width" style="margin: 10px 0; border-top: 1px solid rgba(255,255,255,0.1);"></div>
@@ -1561,19 +1465,6 @@
                         <label for="bookorbit_reading_watch">Auto-match books you start reading in BookOrbit</label>
                     </div>
                     <div class="help-text full-width">When you start reading a BookOrbit ebook the bridge hasn't matched yet (past 1%), it looks for the audiobook. A match is added to Suggestions for you to confirm; with no audiobook found, the book is added as ebook-only so its progress syncs.</div>
-
-                    <!-- Annotation / highlight sync -->
-                    <div class="full-width" style="margin: 10px 0; border-top: 1px solid rgba(255,255,255,0.1);"></div>
-                    <h4 class="full-width" style="font-size: 14px; color: #fff; margin-bottom: -10px;">Highlight Sync</h4>
-                    <div class="form-group">
-                        <label>Highlight Sync Interval (minutes)</label>
-                        <input type="number" min="0" name="BOOKORBIT_ANNOTATION_SYNC_MINUTES"
-                            value="{{ get_val('BOOKORBIT_ANNOTATION_SYNC_MINUTES', '15') }}">
-                        <div class="help-text">Sync highlights/notes between your devices and BookOrbit's web reader
-                            every N minutes (0 disables). Each user also needs their BookOrbit <strong>KOReader sync</strong>
-                            username &amp; password set in Settings → Users → (user) → Integrations — the same
-                            credentials BookOrbit's own KOReader plugin uses.</div>
-                    </div>
 
                     <!-- Read-along sync coexistence -->
                     <div class="full-width" style="margin: 10px 0; border-top: 1px solid rgba(255,255,255,0.1);"></div>
@@ -1643,32 +1534,6 @@
                         </div>
                     </div>
 
-                    <div class="full-width" style="margin: 10px 0; border-top: 1px solid rgba(255,255,255,0.1);"></div>
-                    <h4 class="full-width" style="font-size: 14px; color: #fff; margin-bottom: -10px;">"Up Next" Collection Auto-Match</h4>
-                    <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="kavita_shelf_watch" name="KAVITA_SHELF_WATCH_ENABLED"
-                            onchange="toggleSection('kavita_shelf_watch_body', this.checked)"
-                            {% if get_bool('KAVITA_SHELF_WATCH_ENABLED') %}checked{% endif %}>
-                        <label for="kavita_shelf_watch">Watch a Kavita collection for auto-matching</label>
-                    </div>
-                    <div id="kavita_shelf_watch_body" class="full-width section-body{% if not get_bool('KAVITA_SHELF_WATCH_ENABLED') %} collapsed{% endif %}" style="padding: 0;">
-                        <div class="form-group full-width">
-                            <label>Watch Collection Name</label>
-                            <input type="text" name="KAVITA_SHELF_WATCH_NAME"
-                                value="{{ get_val('KAVITA_SHELF_WATCH_NAME', 'Up Next') }}" placeholder="Up Next">
-                            <div class="help-text">Books placed in this Kavita collection are auto-matched and moved to the user's configured destination collection on success.</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Auto-Match Threshold (%)</label>
-                            <input type="number" name="KAVITA_SHELF_WATCH_THRESHOLD" min="60" max="100"
-                                value="{{ get_val('KAVITA_SHELF_WATCH_THRESHOLD', '95') }}">
-                        </div>
-                        <div class="form-group">
-                            <label>Rescan Cooldown (hours)</label>
-                            <input type="number" name="KAVITA_SHELF_WATCH_RESCAN_HOURS" min="1"
-                                value="{{ get_val('KAVITA_SHELF_WATCH_RESCAN_HOURS', '24') }}">
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -1710,12 +1575,6 @@
                             <strong>Users → Integrations</strong> (the same credentials the Readest KOReader plugin uses).
                             The settings below apply to everyone.
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Sync Interval (minutes)</label>
-                        <input type="number" min="0" name="READEST_ANNOTATION_SYNC_MINUTES"
-                            value="{{ get_val('READEST_ANNOTATION_SYNC_MINUTES', '15') }}">
-                        <div class="help-text">0 disables the sync timer (manual trigger only).</div>
                     </div>
                     <div class="form-group">
                         <label>Upload: max books per run</label>
@@ -1860,29 +1719,10 @@
                         <div class="help-text" style="background:rgba(102,126,234,.08);border:1px solid rgba(102,126,234,.25);border-radius:8px;padding:10px 12px;">
                             🔒 <strong>Per-user token.</strong> Each user's Hardcover API token is set per user in
                             <a href="{{ url_for('settings') }}#users" style="color:#aab4f5;">Settings → Users → (user) → Integrations</a>
-                            (including your own). The cooldown below stays global.
+                            (including your own).
                         </div>
                     </div>
-                    <div class="form-group full-width">
-                        <label>Update Cooldown (minutes)</label>
-                        <input type="number" name="HARDCOVER_UPDATE_COOLDOWN_MINS" min="0" value="{{ get_val('HARDCOVER_UPDATE_COOLDOWN_MINS', '60') }}">
-                        <div class="help-text">Wait this many minutes of no new progress before posting to Hardcover; any new progress resets the timer. Finishing a book posts immediately. 0 = update every cycle.</div>
-                    </div>
 
-                    <!-- Highlight sync sub-section -->
-                    <div class="full-width" style="margin: 10px 0; border-top: 1px solid rgba(255,255,255,0.1);"></div>
-                    <h4 class="full-width" style="font-size: 14px; color: #fff; margin-bottom: -10px;">Highlight Sync</h4>
-                    <div class="checkbox-wrapper full-width">
-                        <input type="checkbox" id="hardcover_ann_sync" name="HARDCOVER_ANNOTATION_SYNC"
-                            {% if get_bool('HARDCOVER_ANNOTATION_SYNC') %}checked{% endif %}>
-                        <label for="hardcover_ann_sync">Push highlights to Hardcover</label>
-                    </div>
-                    <div class="form-group">
-                        <label>Highlight Sync Interval (minutes)</label>
-                        <input type="number" min="0" name="HARDCOVER_ANNOTATION_SYNC_MINUTES"
-                            value="{{ get_val('HARDCOVER_ANNOTATION_SYNC_MINUTES', '30') }}">
-                        <div class="help-text">Pushes KOReader highlights (yellow highlight style) to Hardcover's highlights store every N minutes. 0 disables.</div>
-                    </div>
                     <div class="full-width" style="margin: 10px 0; border-top: 1px solid rgba(255,255,255,0.1);"></div>
                     <h4 class="full-width" style="font-size: 14px; color: #fff; margin-bottom: -10px;">Grimmory Shelves to Lists</h4>
                     <div class="help-text full-width" style="margin-bottom: 8px;">
@@ -1948,13 +1788,56 @@
                         <div class="help-text" style="background:rgba(102,126,234,.08);border:1px solid rgba(102,126,234,.25);border-radius:8px;padding:10px 12px;">
                             🔒 <strong>Per-user cookies.</strong> Each user's StoryGraph session cookie &amp; remember-user token are set per user in
                             <a href="{{ url_for('settings') }}#users" style="color:#aab4f5;">Settings → Users → (user) → Integrations</a>
-                            (including your own). The cooldown below stays global.
+                            (including your own).
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="settings-section" data-svc="goodreads">
+                {% set goodreads_enabled = get_bool('GOODREADS_ENABLED') %}
+                <div class="section-header">
+                    <div class="svc-left">
+                        <span class="svc-chev">▶</span>
+                        <div class="svc-chip">GR</div>
+                        <div class="svc-title">
+                            <h3>Goodreads <span class="tracker-tag">write-only tracker</span></h3>
+                            <div class="svc-desc">Shelf and percentage progress</div>
+                        </div>
+                    </div>
+                    <div class="header-tail">
+                        <span class="pill off">Per-user cookies</span>
+                        <div class="toggle-switch-wrapper">
+                            <span class="toggle-label">Enable</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="toggle_goodreads" name="GOODREADS_ENABLED"
+                                    onchange="toggleSection('goodreads_body', this.checked)" {% if goodreads_enabled %}checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div id="goodreads_body" class="section-body {% if not goodreads_enabled %}collapsed{% endif %}">
                     <div class="form-group full-width">
-                        <label>Update Cooldown (minutes)</label>
-                        <input type="number" name="STORYGRAPH_UPDATE_COOLDOWN_MINS" min="0" value="{{ get_val('STORYGRAPH_UPDATE_COOLDOWN_MINS', '60') }}">
-                        <div class="help-text">Wait this many minutes of no new progress before posting to StoryGraph; any new progress resets the timer. Finishing a book posts immediately. 0 = update every cycle.</div>
+                        <div class="help-text" style="background:rgba(102,126,234,.08);border:1px solid rgba(102,126,234,.25);border-radius:8px;padding:10px 12px;">
+                            🔒 Set each user's Goodreads browser cookie, cookie refresher, or signed-in Selenium URL in
+                            <a href="{{ url_for('settings') }}#users" style="color:#aab4f5;">Settings → Users → (user) → Integrations</a>.
+                            Progress posts appear in the user's public Goodreads feed.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Posting to trackers</h3>
+                </div>
+                <div class="section-body">
+                    <div class="form-group full-width">
+                        <label>Wait before posting progress (minutes)</label>
+                        <input type="number" name="ALL_APPS_TRACKER_COOLDOWN_MINS" min="0" value="{{ merged_values.ALL_APPS_TRACKER_COOLDOWN_MINS }}">
+                        <div class="help-text">Hardcover, StoryGraph and Goodreads get your progress once you have made no new progress for
+                            this long; new progress restarts the wait. Finishing a book posts straight away. 0 posts on every sync.</div>
                     </div>
                 </div>
             </div>
@@ -1989,131 +1872,58 @@
                     <h3>How often each app is checked</h3>
                 </div>
                 <div class="section-body">
-                    <div class="help-text full-width">Apps that cannot notify BookBridge are checked on every scheduled sync. Give one its own timer to pick up its changes sooner.</div>
-                    <div class="poll-row" {% if not get_bool('STORYTELLER_ENABLED') %}hidden{% endif %}>
-                        <span class="poll-name">Storyteller</span>
-                        <select name="STORYTELLER_POLL_MODE" id="storyteller_poll_mode" aria-label="Storyteller: when to check"
-                                onchange="togglePollSeconds('storyteller_poll_custom', this.value)">
-                            <option value="global" {% if get_val('STORYTELLER_POLL_MODE', 'global') == 'global' %}selected{% endif %}>With each sync</option>
-                            <option value="custom" {% if get_val('STORYTELLER_POLL_MODE') == 'custom' %}selected{% endif %}>On its own timer</option>
+                    <div class="help-text full-width">Apps that cannot tell BookBridge when you move are checked on every scheduled sync. Give them their own timer to pick up changes sooner.</div>
+                    <div class="form-group">
+                        <label for="all_apps_poll_mode">When to check</label>
+                        <select name="ALL_APPS_POLL_MODE" id="all_apps_poll_mode"
+                            onchange="togglePollSeconds('all_apps_poll_custom', this.value)">
+                            <option value="global" {% if merged_values.ALL_APPS_POLL_MODE != 'custom' %}selected{% endif %}>With each scheduled sync</option>
+                            <option value="custom" {% if merged_values.ALL_APPS_POLL_MODE == 'custom' %}selected{% endif %}>On their own timer</option>
                         </select>
-                        <span class="poll-custom" id="storyteller_poll_custom"
-                             {% if get_val('STORYTELLER_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            every <input type="number" name="STORYTELLER_POLL_SECONDS" min="10" aria-label="Storyteller: seconds between checks"
-                                   value="{{ get_val('STORYTELLER_POLL_SECONDS', '45') }}"> s
-                            <label class="poll-settle"><input type="checkbox" name="STORYTELLER_POLL_WAIT_FOR_SETTLE"
-                                {% if get_bool('STORYTELLER_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}> wait until you pause</label>
-                        </span>
                     </div>
-                    <div class="poll-row" {% if not get_bool('BOOKLORE_ENABLED') %}hidden{% endif %}>
-                        <span class="poll-name">Grimmory</span>
-                        <select name="BOOKLORE_POLL_MODE" id="booklore_poll_mode" aria-label="Grimmory: when to check"
-                                onchange="togglePollSeconds('booklore_poll_custom', this.value)">
-                            <option value="global" {% if get_val('BOOKLORE_POLL_MODE', 'global') == 'global' %}selected{% endif %}>With each sync</option>
-                            <option value="custom" {% if get_val('BOOKLORE_POLL_MODE') == 'custom' %}selected{% endif %}>On its own timer</option>
-                        </select>
-                        <span class="poll-custom" id="booklore_poll_custom"
-                             {% if get_val('BOOKLORE_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            every <input type="number" name="BOOKLORE_POLL_SECONDS" min="10" aria-label="Grimmory: seconds between checks"
-                                   value="{{ get_val('BOOKLORE_POLL_SECONDS', '300') }}"> s
-                            <label class="poll-settle"><input type="checkbox" name="BOOKLORE_POLL_WAIT_FOR_SETTLE"
-                                {% if get_bool('BOOKLORE_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}> wait until you pause</label>
-                        </span>
+                    <div class="form-group" id="all_apps_poll_custom"
+                        {% if merged_values.ALL_APPS_POLL_MODE != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
+                        <label>Check every (seconds)</label>
+                        <input type="number" name="ALL_APPS_POLL_SECONDS" min="10" value="{{ merged_values.ALL_APPS_POLL_SECONDS }}">
+                        <div class="help-text">60 picks up active reading and listening quickly; 300 is gentler on your servers.</div>
                     </div>
-                    <div class="poll-row" {% if not get_bool('BOOKLORE_ENABLED') %}hidden{% endif %}>
-                        <span class="poll-name">Grimmory audiobooks</span>
-                        <select name="BOOKLORE_AUDIO_POLL_MODE" id="booklore_audio_poll_mode" aria-label="Grimmory audiobooks: when to check"
-                                onchange="togglePollSeconds('booklore_audio_poll_custom', this.value)">
-                            <option value="global" {% if get_val('BOOKLORE_AUDIO_POLL_MODE', 'global') == 'global' %}selected{% endif %}>With each sync</option>
-                            <option value="custom" {% if get_val('BOOKLORE_AUDIO_POLL_MODE') == 'custom' %}selected{% endif %}>On its own timer</option>
-                        </select>
-                        <span class="poll-custom" id="booklore_audio_poll_custom"
-                             {% if get_val('BOOKLORE_AUDIO_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            every <input type="number" name="BOOKLORE_AUDIO_POLL_SECONDS" min="10" aria-label="Grimmory audiobooks: seconds between checks"
-                                   value="{{ get_val('BOOKLORE_AUDIO_POLL_SECONDS', '300') }}"> s
-                            <label class="poll-settle"><input type="checkbox" name="BOOKLORE_AUDIO_POLL_WAIT_FOR_SETTLE"
-                                {% if get_bool('BOOKLORE_AUDIO_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}> wait until you pause</label>
-                        </span>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="hidden" name="ALL_APPS_POLL_WAIT_FOR_SETTLE" value="off">
+                        <input type="checkbox" id="all_apps_poll_settle" name="ALL_APPS_POLL_WAIT_FOR_SETTLE" value="on"
+                            {% if merged_values.ALL_APPS_POLL_WAIT_FOR_SETTLE == 'true' %}checked{% endif %}>
+                        <label for="all_apps_poll_settle">Wait until you pause</label>
+                        <div class="help-text">Hold the sync while your position is still moving between checks, and run it once it stops.</div>
                     </div>
-                    <div class="poll-row" {% if not get_bool('BOOKORBIT_ENABLED') %}hidden{% endif %}>
-                        <span class="poll-name">BookOrbit</span>
-                        <select name="BOOKORBIT_POLL_MODE" id="bookorbit_poll_mode" aria-label="BookOrbit: when to check"
-                                onchange="togglePollSeconds('bookorbit_poll_custom', this.value)">
-                            <option value="global" {% if get_val('BOOKORBIT_POLL_MODE', 'global') == 'global' %}selected{% endif %}>With each sync</option>
-                            <option value="custom" {% if get_val('BOOKORBIT_POLL_MODE') == 'custom' %}selected{% endif %}>On its own timer</option>
-                        </select>
-                        <span class="poll-custom" id="bookorbit_poll_custom"
-                             {% if get_val('BOOKORBIT_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            every <input type="number" name="BOOKORBIT_POLL_SECONDS" min="10" aria-label="BookOrbit: seconds between checks"
-                                   value="{{ get_val('BOOKORBIT_POLL_SECONDS', '300') }}"> s
-                            <label class="poll-settle"><input type="checkbox" name="BOOKORBIT_POLL_WAIT_FOR_SETTLE"
-                                {% if get_bool('BOOKORBIT_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}> wait until you pause</label>
-                        </span>
+                    <div class="help-text full-width">Covers Storyteller, Grimmory, BookOrbit (ebooks and audiobooks), Kavita,
+                        Calibre-Web Automated and BookFusion: whichever of them you use.</div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Highlights &amp; notes</h3>
+                </div>
+                <div class="section-body">
+                    <div class="help-text full-width">Each reader chooses which apps share their highlights (Grimmory, BookFusion, Readest, BookOrbit) under My Integrations.</div>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="koreader_annotation_sync" name="KOREADER_ANNOTATION_SYNC" {% if
+                            get_bool('KOREADER_ANNOTATION_SYNC') %}checked{% endif %}>
+                        <label for="koreader_annotation_sync">Sync highlights &amp; notes between devices</label>
+                        <div class="help-text">Relay KOReader highlights/notes between your devices through the bridge
+                            (BridgeSync plugin required on each device). Deletions and note edits propagate too.</div>
                     </div>
-                    <div class="poll-row" {% if not get_bool('BOOKORBIT_ENABLED') %}hidden{% endif %}>
-                        <span class="poll-name">BookOrbit audiobooks</span>
-                        <select name="BOOKORBIT_AUDIO_POLL_MODE" id="bookorbit_audio_poll_mode" aria-label="BookOrbit audiobooks: when to check"
-                                onchange="togglePollSeconds('bookorbit_audio_poll_custom', this.value)">
-                            <option value="global" {% if get_val('BOOKORBIT_AUDIO_POLL_MODE', 'global') == 'global' %}selected{% endif %}>With each sync</option>
-                            <option value="custom" {% if get_val('BOOKORBIT_AUDIO_POLL_MODE') == 'custom' %}selected{% endif %}>On its own timer</option>
-                        </select>
-                        <span class="poll-custom" id="bookorbit_audio_poll_custom"
-                             {% if get_val('BOOKORBIT_AUDIO_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            every <input type="number" name="BOOKORBIT_AUDIO_POLL_SECONDS" min="10" aria-label="BookOrbit audiobooks: seconds between checks"
-                                   value="{{ get_val('BOOKORBIT_AUDIO_POLL_SECONDS', '300') }}"> s
-                            <label class="poll-settle"><input type="checkbox" name="BOOKORBIT_AUDIO_POLL_WAIT_FOR_SETTLE"
-                                {% if get_bool('BOOKORBIT_AUDIO_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}> wait until you pause</label>
-                        </span>
+                    <div class="form-group">
+                        <label>Sync highlights every (minutes)</label>
+                        <input type="number" min="0" name="ALL_APPS_ANNOTATION_SYNC_MINUTES" value="{{ merged_values.ALL_APPS_ANNOTATION_SYNC_MINUTES }}">
+                        <div class="help-text">How often highlights and notes are copied to and from BookOrbit, Grimmory, Readest and
+                            Hardcover. 0 turns that off; copying between your own KOReader devices is not affected.</div>
                     </div>
-                    <div class="poll-row" {% if not get_bool('KAVITA_ENABLED') %}hidden{% endif %}>
-                        <span class="poll-name">Kavita</span>
-                        <select name="KAVITA_POLL_MODE" id="kavita_poll_mode" aria-label="Kavita: when to check"
-                                onchange="togglePollSeconds('kavita_poll_custom', this.value)">
-                            <option value="global" {% if get_val('KAVITA_POLL_MODE', 'global') == 'global' %}selected{% endif %}>With each sync</option>
-                            <option value="custom" {% if get_val('KAVITA_POLL_MODE') == 'custom' %}selected{% endif %}>On its own timer</option>
-                        </select>
-                        <span class="poll-custom" id="kavita_poll_custom"
-                             {% if get_val('KAVITA_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            every <input type="number" name="KAVITA_POLL_SECONDS" min="10" aria-label="Kavita: seconds between checks"
-                                   value="{{ get_val('KAVITA_POLL_SECONDS', '300') }}"> s
-                            <label class="poll-settle"><input type="checkbox" name="KAVITA_POLL_WAIT_FOR_SETTLE"
-                                {% if get_bool('KAVITA_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}> wait until you pause</label>
-                        </span>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="hardcover_ann_sync" name="HARDCOVER_ANNOTATION_SYNC"
+                            {% if get_bool('HARDCOVER_ANNOTATION_SYNC') %}checked{% endif %}>
+                        <label for="hardcover_ann_sync">Also post my highlights to Hardcover</label>
+                        <div class="help-text">Posts KOReader highlights made in the yellow style to your Hardcover highlights.</div>
                     </div>
-                    <div class="poll-row" {% if not get_bool('CWA_SYNC_ENABLED') %}hidden{% endif %}>
-                        <span class="poll-name">Calibre-Web Automated</span>
-                        <select name="CWA_SYNC_POLL_MODE" id="cwa_sync_poll_mode" aria-label="Calibre-Web Automated: when to check"
-                                onchange="togglePollSeconds('cwa_sync_poll_custom', this.value)">
-                            <option value="global" {% if get_val('CWA_SYNC_POLL_MODE', 'global') == 'global' %}selected{% endif %}>With each sync</option>
-                            <option value="custom" {% if get_val('CWA_SYNC_POLL_MODE') == 'custom' %}selected{% endif %}>On its own timer</option>
-                        </select>
-                        <span class="poll-custom" id="cwa_sync_poll_custom"
-                             {% if get_val('CWA_SYNC_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            every <input type="number" name="CWA_SYNC_POLL_SECONDS" min="10" aria-label="Calibre-Web Automated: seconds between checks"
-                                   value="{{ get_val('CWA_SYNC_POLL_SECONDS', '300') }}"> s
-                            <label class="poll-settle"><input type="checkbox" name="CWA_SYNC_POLL_WAIT_FOR_SETTLE"
-                                {% if get_bool('CWA_SYNC_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}> wait until you pause</label>
-                        </span>
-                    </div>
-                    <div class="poll-row" {% if not get_bool('BOOKFUSION_ENABLED') %}hidden{% endif %}>
-                        <span class="poll-name">BookFusion</span>
-                        <select name="BOOKFUSION_POLL_MODE" id="bookfusion_poll_mode" aria-label="BookFusion: when to check"
-                                onchange="togglePollSeconds('bookfusion_poll_custom', this.value)">
-                            <option value="global" {% if get_val('BOOKFUSION_POLL_MODE', 'global') == 'global' %}selected{% endif %}>With each sync</option>
-                            <option value="custom" {% if get_val('BOOKFUSION_POLL_MODE') == 'custom' %}selected{% endif %}>On its own timer</option>
-                        </select>
-                        <span class="poll-custom" id="bookfusion_poll_custom"
-                             {% if get_val('BOOKFUSION_POLL_MODE') != 'custom' %}style="opacity: 0.45; pointer-events: none;"{% endif %}>
-                            every <input type="number" name="BOOKFUSION_POLL_SECONDS" min="10" aria-label="BookFusion: seconds between checks"
-                                   value="{{ get_val('BOOKFUSION_POLL_SECONDS', '300') }}"> s
-                            <label class="poll-settle"><input type="checkbox" name="BOOKFUSION_POLL_WAIT_FOR_SETTLE"
-                                {% if get_bool('BOOKFUSION_POLL_WAIT_FOR_SETTLE') %}checked{% endif %}> wait until you pause</label>
-                        </span>
-                    </div>
-                    <div class="help-text full-width">Apps you have switched off are hidden here and keep
-                        their values. Suggested timers: Storyteller 30–60 s while reading, audiobooks 60 s
-                        while listening, everything else 300 s. <em>Wait until you pause</em> holds the sync
-                        while the position is still moving between checks and runs it once it stops.</div>
                 </div>
             </div>
 
@@ -2180,6 +1990,39 @@
                         <input type="number" min="1" name="READING_SESSION_MERGE_MINUTES"
                             value="{{ get_val('READING_SESSION_MERGE_MINUTES') or '5' }}">
                         <small>Progress updates closer together than this count as one reading session in your stats. The gap actually used is <strong><span id="effective_session_gap">{{ [1, get_val('READING_SESSION_MERGE_MINUTES')|float(5), [2 * (get_val('SYNC_PERIOD_MINS')|float(5)), 30]|min]|max }}</span> minutes</strong>: at least twice the sync interval, at most 30. A session also ends when you finish the book or after four hours.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>Reading history &amp; stats</h3>
+                </div>
+                <div class="section-body">
+                    <div class="help-text full-width">What BookBridge adds to each app's history and stats when you read or listen.</div>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="abs_reading_checkpoints" name="ABS_READING_CHECKPOINTS"
+                            {% if get_bool('ABS_READING_CHECKPOINTS') %}checked{% endif %}>
+                        <label for="abs_reading_checkpoints">Save reading checkpoints in ABS listening history</label>
+                        <small>When reading an ebook moves your Audiobookshelf position, also save an entry in Audiobookshelf's listening history, so you can jump back to it there. Each entry adds one second of listening time to your stats.</small>
+                    </div>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="storyteller_listening" name="STORYTELLER_LISTENING_SESSIONS"
+                            {% if get_bool('STORYTELLER_LISTENING_SESSIONS') %}checked{% endif %}>
+                        <label for="storyteller_listening">Storyteller: count reading along as Audiobookshelf listening time</label>
+                        <div class="help-text">When you move forward in Storyteller, add that time to your Audiobookshelf listening stats. Turn on if you listen in Storyteller; turn off if you only read there.</div>
+                    </div>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="grimmory_sessions" name="GRIMMORY_READING_SESSIONS"
+                            {% if get_bool('GRIMMORY_READING_SESSIONS') %}checked{% endif %}>
+                        <label for="grimmory_sessions">Grimmory: record my reading sessions</label>
+                        <div class="help-text">Send reading sessions to Grimmory so its reading stats include them.</div>
+                    </div>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="bookorbit_sessions" name="BOOKORBIT_READING_SESSIONS"
+                            {% if get_bool('BOOKORBIT_READING_SESSIONS') %}checked{% endif %}>
+                        <label for="bookorbit_sessions">BookOrbit: record my reading sessions</label>
+                        <div class="help-text">Send reading sessions to BookOrbit so its reading stats include them.</div>
                     </div>
                 </div>
             </div>
@@ -2330,6 +2173,13 @@
                 <div class="section-body">
                     <div class="help-text full-width">How a book opened on a reader gets linked to the right audiobook and stays linked.</div>
                     <div class="checkbox-wrapper full-width">
+                        <input type="checkbox" id="auto_create_ebook_mapping" name="AUTO_CREATE_EBOOK_MAPPING"
+                            {% if get_bool('AUTO_CREATE_EBOOK_MAPPING') %}checked{% endif %}>
+                        <label for="auto_create_ebook_mapping">Identify books I open that BookBridge doesn't know yet</label>
+                        <div class="help-text">When a KOReader device opens a book BookBridge hasn't seen, look for the same file in
+                            your libraries so its progress can sync. Turn off to sync only books you have matched yourself.</div>
+                    </div>
+                    <div class="checkbox-wrapper full-width">
                         <input type="checkbox" id="kosync_auto_map" name="KOSYNC_AUTO_MAP_ON_AGREEMENT"
                             {% if get_bool('KOSYNC_AUTO_MAP_ON_AGREEMENT') %}checked{% endif %}>
                         <label for="kosync_auto_map">Auto-map on exact agreement</label>
@@ -2367,6 +2217,54 @@
                             candidate must be downloaded — this caps how many are fetched per search. Already-cached
                             books are checked for free and don't count. Set to <code>0</code> to disable the
                             BookOrbit search.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3>"Up Next" shelf</h3>
+                </div>
+                <div class="section-body">
+                    <div class="help-text full-width">Put a book on this shelf in Grimmory, BookOrbit or Kavita and BookBridge finds its audiobook, links them, and moves the book to your synced shelf.</div>
+                    <div class="checkbox-wrapper full-width">
+                        <input type="hidden" name="ALL_APPS_SHELF_WATCH_ENABLED" value="off">
+                        <input type="checkbox" id="all_apps_shelf_watch" name="ALL_APPS_SHELF_WATCH_ENABLED" value="on"
+                            onchange="toggleSection('all_apps_shelf_watch_body', this.checked)"
+                            {% if merged_values.ALL_APPS_SHELF_WATCH_ENABLED == 'true' %}checked{% endif %}>
+                        <label for="all_apps_shelf_watch">Watch an "Up Next" shelf in my library apps</label>
+                    </div>
+                    <div id="all_apps_shelf_watch_body" class="full-width section-body{% if merged_values.ALL_APPS_SHELF_WATCH_ENABLED != 'true' %} collapsed{% endif %}" style="padding: 0;">
+                    <div class="form-group full-width">
+                        <label>Shelf or collection name</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" name="ALL_APPS_SHELF_WATCH_NAME" value="{{ merged_values.ALL_APPS_SHELF_WATCH_NAME }}"
+                                placeholder="Up Next" style="flex:1;">
+                            <button class="btn" type="button" onclick="checkBookloreWatchShelf()">🔍 Find Grimmory shelves</button>
+                        </div>
+                        <select id="booklore_watch_shelf_picker" style="display:none; margin-top:10px;"
+                            onchange="applyShelfPickerSelection('ALL_APPS_SHELF_WATCH_NAME', 'booklore_watch_shelf_picker', true)">
+                            <option value="">Select a shelf...</option>
+                        </select>
+                        <div id="booklore_watch_shelf_picker_status" class="help-text" style="display:none; margin-top:6px;"></div>
+                        <div class="help-text">Create a shelf (Grimmory) or collection (BookOrbit, Kavita) with this name in each app you use.
+                            An app without it is skipped, with a note in the log.</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Link automatically at (%)</label>
+                        <input type="number" name="ALL_APPS_SHELF_WATCH_THRESHOLD" min="60" max="100" value="{{ merged_values.ALL_APPS_SHELF_WATCH_THRESHOLD }}">
+                        <div class="help-text">A match scoring at least this is linked straight away; lower ones become Suggestions for you to check.</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Look again after (hours)</label>
+                        <input type="number" name="ALL_APPS_SHELF_WATCH_RESCAN_HOURS" min="1" value="{{ merged_values.ALL_APPS_SHELF_WATCH_RESCAN_HOURS }}">
+                        <div class="help-text">A book with no audiobook found yet is searched for again at most this often.</div>
+                    </div>
+                        <div class="checkbox-wrapper full-width">
+                            <input type="checkbox" id="bookorbit_shelf_watch_readalong" name="BOOKORBIT_SHELF_WATCH_READALONG"
+                                {% if get_bool('BOOKORBIT_SHELF_WATCH_READALONG') %}checked{% endif %}>
+                            <label for="bookorbit_shelf_watch_readalong">For BookOrbit books, also make a read-along EPUB</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2556,6 +2454,13 @@
                                 Set this here in the UI: dashboard settings are stored in the database and take
                                 precedence over <code>docker-compose</code> environment variables.
                             </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Server timeout (seconds)</label>
+                            <input type="number" name="WHISPER_CPP_TIMEOUT" min="30"
+                                value="{{ get_val('WHISPER_CPP_TIMEOUT', '600') }}">
+                            <div class="help-text">How long to wait for the server to transcribe one piece of audio before giving up.
+                                Raise it for a slow server or long pieces.</div>
                         </div>
                         <div class="form-group full-width">
                             <label>Split Uploads (minutes)</label>
@@ -3475,7 +3380,7 @@
             populateLibraryPicker({
                 endpoint: '/api/booklore/shelves',
                 button: event.target,
-                inputName: 'BOOKLORE_SHELF_WATCH_NAME',
+                inputName: 'ALL_APPS_SHELF_WATCH_NAME',
                 selectId: 'booklore_watch_shelf_picker',
                 statusId: 'booklore_watch_shelf_picker_status',
                 emptyMessage: 'No shelves found. Create one in Grimmory first, then click Find again.',

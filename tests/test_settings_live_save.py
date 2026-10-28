@@ -103,13 +103,29 @@ class TestSettingsSaveRestartsOnlyWhenNeeded(unittest.TestCase):
         self.assertTrue(self._post(return_tab='reading').headers['Location'].endswith('/settings#reading'))
         self.assertTrue(self._post(return_tab='x"><script>').headers['Location'].endswith('/settings'))
 
-    def test_a_switched_off_app_keeps_its_wait_until_you_pause_setting(self):
-        """Its timer fields used to be left out of the page, so every save posted no
-        checkbox and reset the settle wait to false."""
-        os.environ['KAVITA_ENABLED'] = 'false'
-        os.environ['KAVITA_POLL_WAIT_FOR_SETTLE'] = 'true'
-        html = self.client.get('/settings').get_data(as_text=True)
-        self.assertIn('checked', html.split('name="KAVITA_POLL_WAIT_FOR_SETTLE"', 1)[1].split('>', 1)[0])
+    def test_one_control_saves_every_apps_setting_including_switched_off_ones(self):
+        """Polling, shelf watch, highlight interval and tracker cooldown are one choice
+        each; saving copies it into every app's own setting."""
+        from src.utils.config_loader import MERGED_SETTINGS
+        self._post(ALL_APPS_POLL_MODE='custom', ALL_APPS_POLL_SECONDS='60',
+                   ALL_APPS_POLL_WAIT_FOR_SETTLE=['off', 'on'],
+                   ALL_APPS_SHELF_WATCH_ENABLED='off', ALL_APPS_SHELF_WATCH_NAME='Next Up',
+                   ALL_APPS_ANNOTATION_SYNC_MINUTES='20', ALL_APPS_TRACKER_COOLDOWN_MINS='90')
+        expected = {'ALL_APPS_POLL_MODE': 'custom', 'ALL_APPS_POLL_SECONDS': '60',
+                    'ALL_APPS_POLL_WAIT_FOR_SETTLE': 'true', 'ALL_APPS_SHELF_WATCH_ENABLED': 'false',
+                    'ALL_APPS_SHELF_WATCH_NAME': 'Next Up', 'ALL_APPS_ANNOTATION_SYNC_MINUTES': '20',
+                    'ALL_APPS_TRACKER_COOLDOWN_MINS': '90'}
+        for merged, value in expected.items():
+            for target in MERGED_SETTINGS[merged]:
+                self.assertEqual(self.store.get(target), value, target)
+            self.assertNotIn(merged, self.store)
+        self.assertEqual(self.store['KAVITA_POLL_WAIT_FOR_SETTLE'], 'true')
+
+    def test_an_unticked_merged_switch_turns_every_app_off(self):
+        self._post(ALL_APPS_POLL_WAIT_FOR_SETTLE=['off', 'on'])
+        self._post(ALL_APPS_POLL_WAIT_FOR_SETTLE='off')
+        self.assertEqual(self.store['STORYTELLER_POLL_WAIT_FOR_SETTLE'], 'false')
+        self.assertEqual(self.store['BOOKORBIT_AUDIO_POLL_WAIT_FOR_SETTLE'], 'false')
 
     def test_the_page_marks_restart_settings_and_ships_defaults(self):
         html = self.client.get('/settings').get_data(as_text=True)

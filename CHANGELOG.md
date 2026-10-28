@@ -15,8 +15,13 @@ All notable changes to BookBridge will be documented in this file.
   Matching**, **Alignment**, **AI**, **Server**, **Maintenance** and **Users**. The KOReader book-matching options
   that sat under Suggestions, and the transcription and alignment options buried in System → Advanced, each have a
   home of their own. The clean-up and backfill buttons live on **Maintenance**. Every on/off is now the same switch.
-- **One row per app for how often it is checked.** Each app's poll mode, interval and "wait until you pause" are now
-  a single row, and they no longer hide behind the Instant Sync switch.
+- **One choice instead of one per app.** How often apps are checked, how often highlights sync, the "Up Next" shelf
+  that auto-matches books you put on it, and how long to wait before posting progress to Hardcover, StoryGraph and
+  Goodreads are each a single setting now, applied to every app you use. Highlights, reading-history switches and the
+  "Up Next" shelf each have their own card instead of being spread across the service cards.
+- **More of BookBridge is in Settings.** Identifying books a KOReader device opens that BookBridge doesn't know yet,
+  the Storyteller collection for synced books, combining KOReader statistics across your devices, and the Whisper.cpp
+  server timeout used to be environment variables only.
 - **Find a setting searches every tab, and "Only what I've changed" lists your changes.** Each changed setting has a
   **reset** link back to its default.
 - **Each reader chooses their own reading preferences.** Highlight, reading-status and History sharing between
@@ -28,9 +33,6 @@ All notable changes to BookBridge will be documented in this file.
   now say what they do, and descriptions say what changes for you and when you would touch them.
 
 ### Fixed
-
-- **"Wait until you pause" stays on for an app you have switched off.** Saving Settings while an app was switched
-  off quietly turned its "wait for position to settle" option back off.
 
 - **Storyteller listening shows as one Audiobookshelf session per sitting** (#566). With **Count as Listening Time**
   on, every sync opened and closed its own ABS listening session, so 30 minutes with a 3-minute sync showed as ten

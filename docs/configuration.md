@@ -671,6 +671,24 @@ Transcription notes:
 - **Forced alignment** is the recommended, default-on method: it runs on the CPU in every published image (standard and `-cuda`) using QuartzNet, and it finds each chapter directly in the audio, so long books skip the Whisper transcript entirely — a 22-hour audiobook takes about 7.5 minutes on a modern 8-thread CPU, a 39-hour one about 15. It falls back to transcription automatically, with no user action needed, for a book that is not in English, whose audio does not follow the text closely enough, whose chapters are narrated out of order, or that appears to be a different book — that fallback is expected, not an error. New installs default it on; existing installs keep whatever they had.
 - For a non-English book, switch **Alignment model** to `mms_fa` under **Advanced — forced alignment model**. MMS needs a self-built image (`INSTALL_CTC=true`) and effectively an NVIDIA GPU — see [Forced alignment for non-English books (MMS)](#forced-alignment-for-non-english-books-mms) below.
 
+### Shared choices
+
+A few choices that used to be repeated on every service card are now one control each
+on the Settings page. Saving copies the value into every service's own setting, so the
+per-service environment variables in the tables above still work and still seed a first
+boot; the first save from the Settings page evens them out.
+
+| Settings control | Where | Saves into |
+| --- | --- | --- |
+| When to check / Check every / Wait until you pause | Reading & Sync → How often each app is checked | `*_POLL_MODE`, `*_POLL_SECONDS`, `*_POLL_WAIT_FOR_SETTLE` for Storyteller, Grimmory (+ audiobooks), BookOrbit (+ audiobooks), Kavita, CWA Kobo sync and BookFusion |
+| Sync highlights every (minutes) | Reading & Sync → Highlights & notes | `BOOKORBIT_`, `BOOKLORE_`, `READEST_` and `HARDCOVER_ANNOTATION_SYNC_MINUTES` (the highlight timer always ran on the shortest of these) |
+| "Up Next" shelf | Library & Matching → "Up Next" shelf | `BOOKORBIT_`, `BOOKLORE_` and `KAVITA_SHELF_WATCH_ENABLED` / `_NAME` / `_THRESHOLD` / `_RESCAN_HOURS` |
+| Wait before posting progress (minutes) | Services → Posting to trackers | `HARDCOVER_`, `STORYGRAPH_` and `GOODREADS_UPDATE_COOLDOWN_MINS` |
+
+When the services currently disagree, the control shows the fastest custom check timer,
+"on" if any service has a switch on, the shortest highlight interval and the longest tracker
+cooldown.
+
 ### Sync Tuning
 
 Found under **Settings -> Reading & Sync**. Each app that cannot notify BookBridge has one row in **How often each app is checked**; Alignment Health is under **Settings -> Alignment**.

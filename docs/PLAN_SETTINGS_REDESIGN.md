@@ -77,19 +77,22 @@ KoSync hot paths and session flushes), `SYNC_COMPLETION_THRESHOLD` (also read by
 sweep). Larger: shelf watch per user (runs as the primary admin today), Telegram per user (one global
 log handler), `ABS_PROGRESS_OFFSET_SECONDS` (captured in `ABSSyncClient.__init__`).
 
-## Phase 3 — combine further
+## Phase 3 — combine (done)
 
-- **Reading history:** one card with a row per app (ABS checkpoints, Storyteller listening, Grimmory
-  and BookOrbit sessions) instead of a switch inside each service card.
-- **"Up Next" shelf watch:** Grimmory, BookOrbit and Kavita each have the same four fields. Use one
-  card with a row per app, like the polling table.
-- **Highlights & notes:** the `*_ANNOTATION_SYNC` switches and intervals for KOReader, Grimmory,
-  BookFusion, Readest, Hardcover and BookOrbit in one place.
-- **Trackers:** the three `*_UPDATE_COOLDOWN_MINS` become one field, unless someone needs them
-  to differ.
-- **`OLLAMA_*` vs `LLM_*`:** retire the legacy duplicates with a one-time migration.
-- **Services cards:** show the admin's own account status inline ("Your account: connected")
-  instead of the "set this under Users → (you) → Integrations" boxes.
+One control per shared choice (`MERGED_SETTINGS` in `src/utils/config_loader.py`): per-app polling,
+highlight interval, "Up Next" shelf watch, tracker cooldown. The page posts the merged field; `POST /settings`
+copies it into each app's key before saving (checkboxes post a hidden `off` so unticking reaches every app),
+so consumers and stored keys are unchanged. `merged_setting_values()` picks what the control shows when the
+apps disagree. Highlights, reading history and the shelf each got a card. Four env-only settings moved onto
+the page: `AUTO_CREATE_EBOOK_MAPPING`, `STORYTELLER_COLLECTION_NAME`, `KOREADER_COMBINE_DEVICE_STATS`,
+`WHISPER_CPP_TIMEOUT`. Kept separate on purpose: the KOReader and ABS debounces (different event rhythms; the
+ABS one is env-only) and the reading-history switches (four different behaviours).
+
+Dev port: drop `GOODREADS_UPDATE_COOLDOWN_MINS` from `ALL_APPS_TRACKER_COOLDOWN_MINS`.
+
+Still open: retire the legacy `OLLAMA_*` duplicates of `LLM_*` (needs a migration); show the admin's own account
+status inline on each service card; presets for the AI tab's tuning numbers; fold each merged group into a
+single stored key when its consumers are next reworked.
 
 ## Shrinking the restart list
 

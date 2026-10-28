@@ -2543,7 +2543,7 @@ def koreader_upload_statistics():
 @kosync_auth_required
 def koreader_merged_statistics():
     """Return other devices' page-stat events so the plugin can merge them locally."""
-    if os.environ.get("KOREADER_COMBINE_DEVICE_STATS", "true").lower() != "true":
+    if not env_truthy("KOREADER_COMBINE_DEVICE_STATS", "true"):
         return jsonify({"enabled": False, "page_stats": []}), 200
 
     device = str(request.args.get("device") or "").strip()
@@ -4279,7 +4279,7 @@ def _schedule_auto_discovery(doc_id: str, user_id=None, *, source: str = "get") 
     or AUTO_CREATE_EBOOK_MAPPING is off. Preserves _active_scans dedupe.
     """
     global _queued_discovery_count
-    auto_create = os.environ.get('AUTO_CREATE_EBOOK_MAPPING', 'true').lower() == 'true'
+    auto_create = env_truthy('AUTO_CREATE_EBOOK_MAPPING', 'true')
     if not auto_create:
         return
     with _active_scans_lock:
