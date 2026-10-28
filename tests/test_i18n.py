@@ -306,6 +306,32 @@ class RenderedTranslationTests(I18nTestBase):
         self.assertIn('confirm("Supprimer l\\u0027utilisateur \\u003ci\\u003ex ?")', body)
         self.assertNotIn('<i>x', body)
 
+    def test_integration_field_labels_render_russian(self):
+        # Labels, group names and select options come from PER_USER_FIELD_GROUPS
+        # in Python and are translated only where shown. The option *values*, the
+        # field names and the group comparisons stay English.
+        _write_catalog(self.translations, 'ru', {
+            'API token': 'API-токен',
+            'Reading preferences': 'Настройки чтения',
+            'KOReader Collections': 'Коллекции KOReader',
+            'Collection source': 'Источник коллекций',
+            'Off / Disabled': 'Выключено',
+            'Hardcover Lists': 'Списки Hardcover',
+        })
+        user = self.svc.create_user("reader", "secret")
+        self._login()
+        self.client.post('/account/language', data={'language': 'ru'}, follow_redirects=False)
+        for path in ('/account/integrations', f'/admin/users/{user.id}/integrations'):
+            body = self.client.get(path).get_data(as_text=True)
+            self.assertIn('API-токен', body, path)
+            self.assertIn('Настройки чтения', body, path)
+            self.assertIn('Коллекции KOReader', body, path)
+            self.assertIn('Источник коллекций', body, path)
+            self.assertRegex(body, r'<option value="off"[^>]*>Выключено</option>', path)
+            self.assertRegex(body, r'<option value="hardcover"[^>]*>Списки Hardcover</option>', path)
+            self.assertIn('name="DEVICE_SYNC_COLLECTION_SOURCE"', body, path)
+            self.assertNotIn('Off / Disabled', body, path)
+
 
 class TemplateMessageTests(unittest.TestCase):
     """Every msgid extracted from the templates must survive newstyle gettext.
@@ -333,6 +359,55 @@ class TemplateMessageTests(unittest.TestCase):
                 except (ValueError, TypeError, KeyError) as exc:
                     bad.append(f"{filename}:{lineno}: {msgid!r} ({exc})")
         self.assertEqual(bad, [], "msgids that break newstyle gettext:\n" + "\n".join(bad))
+
+
+class FieldGroupMessageTests(unittest.TestCase):
+    """The display text in PER_USER_FIELD_GROUPS must reach the catalog.
+
+    It is shown through `{{ _(label) }}`, which only finds a translation if Babel
+    extracted the same string from user_config.py. A label added without N_()
+    would silently stay English, so every group name, field label and select
+    option label is checked against what the [python:] section of babel.cfg
+    actually extracts.
+    """
+
+    @staticmethod
+    def _extracted():
+        from babel.messages.extract import extract_from_file
+
+        path = Path(__file__).parent.parent / "src" / "utils" / "user_config.py"
+        return {message for _lineno, message, _comments, _ctx in extract_from_file("python", str(path))}
+
+    @staticmethod
+    def _display_text():
+        from src.utils.user_config import PER_USER_FIELD_GROUPS
+
+        texts = set()
+        for group, fields in PER_USER_FIELD_GROUPS:
+            texts.add(group)
+            for _key, label, ftype in fields:
+                texts.add(label)
+                if ftype.startswith("select:"):
+                    for opt in ftype[len("select:"):].split("|"):
+                        parts = opt.split("=", 1)
+                        texts.add(parts[1] if len(parts) > 1 else parts[0])
+        return texts
+
+    def test_every_label_is_extracted(self):
+        missing = sorted(self._display_text() - self._extracted())
+        self.assertEqual(missing, [], "Display text not marked with N_() in user_config.py:\n" + "\n".join(missing))
+
+    def test_labels_are_valid_newstyle_format_strings(self):
+        # `{{ _(label) }}` goes through newstyle gettext too, so a bare % breaks it.
+        from collections import defaultdict
+
+        bad = []
+        for text in self._display_text():
+            try:
+                text % defaultdict(str)
+            except (ValueError, TypeError, KeyError) as exc:
+                bad.append(f"{text!r} ({exc})")
+        self.assertEqual(bad, [], "\n".join(bad))
 
 
 if __name__ == '__main__':
