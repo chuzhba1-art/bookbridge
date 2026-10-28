@@ -6,7 +6,9 @@ in a temp dir for the render test — the repo ships no catalogs yet, and the
 language picker must not offer a language we cannot render.
 """
 
+import json
 import os
+import re
 import shutil
 import tempfile
 import unittest
@@ -21,13 +23,18 @@ from tests.test_webserver import MockContainer
 _TEMPLATES = str(Path(__file__).parent.parent / "templates")
 
 
-def _write_catalog(directory: str, locale: str, messages: dict) -> None:
-    """Build translations/<locale>/LC_MESSAGES/messages.mo from a plain dict."""
+def _write_catalog(directory: str, locale: str, messages: dict, contexts: dict = None) -> None:
+    """Build translations/<locale>/LC_MESSAGES/messages.mo from a plain dict.
+
+    contexts maps (msgctxt, msgid) to msgstr, for pgettext() strings.
+    """
     lc_dir = Path(directory) / locale / "LC_MESSAGES"
     lc_dir.mkdir(parents=True, exist_ok=True)
     catalog = Catalog(locale=locale, domain="messages")
     for msgid, msgstr in messages.items():
         catalog.add(msgid, string=msgstr)
+    for (context, msgid), msgstr in (contexts or {}).items():
+        catalog.add(msgid, string=msgstr, context=context)
     with open(lc_dir / "messages.mo", "wb") as fh:
         write_mo(fh, catalog)
     # Catalog discovery is cached; drop it so the new catalog is seen.
@@ -359,6 +366,101 @@ class TemplateMessageTests(unittest.TestCase):
                 except (ValueError, TypeError, KeyError) as exc:
                     bad.append(f"{filename}:{lineno}: {msgid!r} ({exc})")
         self.assertEqual(bad, [], "msgids that break newstyle gettext:\n" + "\n".join(bad))
+
+
+class DashboardRenderTests(unittest.TestCase):
+    """The Library page with a real book card, rendered in Russian.
+
+    Borrows the mocked-container setup from tests.test_webserver (its methods,
+    not its class, so its own tests are not collected a second time here).
+    """
+
+    def setUp(self):
+        from tests.test_webserver import CleanFlaskIntegrationTest
+
+        # The catalog directory is read when the app is built, so it must exist
+        # in the environment before create_app runs in the borrowed setUp.
+        self.translations = tempfile.mkdtemp()
+        self._orig_translations_dir = os.environ.get('TRANSLATIONS_DIR')
+        os.environ['TRANSLATIONS_DIR'] = self.translations
+        _write_catalog(self.translations, 'ru', {
+            'Not Started': 'Не начато',
+            'Sort by:': 'Сортировка:',
+            'Last Synced': 'Последняя синхронизация',
+            'Synced %(when)s': 'Синхронизировано %(when)s',
+            'Open in Audiobookshelf': 'Открыть в Audiobookshelf',
+            'Delete this mapping?': "Удалить эту связку?",
+            ('<span class="rs-val">%(count)s</span> session',
+             '<span class="rs-val">%(count)s</span> sessions'):
+                ('<span class="rs-val">%(count)s</span> сеанс',
+                 '<span class="rs-val">%(count)s</span> сеанса',
+                 '<span class="rs-val">%(count)s</span> сеансов'),
+            # A user's status, same word: must not leak into the book badge.
+            'active': 'активен',
+        }, contexts={('book state', 'active'): 'активна'})
+        CleanFlaskIntegrationTest.setUp(self)
+        CleanFlaskIntegrationTest._set_dashboard_integrations(self)
+
+    def tearDown(self):
+        from tests.test_webserver import CleanFlaskIntegrationTest
+
+        CleanFlaskIntegrationTest.tearDown(self)
+        if self._orig_translations_dir is None:
+            os.environ.pop('TRANSLATIONS_DIR', None)
+        else:
+            os.environ['TRANSLATIONS_DIR'] = self._orig_translations_dir
+        shutil.rmtree(self.translations, ignore_errors=True)
+        from src.web_server import available_locales
+        available_locales.cache_clear()
+
+    def _dashboard(self, language):
+        from src.db.models import Book
+
+        book = Book(abs_id='ru-card', abs_title='Первый закон', ebook_filename='law.epub',
+                    status='active', duration=100)
+        self.mock_database_service.get_all_books.return_value = [book]
+        self.mock_database_service.get_all_reading_stats.return_value = {
+            'ru-card': {'listen_seconds': 0, 'read_seconds': 600, 'session_count': 5,
+                        'avg_session_seconds': 120},
+        }
+        response = self.client.get('/', headers={'Accept-Language': language})
+        self.assertEqual(response.status_code, 200)
+        return response.get_data(as_text=True)
+
+    def test_library_renders_russian(self):
+        body = self._dashboard('ru')
+        self.assertIn('<h2>Не начато</h2>', body)
+        self.assertIn('Сортировка:', body)
+        self.assertIn('<option value="last_sync">Последняя синхронизация</option>', body)
+        self.assertIn('<span class="last-sync-age">Синхронизировано', body)
+        # Book state: translated label, English key kept for CSS and data-status.
+        self.assertRegex(body, r'status-badge status-active">\s*активна')
+        self.assertIn('data-status="active"', body)
+        # Plural through {% trans %}: 5 takes the third Russian form.
+        self.assertIn('<span class="rs-val">5</span> сеансов', body)
+        self.assertIn('title="Открыть в Audiobookshelf"', body)
+        # tojson writes non-ASCII as \\uXXXX escapes, which JS decodes the same way.
+        match = re.search(r"onclick='return confirm\((\"[^\"]*\")\)'", body)
+        self.assertIsNotNone(match)
+        self.assertEqual(json.loads(match.group(1)), 'Удалить эту связку?')
+
+    def test_library_english_is_unchanged(self):
+        body = self._dashboard('en')
+        self.assertIn('<h2>Not Started</h2>', body)
+        self.assertRegex(body, r'status-badge status-active">\s*active')
+        self.assertIn('<span class="rs-val">5</span> sessions', body)
+        self.assertIn('title="Open in Audiobookshelf"', body)
+        self.assertIn("onclick='return confirm(\"Delete this mapping?\")'", body)
+
+    def test_live_refresh_finds_services_by_data_attribute(self):
+        # The 30-second refresh updates ABS/KoSync/Storyteller values in place. It
+        # used to find them by their English title, which a translation changes.
+        body = self._dashboard('ru')
+        for service in ('abs', 'kosync', 'storyteller'):
+            self.assertIn(f'.service-item[data-service="{service}"] .service-value', body)
+        self.assertNotIn('.service-item[title', body)
+        self.assertIn('class="service-item" data-service="abs"', body)
+        self.assertIn('class="service-item cursor-pointer" data-service="kosync"', body)
 
 
 class FieldGroupMessageTests(unittest.TestCase):
