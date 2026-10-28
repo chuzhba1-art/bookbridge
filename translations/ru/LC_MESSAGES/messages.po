@@ -1,0 +1,1196 @@
+# Russian translation of the BookBridge web UI.
+# Update with the commands in docs (see translations/README.md).
+msgid ""
+msgstr ""
+"Project-Id-Version: BookBridge\n"
+"Report-Msgid-Bugs-To: https://github.com/cporcellijr/bookbridge/issues\n"
+"POT-Creation-Date: 2026-10-28 12:08+0700\n"
+"PO-Revision-Date: 2026-10-28 12:09+0700\n"
+"Last-Translator: chuzhba1-art\n"
+"Language: ru\n"
+"Language-Team: Russian\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: templates/_match_queue_panel.html:5 templates/add_book.html:1034
+#: templates/add_book.html:1216 templates/suggestions.html:203
+msgid "Cover"
+msgstr "Обложка"
+
+#: templates/_match_queue_panel.html:9 templates/add_book.html:1102
+#: templates/add_book.html:1225
+msgid "Audio only"
+msgstr "Только аудио"
+
+#: templates/_match_queue_panel.html:28
+msgid "Also generate read-along EPUBs for the BookOrbit audiobooks in this queue"
+msgstr "Также создать EPUB с чтением под аудио для аудиокниг BookOrbit из этой очереди"
+
+#: templates/_match_queue_panel.html:33 templates/add_book.html:1262
+#, python-format
+msgid "Match All (%(count)s)"
+msgstr "Сопоставить все (%(count)s)"
+
+#: templates/_match_queue_panel.html:38 templates/add_book.html:1274
+#, python-format
+msgid "Create Storyteller Edition &amp; Match All (%(count)s)"
+msgstr "Создать издание Storyteller и сопоставить все (%(count)s)"
+
+#: templates/_match_queue_panel.html:44 templates/add_book.html:1302
+msgid "Clear entire queue?"
+msgstr "Очистить всю очередь?"
+
+#: templates/_match_queue_panel.html:44 templates/add_book.html:1303
+msgid "Clear Queue"
+msgstr "Очистить очередь"
+
+#: templates/_match_queue_panel.html:48 templates/add_book.html:1311
+msgid "Queue is empty"
+msgstr "Очередь пуста"
+
+#: templates/_match_queue_panel.html:48 templates/add_book.html:1311
+msgid "Add items to get started"
+msgstr "Добавьте книги, чтобы начать"
+
+#: templates/_nav.html:20
+msgid "Library"
+msgstr "Библиотека"
+
+#: templates/_nav.html:21
+msgid "Add Book"
+msgstr "Добавить книгу"
+
+#: templates/_nav.html:22 templates/job_queue.html:3
+#: templates/job_queue.html:11
+msgid "Job Queue"
+msgstr "Очередь задач"
+
+#: templates/_nav.html:24 templates/stats.html:3
+msgid "Stats"
+msgstr "Статистика"
+
+#: templates/_nav.html:27 templates/suggestions.html:3
+msgid "Suggestions"
+msgstr "Предложения"
+
+#: templates/_nav.html:30 templates/logs.html:4
+msgid "Logs"
+msgstr "Журнал"
+
+#: templates/_nav.html:33
+msgid "Settings"
+msgstr "Настройки"
+
+#: templates/_nav.html:57
+msgid "Audiobookshelf audiobook library"
+msgstr "Библиотека аудиокниг Audiobookshelf"
+
+#: templates/_nav.html:60
+msgid "Grimmory audiobook library"
+msgstr "Библиотека аудиокниг Grimmory"
+
+#: templates/_nav.html:63
+msgid "BookOrbit audiobook library"
+msgstr "Библиотека аудиокниг BookOrbit"
+
+#: templates/_nav.html:78
+msgid "Calibre-Web ebook library"
+msgstr "Библиотека электронных книг Calibre-Web"
+
+#: templates/_nav.html:80
+msgid "Grimmory ebook library"
+msgstr "Библиотека электронных книг Grimmory"
+
+#: templates/_nav.html:82
+msgid "BookOrbit ebook library"
+msgstr "Библиотека электронных книг BookOrbit"
+
+#: templates/_nav.html:84
+msgid "Kavita ebook library"
+msgstr "Библиотека электронных книг Kavita"
+
+#: templates/_nav.html:89 templates/_nav.html:90
+msgid "Shelfmark Tool"
+msgstr "Инструмент Shelfmark"
+
+#: templates/_nav.html:98 templates/_nav.html:102 templates/account.html:2
+#: templates/account.html:49
+msgid "Account"
+msgstr "Аккаунт"
+
+#: templates/_nav.html:104
+msgid "Documentation"
+msgstr "Документация"
+
+#: templates/_nav.html:110
+msgid "Docs"
+msgstr "Документация"
+
+#: templates/_nav.html:112
+msgid "Logout"
+msgstr "Выйти"
+
+#: templates/account.html:46
+msgid "Back to dashboard"
+msgstr "На главную"
+
+#: templates/account.html:50 templates/account_integrations.html:59
+#, python-format
+msgid "Signed in as <strong>%(name)s</strong>"
+msgstr "Вы вошли как <strong>%(name)s</strong>"
+
+#: templates/account.html:50 templates/account_integrations.html:59
+msgid "(admin)"
+msgstr "(администратор)"
+
+#: templates/account.html:57 templates/add_book.html:1046
+#: templates/add_book.html:1123 templates/suggestions.html:208
+#: templates/suggestions.html:215
+msgid "Language"
+msgstr "Язык"
+
+#: templates/account.html:58
+msgid "Interface language"
+msgstr "Язык интерфейса"
+
+#: templates/account.html:60
+msgid "Automatic (browser)"
+msgstr "Автоматически (по браузеру)"
+
+#: templates/account.html:69 templates/account.html:70 templates/login.html:17
+msgid "Username"
+msgstr "Имя пользователя"
+
+#: templates/account.html:73
+msgid "Change password"
+msgstr "Сменить пароль"
+
+#: templates/account.html:74
+msgid "New password"
+msgstr "Новый пароль"
+
+#: templates/account.html:76
+msgid "Confirm new password"
+msgstr "Повторите новый пароль"
+
+#: templates/account.html:78
+msgid "Leave password fields blank to keep your current password."
+msgstr "Оставьте поля пароля пустыми, чтобы сохранить текущий пароль."
+
+#: templates/account.html:80
+msgid "Confirm it's you"
+msgstr "Подтвердите, что это вы"
+
+#: templates/account.html:81
+msgid "Current password"
+msgstr "Текущий пароль"
+
+#: templates/account.html:84
+msgid "Save changes"
+msgstr "Сохранить изменения"
+
+#: templates/account.html:88 templates/account_integrations.html:58
+msgid "My Integrations"
+msgstr "Мои интеграции"
+
+#: templates/account.html:90
+msgid "Manage the accounts, tokens, and sync toggles BookBridge uses for your own reader profile."
+msgstr "Аккаунты, токены и переключатели синхронизации, которые BookBridge использует для вашего профиля читателя."
+
+#: templates/account.html:93
+msgid "Open integrations"
+msgstr "Открыть интеграции"
+
+#: templates/account.html:97
+msgid "Connect a KOReader device"
+msgstr "Подключить устройство с KOReader"
+
+#: templates/account.html:99
+msgid "1 · Point KOReader at the bridge."
+msgstr "1 · Укажите KOReader адрес моста."
+
+#: templates/account.html:100
+#, python-format
+msgid "On the device, open Tools → Progress sync → Custom sync server and enter this address, then sign in with your KoSync username &amp; password from <a href=\"%(url)s\" style=\"color:#aab4f5;\">My Integrations</a>."
+msgstr "На устройстве откройте «Инструменты → Синхронизация прогресса → Свой сервер синхронизации» и введите этот адрес, затем войдите с именем пользователя и паролем KoSync из раздела <a href=\"%(url)s\" style=\"color:#aab4f5;\">Мои интеграции</a>."
+
+#: templates/account.html:106
+msgid "Sync server address"
+msgstr "Адрес сервера синхронизации"
+
+#: templates/account.html:108
+msgid "Copy"
+msgstr "Копировать"
+
+#: templates/account.html:111
+msgid "Suggested from this browser's address — adjust the host to one your devices can reach. Enter the base address only, with no <code>/api</code> or <code>/koreader</code> suffix."
+msgstr "Подставлено из адреса этого браузера — замените хост на тот, что доступен вашим устройствам. Указывайте только базовый адрес, без <code>/api</code> или <code>/koreader</code> в конце."
+
+#: templates/account.html:113
+#, python-format
+msgid "Split-port mode is on, so KOSync listens on port %(port)s — publish that port in Docker too."
+msgstr "Включён режим отдельного порта, поэтому KOSync слушает порт %(port)s — опубликуйте этот порт и в Docker."
+
+#: templates/account.html:116
+msgid "This address uses localhost/loopback, which points back to the KOReader device itself. Replace the host above with this server's LAN hostname or IP address before copying it."
+msgstr "Этот адрес указывает на localhost (loopback), то есть на само устройство с KOReader. Перед копированием замените хост на имя или IP-адрес этого сервера в локальной сети."
+
+#: templates/account.html:120
+msgid "2 · Install the BridgeSync plugin"
+msgstr "2 · Установите плагин BridgeSync"
+
+#: templates/account.html:122
+msgid "Delivers books from the bridge byte-for-byte (so progress auto-links with no manual matching), syncs reading stats, and relays highlights and notes. Download the zip, unzip it into <code>koreader/plugins/</code>, then restart KOReader."
+msgstr "Загружает книги с моста байт в байт (поэтому прогресс связывается сам, без ручного сопоставления), синхронизирует статистику чтения и передаёт выделения и заметки. Скачайте zip, распакуйте его в <code>koreader/plugins/</code> и перезапустите KOReader."
+
+#: templates/account.html:127
+msgid "Download plugin (.zip)"
+msgstr "Скачать плагин (.zip)"
+
+#: templates/account_integrations.html:2
+msgid "My Integrations - BookBridge"
+msgstr "Мои интеграции — BookBridge"
+
+#: templates/account_integrations.html:54
+msgid "Back to account"
+msgstr "К аккаунту"
+
+#: templates/account_integrations.html:55
+#: templates/admin_user_integrations.html:48 templates/admin_users.html:39
+msgid "Dashboard"
+msgstr "Главная"
+
+#: templates/account_integrations.html:59
+msgid "These accounts are used only for your reading progress, books, highlights, and trackers."
+msgstr "Эти аккаунты используются только для вашего прогресса чтения, книг, выделений и трекеров."
+
+#: templates/account_integrations.html:62
+msgid "Blank fields can inherit master Settings values for your admin account."
+msgstr "Для вашего аккаунта администратора пустые поля могут брать основные значения из Настроек."
+
+#: templates/account_integrations.html:64
+msgid "Blank account fields stay unavailable instead of inheriting an admin's library or tracker account."
+msgstr "Пустые поля аккаунтов остаются незаполненными и не берут библиотеку или аккаунт трекера администратора."
+
+#: templates/account_integrations.html:128
+msgid "Not linked"
+msgstr "Не связано"
+
+#: templates/account_integrations.html:128 templates/add_book.html:1126
+#: templates/add_book.html:1182
+msgid "Linked"
+msgstr "Связано"
+
+#: templates/account_integrations.html:135
+#: templates/admin_user_integrations.html:124
+msgid "Off server-wide"
+msgstr "Выключено на сервере"
+
+#: templates/account_integrations.html:135
+#: templates/admin_user_integrations.html:124 templates/admin_users.html:65
+msgid "Enable"
+msgstr "Включить"
+
+#: templates/account_integrations.html:157
+msgid "Turned off for everyone in Settings → Integrations. Your own choice here is remembered and takes effect again when an admin switches this service back on."
+msgstr "Выключено для всех в «Настройки → Интеграции». Ваш выбор здесь сохраняется и снова вступит в силу, когда администратор включит этот сервис."
+
+#: templates/account_integrations.html:160
+msgid "To create Storyteller editions, your Storyteller account needs Upload book and Book syncing permissions."
+msgstr "Чтобы создавать издания Storyteller, вашему аккаунту Storyteller нужны права Upload book и Book syncing."
+
+#: templates/account_integrations.html:163
+msgid "The account your KOReader devices use with BookBridge's own sync server. Choose HTTP Basic only when relaying through Calibre-Web Automated, preferably over HTTPS."
+msgstr "Аккаунт, с которым ваши устройства с KOReader входят на собственный сервер синхронизации BookBridge. HTTP Basic выбирайте, только если запросы идут через Calibre-Web Automated, и желательно по HTTPS."
+
+#: templates/account_integrations.html:166
+msgid "BridgeSync can create KOReader collections from your Grimmory shelves or Hardcover lists."
+msgstr "BridgeSync может создавать коллекции KOReader из ваших полок Grimmory или списков Hardcover."
+
+#: templates/account_integrations.html:169
+msgid "Username / Password is your BookOrbit web account. The KOReader sync fields are separate credentials used only for highlight and note relay."
+msgstr "Имя пользователя и пароль — это ваш веб-аккаунт BookOrbit. Поля синхронизации KOReader — отдельные учётные данные, они нужны только для передачи выделений и заметок."
+
+#: templates/account_integrations.html:172
+#, python-format
+msgid "<strong>Two separate credentials.</strong> The <strong>Access token</strong> authorizes reading progress &amp; highlights — get it with the <strong>Link BookFusion</strong> button below (device flow; the raw field is kept for recovery/manual setup). The <strong>Calibre API key</strong> is only needed to <strong>upload books</strong> to BookFusion, from the <a href=\"%(url)s\" target=\"_blank\" rel=\"noopener\" style=\"color:#aab4f5;\">BookFusion Calibre integration page</a>."
+msgstr "<strong>Два разных ключа.</strong> <strong>Токен доступа</strong> открывает доступ к прогрессу чтения и выделениям — получите его кнопкой <strong>Связать BookFusion</strong> ниже (авторизация через устройство; само поле оставлено для восстановления и ручной настройки). <strong>API-ключ Calibre</strong> нужен только для <strong>загрузки книг</strong> в BookFusion, его берут на <a href=\"%(url)s\" target=\"_blank\" rel=\"noopener\" style=\"color:#aab4f5;\">странице интеграции BookFusion с Calibre</a>."
+
+#: templates/account_integrations.html:175
+#: templates/admin_user_integrations.html:183
+msgid "Link BookFusion"
+msgstr "Связать BookFusion"
+
+#: templates/account_integrations.html:181
+#: templates/admin_user_integrations.html:144
+msgid "Test"
+msgstr "Проверить"
+
+#: templates/account_integrations.html:189
+#: templates/admin_user_integrations.html:193
+#, python-format
+msgid "(master: %(value)s)"
+msgstr "(основное: %(value)s)"
+
+#: templates/account_integrations.html:194
+#: templates/account_integrations.html:216
+#: templates/account_integrations.html:228
+#: templates/admin_user_integrations.html:198
+#: templates/admin_user_integrations.html:220
+#: templates/admin_user_integrations.html:232
+msgid "not set"
+msgstr "не задано"
+
+#: templates/account_integrations.html:194
+#: templates/admin_user_integrations.html:198
+msgid "set - leave blank to keep"
+msgstr "задано — оставьте пустым, чтобы не менять"
+
+#: templates/account_integrations.html:194
+#: templates/admin_user_integrations.html:198
+msgid "inherits master (set)"
+msgstr "берёт основное (задано)"
+
+#: templates/account_integrations.html:216
+#: templates/account_integrations.html:228
+#: templates/admin_user_integrations.html:220
+#: templates/admin_user_integrations.html:232
+#, python-format
+msgid "inherits master: %(value)s"
+msgstr "берёт основное: %(value)s"
+
+#: templates/account_integrations.html:218
+#: templates/admin_user_integrations.html:222
+msgid "Find IDs"
+msgstr "Найти ID"
+
+#: templates/account_integrations.html:223
+msgid "Select a library..."
+msgstr "Выберите библиотеку..."
+
+#: templates/account_integrations.html:234
+#: templates/admin_user_integrations.html:238
+msgid "Save integrations"
+msgstr "Сохранить интеграции"
+
+#: templates/add_book.html:3 templates/add_book.html:963
+msgid "Add / Update Book"
+msgstr "Добавить / обновить книгу"
+
+#: templates/add_book.html:964
+msgid "Pick text by itself, or pair audio with text and choose how the list should be processed"
+msgstr "Выберите только текст или пару «аудио + текст» и решите, как обработать список"
+
+#: templates/add_book.html:971
+msgid "Search by title, author, or filename..."
+msgstr "Поиск по названию, автору или имени файла..."
+
+#: templates/add_book.html:975
+msgid "Searching..."
+msgstr "Поиск..."
+
+#: templates/add_book.html:976
+msgid "Searching the library..."
+msgstr "Поиск по библиотеке..."
+
+#: templates/add_book.html:978
+msgid "Search"
+msgstr "Найти"
+
+#: templates/add_book.html:1003
+msgid "Select Audiobook"
+msgstr "Выберите аудиокнигу"
+
+#: templates/add_book.html:1004
+msgid "(optional)"
+msgstr "(необязательно)"
+
+#: templates/add_book.html:1017
+msgid "None"
+msgstr "Нет"
+
+#: templates/add_book.html:1019
+msgid "No audio"
+msgstr "Без аудио"
+
+#: templates/add_book.html:1059 templates/suggestions.html:284
+msgid "Storyteller (Preferred)"
+msgstr "Storyteller (предпочтительно)"
+
+#: templates/add_book.html:1065
+msgid "None / Skip"
+msgstr "Нет / пропустить"
+
+#: templates/add_book.html:1072
+msgid "Transcript"
+msgstr "Транскрипт"
+
+#: templates/add_book.html:1088
+msgid "Storyteller didn't respond in time or returned an error, so its results are missing. If your library is large, raise Settings → Storyteller → Library Timeout."
+msgstr "Storyteller не ответил вовремя или вернул ошибку, поэтому его результатов нет. Если библиотека большая, увеличьте «Настройки → Storyteller → Library Timeout»."
+
+#: templates/add_book.html:1094
+msgid "Select Ebook"
+msgstr "Выберите электронную книгу"
+
+#: templates/add_book.html:1095
+msgid "(optional if Storyteller selected)"
+msgstr "(необязательно, если выбран Storyteller)"
+
+#: templates/add_book.html:1105 templates/add_book.html:1146
+msgid "Audio only (no ebook)"
+msgstr "Только аудио (без электронной книги)"
+
+#: templates/add_book.html:1126
+msgid "Authoritative match via Calibre audiobookshelf_id"
+msgstr "Точное сопоставление по audiobookshelf_id из Calibre"
+
+#: templates/add_book.html:1142
+msgid "No ebooks found for this search."
+msgstr "По этому запросу электронных книг не найдено."
+
+#: templates/add_book.html:1152
+msgid "Also generate a read-along EPUB for BookOrbit once this book finishes forging"
+msgstr "Также создать EPUB с чтением под аудио для BookOrbit, когда издание этой книги будет собрано"
+
+#: templates/add_book.html:1157
+msgid "Adding to queue..."
+msgstr "Добавление в очередь..."
+
+#: templates/add_book.html:1158
+msgid "Adding this item to the queue..."
+msgstr "Добавляем книгу в очередь..."
+
+#: templates/add_book.html:1160 templates/suggestions.html:295
+msgid "Add to Queue"
+msgstr "Добавить в очередь"
+
+#: templates/add_book.html:1168
+msgid "Reader Documents"
+msgstr "Документы читалок"
+
+#: templates/add_book.html:1172
+msgid "Checking..."
+msgstr "Проверка..."
+
+#: templates/add_book.html:1179
+msgid "Search hash, device, or book"
+msgstr "Поиск по хэшу, устройству или книге"
+
+#: templates/add_book.html:1180
+msgid "Reader document filter"
+msgstr "Фильтр документов читалок"
+
+#: templates/add_book.html:1181
+msgid "Needs Linking"
+msgstr "Нужно связать"
+
+#: templates/add_book.html:1183
+msgid "All"
+msgstr "Все"
+
+#: templates/add_book.html:1185
+msgid "Show All"
+msgstr "Показать все"
+
+#: templates/add_book.html:1188
+msgid "Books your e-reader has reported to the sync server, identified by file hash. BookBridge links them to your books automatically; if a device copy doesn't match any library file (progress not syncing), link it to the right book here. Old unlinked documents are usually just history — link one only when a current book is failing to sync."
+msgstr "Книги, о которых ваша читалка сообщила серверу синхронизации; они определяются по хэшу файла. BookBridge связывает их с вашими книгами автоматически; если копия на устройстве не совпадает ни с одним файлом библиотеки (прогресс не синхронизируется), свяжите её с нужной книгой здесь. Старые несвязанные документы — обычно просто история: связывайте документ, только когда текущая книга не синхронизируется."
+
+#: templates/add_book.html:1193
+msgid "Loading..."
+msgstr "Загрузка..."
+
+#: templates/add_book.html:1202
+msgid "Queue"
+msgstr "Очередь"
+
+#: templates/add_book.html:1203 templates/suggestions.html:175
+#: templates/suggestions.html:253
+#, python-format
+msgid "%(num)s item"
+msgid_plural "%(num)s items"
+msgstr[0] "%(num)s элемент"
+msgstr[1] "%(num)s элемента"
+msgstr[2] "%(num)s элементов"
+
+#: templates/add_book.html:1219
+msgid "Text"
+msgstr "Текст"
+
+#: templates/add_book.html:1241
+msgid "A read-along EPUB will be generated for BookOrbit once this book finishes forging"
+msgstr "Когда издание этой книги будет собрано, для BookOrbit будет создан EPUB с чтением под аудио"
+
+#: templates/add_book.html:1241
+msgid "Read-along"
+msgstr "Чтение под аудио"
+
+#: templates/add_book.html:1259
+msgid "Processing queue..."
+msgstr "Обработка очереди..."
+
+#: templates/add_book.html:1260
+msgid "Processing queued matches and returning to the dashboard..."
+msgstr "Обрабатываем сопоставления из очереди и возвращаемся на главную..."
+
+#: templates/add_book.html:1271
+msgid "Creating Storyteller editions..."
+msgstr "Создание изданий Storyteller..."
+
+#: templates/add_book.html:1272
+msgid "Creating queued Storyteller editions and saving matches..."
+msgstr "Создаём издания Storyteller из очереди и сохраняем сопоставления..."
+
+#: templates/add_book.html:1277
+msgid "Creates Storyteller editions for audio plus standard ebook items; existing Storyteller or text-only items are matched directly."
+msgstr "Создаёт издания Storyteller для пар «аудио + обычная электронная книга»; готовые издания Storyteller и книги только с текстом сопоставляются сразу."
+
+#: templates/add_book.html:1286
+msgid "Creating Storyteller edition..."
+msgstr "Создание издания Storyteller..."
+
+#: templates/add_book.html:1287
+msgid "Starting Storyteller edition creation and returning to the dashboard..."
+msgstr "Запускаем создание издания Storyteller и возвращаемся на главную..."
+
+#: templates/add_book.html:1289 templates/add_book.html:1294
+msgid "Create Storyteller Edition Only"
+msgstr "Только создать издание Storyteller"
+
+#: templates/add_book.html:1293
+msgid "Storyteller edition creation is available for one queued book at a time."
+msgstr "Издание Storyteller можно создавать только для одной книги в очереди за раз."
+
+#: templates/add_book.html:1296
+msgid "Storyteller edition-only creation is disabled when more than one item is queued."
+msgstr "Отдельное создание издания Storyteller недоступно, когда в очереди больше одной книги."
+
+#: templates/add_book.html:1321
+msgid "Storyteller edition staging"
+msgstr "Подготовка издания Storyteller"
+
+#: templates/add_book.html:1322
+msgid "Choose what happens to the staged source files after Storyteller finishes processing."
+msgstr "Выберите, что делать с подготовленными исходными файлами после обработки в Storyteller."
+
+#: templates/add_book.html:1325
+msgid "Delete staged sources"
+msgstr "Удалить подготовленные файлы"
+
+#: templates/add_book.html:1326
+msgid "Default. Copy files into Storyteller, then remove the staged audio and EPUB after processing completes."
+msgstr "По умолчанию. Файлы копируются в Storyteller, а после обработки подготовленные аудио и EPUB удаляются."
+
+#: templates/add_book.html:1329
+msgid "Keep staged files / hardlink local"
+msgstr "Оставить файлы / жёсткие ссылки на локальные"
+
+#: templates/add_book.html:1330
+msgid "Use hardlinks for local files when possible and skip staged-source cleanup. Remote downloads still fall back to copied files."
+msgstr "Для локальных файлов по возможности использовать жёсткие ссылки и не удалять подготовленные файлы. Скачанные с удалённых источников файлы всё равно копируются."
+
+#: templates/add_book.html:1334
+msgid "Cancel"
+msgstr "Отмена"
+
+#: templates/admin_user_integrations.html:3
+#, python-format
+msgid "%(name)s - Integrations - BookBridge admin"
+msgstr "%(name)s — интеграции — администрирование BookBridge"
+
+#: templates/admin_user_integrations.html:47 templates/admin_users.html:45
+msgid "Users"
+msgstr "Пользователи"
+
+#: templates/admin_user_integrations.html:51
+#, python-format
+msgid "Integrations - %(name)s"
+msgstr "Интеграции: %(name)s"
+
+#: templates/admin_user_integrations.html:52
+msgid "Admin - set this user's own accounts/library here."
+msgstr "Администратор — здесь задаются собственные аккаунты и библиотека этого пользователя."
+
+#: templates/admin_user_integrations.html:52
+msgid "User - set this user's own accounts/library here."
+msgstr "Пользователь — здесь задаются собственные аккаунты и библиотека этого пользователя."
+
+#: templates/admin_user_integrations.html:55
+msgid "Blank fields inherit the master Settings value for this admin account."
+msgstr "Для этого аккаунта администратора пустые поля берут основное значение из Настроек."
+
+#: templates/admin_user_integrations.html:57
+msgid "Regular users need explicit account credentials here. Blank account fields stay unavailable instead of inheriting the admin/master library."
+msgstr "Обычным пользователям здесь нужны собственные учётные данные. Пустые поля аккаунтов остаются незаполненными и не берут основную библиотеку администратора."
+
+#: templates/admin_user_integrations.html:60
+msgid "You can manage these fields for this reader here, or the reader can sign in and update their own accounts, tokens, and sync toggles from <strong>Account -> My Integrations</strong>."
+msgstr "Эти поля можно заполнить за читателя здесь, или читатель может войти сам и изменить свои аккаунты, токены и переключатели синхронизации в разделе <strong>Аккаунт → Мои интеграции</strong>."
+
+#: templates/admin_user_integrations.html:150
+msgid "Turned off for everyone in Settings → Integrations. This reader’s own choice is remembered and takes effect again when the service is switched back on."
+msgstr "Выключено для всех в «Настройки → Интеграции». Выбор этого читателя сохраняется и снова вступит в силу, когда сервис включат."
+
+#: templates/admin_user_integrations.html:153
+msgid "For this user to <strong>create Storyteller editions</strong>, their Storyteller account needs the <strong>Upload book</strong> and <strong>Book syncing</strong> permissions (granted in Storyteller → user permissions). Without them, it fails at the upload (403 Forbidden) or the processing-trigger step."
+msgstr "Чтобы этот пользователь мог <strong>создавать издания Storyteller</strong>, его аккаунту Storyteller нужны права <strong>Upload book</strong> и <strong>Book syncing</strong> (выдаются в Storyteller → права пользователя). Без них создание падает на загрузке (403 Forbidden) или на запуске обработки."
+
+#: templates/admin_user_integrations.html:159
+msgid "The account this user's KOReader <strong>devices</strong> sign in to <strong>BookBridge's own</strong> sync server with. Reading progress (and highlights, via the Bridge Sync plugin) come <strong>in</strong> this way. This is <em>not</em> the same as the \"KOReader sync\" fields under BookOrbit below. Choose HTTP Basic only when relaying through Calibre-Web Automated, preferably over HTTPS."
+msgstr "Аккаунт, с которым <strong>устройства</strong> этого пользователя с KOReader входят на <strong>собственный</strong> сервер синхронизации BookBridge. Так <strong>приходят</strong> прогресс чтения (и выделения — через плагин Bridge Sync). Это <em>не</em> то же самое, что поля «KOReader sync» в разделе BookOrbit ниже. HTTP Basic выбирайте, только если запросы идут через Calibre-Web Automated, и желательно по HTTPS."
+
+#: templates/admin_user_integrations.html:166
+msgid "BridgeSync can create KOReader collections from either this user's Grimmory shelves or this user's Hardcover lists. Choose one source here to avoid collection-name collisions. Only books already matched in BookBridge are included."
+msgstr "BridgeSync может создавать коллекции KOReader из полок Grimmory этого пользователя или из его списков Hardcover. Выберите здесь один источник, чтобы названия коллекций не пересекались. В коллекции попадают только книги, уже сопоставленные в BookBridge."
+
+#: templates/admin_user_integrations.html:171
+msgid "<strong>Two separate logins.</strong> <strong>Username / Password</strong> is the BookOrbit web account (reading progress, library, collections). The <strong>KOReader sync</strong> fields are a <em>different</em> credential — a KOReader-sync account on BookOrbit that the bridge uses <strong>only</strong> to relay highlights and notes <strong>out</strong> to BookOrbit's web reader. Leave them blank unless you want highlight sync. If that sync account's name differs from the BookOrbit username, set <strong>owner</strong> to the BookOrbit username so the bridge knows the account belongs to this user."
+msgstr "<strong>Два разных входа.</strong> <strong>Имя пользователя и пароль</strong> — веб-аккаунт BookOrbit (прогресс чтения, библиотека, коллекции). Поля <strong>KOReader sync</strong> — <em>другие</em> учётные данные: аккаунт KOReader-sync в BookOrbit, через который мост <strong>только</strong> <strong>отправляет</strong> выделения и заметки в веб-читалку BookOrbit. Оставьте их пустыми, если синхронизация выделений не нужна. Если имя этого аккаунта отличается от имени пользователя BookOrbit, укажите в поле <strong>owner</strong> имя пользователя BookOrbit, чтобы мост знал, что аккаунт принадлежит этому пользователю."
+
+#: templates/admin_user_integrations.html:180
+#, python-format
+msgid "<strong>Two separate credentials.</strong> The <strong>Access token</strong> (reading progress &amp; highlights) can be obtained with the <strong>Link BookFusion</strong> button below, or by the reader from their own <strong>Account → My Integrations</strong> page. <strong>Linking here saves the token to this user</strong> — you must be signed in to the BookFusion account you want to link when you complete the device authorization. The <strong>Calibre API key</strong> is only for <strong>uploading books</strong> and can be pasted here, from the <a href=\"%(url)s\" target=\"_blank\" rel=\"noopener\" style=\"color:#aab4f5;\">BookFusion Calibre integration page</a>."
+msgstr "<strong>Два разных ключа.</strong> <strong>Токен доступа</strong> (прогресс чтения и выделения) можно получить кнопкой <strong>Связать BookFusion</strong> ниже, или читатель получит его сам на странице <strong>Аккаунт → Мои интеграции</strong>. <strong>Связывание здесь сохраняет токен этому пользователю</strong> — при авторизации устройства вы должны быть вошедшими в тот аккаунт BookFusion, который хотите связать. <strong>API-ключ Calibre</strong> нужен только для <strong>загрузки книг</strong>, его можно вставить здесь, взяв на <a href=\"%(url)s\" target=\"_blank\" rel=\"noopener\" style=\"color:#aab4f5;\">странице интеграции BookFusion с Calibre</a>."
+
+#: templates/admin_user_integrations.html:227
+msgid "Select a library…"
+msgstr "Выберите библиотеку…"
+
+#: templates/admin_users.html:3
+msgid "Users · BookBridge admin"
+msgstr "Пользователи · администрирование BookBridge"
+
+#: templates/admin_users.html:47
+msgid "User"
+msgstr "Пользователь"
+
+#: templates/admin_users.html:47
+msgid "Role"
+msgstr "Роль"
+
+#: templates/admin_users.html:47
+msgid "Status"
+msgstr "Статус"
+
+#: templates/admin_users.html:47
+msgid "Last login"
+msgstr "Последний вход"
+
+#: templates/admin_users.html:47
+msgid "Actions"
+msgstr "Действия"
+
+#: templates/admin_users.html:50
+msgid "(you)"
+msgstr "(вы)"
+
+#: templates/admin_users.html:51 templates/admin_users.html:105
+msgid "user"
+msgstr "пользователь"
+
+#: templates/admin_users.html:51 templates/admin_users.html:106
+msgid "admin"
+msgstr "администратор"
+
+#: templates/admin_users.html:52
+msgid "active"
+msgstr "активен"
+
+#: templates/admin_users.html:52
+msgid "disabled"
+msgstr "отключён"
+
+#: templates/admin_users.html:55
+msgid "Integrations"
+msgstr "Интеграции"
+
+#: templates/admin_users.html:59
+msgid "new password"
+msgstr "новый пароль"
+
+#: templates/admin_users.html:60
+msgid "Reset"
+msgstr "Сбросить"
+
+#: templates/admin_users.html:65
+msgid "Disable"
+msgstr "Отключить"
+
+#: templates/admin_users.html:68
+msgid "Make this account a regular user? They lose admin access to every book, user and setting."
+msgstr "Сделать этот аккаунт обычным пользователем? Он потеряет права администратора на все книги, пользователей и настройки."
+
+#: templates/admin_users.html:68
+msgid "Make this account an administrator? Admins manage every book, user and setting. They keep using their own service logins — an admin does not inherit yours."
+msgstr "Сделать этот аккаунт администратором? Администраторы управляют всеми книгами, пользователями и настройками. Входы в сервисы у него останутся свои — ваши администратор не наследует."
+
+#: templates/admin_users.html:72
+msgid "Make user"
+msgstr "Сделать пользователем"
+
+#: templates/admin_users.html:72
+msgid "Make admin"
+msgstr "Сделать администратором"
+
+#: templates/admin_users.html:77
+#, python-format
+msgid "Delete %(name)s? Their progress/credentials are removed."
+msgstr "Удалить %(name)s? Прогресс и учётные данные пользователя будут удалены."
+
+#: templates/admin_users.html:80
+msgid "Delete"
+msgstr "Удалить"
+
+#: templates/admin_users.html:90
+msgid "Shared library"
+msgstr "Общая библиотека"
+
+#: templates/admin_users.html:91
+msgid "Shares the existing catalog with all active users. Requires the Shared Library setting (Features → Shared Library). This is one-way and cannot be undone in bulk."
+msgstr "Открывает текущий каталог всем активным пользователям. Нужна включённая настройка Shared Library (Features → Shared Library). Действие одностороннее, массово его не отменить."
+
+#: templates/admin_users.html:92
+msgid "This will give every active user visibility of every book in the catalog. This cannot be undone in bulk."
+msgstr "Все активные пользователи увидят все книги каталога. Массово это не отменить."
+
+#: templates/admin_users.html:94
+msgid "Share library with all users"
+msgstr "Открыть библиотеку всем пользователям"
+
+#: templates/admin_users.html:99
+msgid "Create user"
+msgstr "Создать пользователя"
+
+#: templates/admin_users.html:102
+msgid "username"
+msgstr "имя пользователя"
+
+#: templates/admin_users.html:103
+msgid "password"
+msgstr "пароль"
+
+#: templates/admin_users.html:108
+msgid "Create"
+msgstr "Создать"
+
+#: templates/job_queue.html:12
+msgid "See books waiting, processing, or recently finished. Move staged books or pending alignments before they start."
+msgstr "Книги в ожидании, в обработке и недавно готовые. Подготовленные книги и ожидающие выравнивания можно переставить до начала обработки."
+
+#: templates/job_queue.html:14
+msgid "Refresh status"
+msgstr "Обновить статус"
+
+#: templates/job_queue.html:17
+msgid "Updates every 20 seconds while books are processing."
+msgstr "Пока идёт обработка, обновляется каждые 20 секунд."
+
+#: templates/job_queue.html:33
+msgid "Processing"
+msgstr "В обработке"
+
+#: templates/job_queue.html:34
+msgid "Waiting"
+msgstr "В ожидании"
+
+#: templates/job_queue.html:35
+msgid "Recently finished (7 days)"
+msgstr "Недавно готовые (7 дней)"
+
+#: templates/job_queue.html:50
+msgid "Book"
+msgstr "Книга"
+
+#: templates/job_queue.html:51
+msgid "Operation"
+msgstr "Операция"
+
+#: templates/job_queue.html:52
+msgid "Status / stage"
+msgstr "Статус / этап"
+
+#: templates/job_queue.html:53
+msgid "Progress"
+msgstr "Прогресс"
+
+#: templates/job_queue.html:54
+msgid "Requested"
+msgstr "Запрошено"
+
+#: templates/job_queue.html:55
+msgid "Order"
+msgstr "Порядок"
+
+#: templates/job_queue.html:64
+#, python-format
+msgid "#%(position)s in its list"
+msgstr "№%(position)s в своём списке"
+
+#: templates/job_queue.html:71
+#, python-format
+msgid "Last attempt %(ago)s ago"
+msgstr "Последняя попытка: %(ago)s назад"
+
+#: templates/job_queue.html:75
+#, python-format
+msgid "%(title)s progress"
+msgstr "Прогресс: %(title)s"
+
+#: templates/job_queue.html:86
+#, python-format
+msgid "Move %(title)s up"
+msgstr "Поднять «%(title)s»"
+
+#: templates/job_queue.html:86
+msgid "Move up"
+msgstr "Выше"
+
+#: templates/job_queue.html:87
+#, python-format
+msgid "Move %(title)s down"
+msgstr "Опустить «%(title)s»"
+
+#: templates/job_queue.html:87
+msgid "Move down"
+msgstr "Ниже"
+
+#: templates/job_queue.html:88
+#, python-format
+msgid "Move %(title)s to top"
+msgstr "Поставить «%(title)s» первой"
+
+#: templates/job_queue.html:88
+msgid "Move to top"
+msgstr "В начало"
+
+#: templates/job_queue.html:105
+msgid "Nothing to show here."
+msgstr "Здесь пока ничего нет."
+
+#: templates/login.html:4 templates/login.html:24
+msgid "Sign in"
+msgstr "Войти"
+
+#: templates/login.html:12
+msgid "Sign in to continue"
+msgstr "Войдите, чтобы продолжить"
+
+#: templates/login.html:21 templates/setup.html:21
+msgid "Password"
+msgstr "Пароль"
+
+#: templates/logs.html:290
+msgid "Application Logs"
+msgstr "Журнал приложения"
+
+#: templates/logs.html:291
+msgid "View, filter, and monitor system logs in real-time"
+msgstr "Просмотр, фильтрация и наблюдение за системным журналом в реальном времени"
+
+#: templates/logs.html:298
+msgid "Min Log Level:"
+msgstr "Мин. уровень:"
+
+#: templates/logs.html:309
+msgid "Filter by text:"
+msgstr "Фильтр по тексту:"
+
+#: templates/logs.html:310
+msgid "Search logs..."
+msgstr "Поиск по журналу..."
+
+#: templates/logs.html:314
+msgid "Lines to show:"
+msgstr "Сколько строк:"
+
+#: templates/logs.html:326
+msgid "Refresh Logs"
+msgstr "Обновить журнал"
+
+#: templates/logs.html:330
+msgid "Auto-refresh (30s):"
+msgstr "Автообновление (30 с):"
+
+#: templates/logs.html:335
+msgid "Live mode (real-time):"
+msgstr "Живой режим (в реальном времени):"
+
+#: templates/logs.html:342
+msgid "Total: 0 lines"
+msgstr "Всего: 0 строк"
+
+#: templates/logs.html:343
+msgid "Showing: 0 lines"
+msgstr "Показано: 0 строк"
+
+#: templates/logs.html:344
+msgid "Last updated: Never"
+msgstr "Обновлено: никогда"
+
+#: templates/logs.html:350
+msgid "Log Entries"
+msgstr "Записи журнала"
+
+#: templates/logs.html:353
+msgid "Top"
+msgstr "Вверх"
+
+#: templates/logs.html:355
+msgid "Bottom"
+msgstr "Вниз"
+
+#: templates/logs.html:361
+msgid "Loading logs..."
+msgstr "Загрузка журнала..."
+
+#: templates/logs.html:365
+msgid "Load More Logs"
+msgstr "Загрузить ещё"
+
+#: templates/setup.html:4
+msgid "Set up BookBridge"
+msgstr "Настройка BookBridge"
+
+#: templates/setup.html:12
+msgid "Create the first administrator account."
+msgstr "Создайте первый аккаунт администратора."
+
+#: templates/setup.html:17
+msgid "Admin username"
+msgstr "Имя администратора"
+
+#: templates/setup.html:25
+msgid "Confirm password"
+msgstr "Повторите пароль"
+
+#: templates/setup.html:28
+msgid "Create admin"
+msgstr "Создать администратора"
+
+#: templates/stats.html:216
+msgid "Unified activity dashboard"
+msgstr "Сводная панель активности"
+
+#: templates/stats.html:217
+msgid "Live listening stats come from Audiobookshelf, reading stats come from KOReader uploads, and the combined view merges both into one BookBridge-native dashboard."
+msgstr "Статистика прослушивания приходит из Audiobookshelf в реальном времени, статистика чтения — из выгрузок KOReader, а сводный вид объединяет обе в одну панель BookBridge."
+
+#: templates/stats.html:219
+msgid "ABS live data"
+msgstr "данные ABS в реальном времени"
+
+#: templates/stats.html:219 templates/stats.html:231 templates/stats.html:234
+msgid "Listening"
+msgstr "Прослушивание"
+
+#: templates/stats.html:220
+msgid "KOReader sync uploads"
+msgstr "выгрузки синхронизации KOReader"
+
+#: templates/stats.html:220 templates/stats.html:230 templates/stats.html:235
+msgid "Reading"
+msgstr "Чтение"
+
+#: templates/stats.html:221
+msgid "Timezone"
+msgstr "Часовой пояс"
+
+#: templates/stats.html:221 templates/stats.html:265
+msgid "Loading…"
+msgstr "Загрузка…"
+
+#: templates/stats.html:224
+msgid "Waiting for stats…"
+msgstr "Ожидание статистики…"
+
+#: templates/stats.html:229
+msgid "Combined"
+msgstr "Сводно"
+
+#: templates/stats.html:236
+msgid "Refresh"
+msgstr "Обновить"
+
+#: templates/stats.html:240
+msgid "Loading dashboard data…"
+msgstr "Загрузка данных панели…"
+
+#: templates/stats.html:247
+msgid "Books read on this day"
+msgstr "Книги, прочитанные в этот день"
+
+#: templates/stats.html:248
+msgid "Select a day from the reading calendar to see which books were active."
+msgstr "Выберите день в календаре чтения, чтобы увидеть, какие книги вы читали."
+
+#: templates/stats.html:250 templates/stats.html:263
+msgid "Close"
+msgstr "Закрыть"
+
+#: templates/stats.html:252
+msgid "No day selected."
+msgstr "День не выбран."
+
+#: templates/stats.html:260
+msgid "Book detail"
+msgstr "О книге"
+
+#: templates/stats.html:261
+msgid "Per-book reading and listening statistics."
+msgstr "Статистика чтения и прослушивания по книге."
+
+#: templates/suggestions.html:137
+msgid "Library Suggestions"
+msgstr "Предложения по библиотеке"
+
+#: templates/suggestions.html:138
+msgid "Scan your library to find unmatched audiobook/ebook pairs"
+msgstr "Просканируйте библиотеку, чтобы найти несопоставленные пары аудиокниг и электронных книг"
+
+#: templates/suggestions.html:144
+msgid "Scan Library"
+msgstr "Сканировать библиотеку"
+
+#: templates/suggestions.html:148
+msgid "Full Refresh"
+msgstr "Полное обновление"
+
+#: templates/suggestions.html:153
+msgid "Sort"
+msgstr "Сортировка"
+
+#: templates/suggestions.html:155
+msgid "Best Match"
+msgstr "Лучшее совпадение"
+
+#: templates/suggestions.html:159
+#, python-format
+msgid "Showing %(num)s suggestion"
+msgid_plural "Showing %(num)s suggestions"
+msgstr[0] "Показано %(num)s предложение"
+msgstr[1] "Показано %(num)s предложения"
+msgstr[2] "Показано %(num)s предложений"
+
+#: templates/suggestions.html:164
+#, python-format
+msgid "Last scan: %(new)s new scanned, %(cached)s reused from cache"
+msgstr "Последнее сканирование: новых — %(new)s, из кэша — %(cached)s"
+
+#: templates/suggestions.html:168
+#, python-format
+msgid "Last scan failed: %(error)s"
+msgstr "Последнее сканирование не удалось: %(error)s"
+
+#: templates/suggestions.html:174
+msgid "Audiobooks"
+msgstr "Аудиокниги"
+
+#: templates/suggestions.html:179
+msgid "Add all exact"
+msgstr "Добавить все точные"
+
+#: templates/suggestions.html:180
+msgid "Add selected"
+msgstr "Добавить выбранные"
+
+#: templates/suggestions.html:190
+#, python-format
+msgid "Scanning library... 0%%"
+msgstr "Сканирование библиотеки... 0%%"
+
+#: templates/suggestions.html:207
+msgid "Audiobook source"
+msgstr "Источник аудиокниги"
+
+#: templates/suggestions.html:211
+#, python-format
+msgid "Match %(score)s%%"
+msgstr "Совпадение %(score)s%%"
+
+#: templates/suggestions.html:211
+msgid "Match --"
+msgstr "Совпадение --"
+
+#: templates/suggestions.html:214
+#, python-format
+msgid "Best: %(name)s (%(score)s%%)"
+msgstr "Лучшее: %(name)s (%(score)s%%)"
+
+#: templates/suggestions.html:222
+msgid "Select"
+msgstr "Выбрать"
+
+#: templates/suggestions.html:224
+msgid "Dismiss"
+msgstr "Скрыть"
+
+#: templates/suggestions.html:232
+msgid "Reject"
+msgstr "Отклонить"
+
+#: templates/suggestions.html:241
+#, python-format
+msgid "No suggestions found above 60%% confidence."
+msgstr "Предложений с уверенностью выше 60%% не найдено."
+
+#: templates/suggestions.html:241
+msgid "Run another scan after your library changes."
+msgstr "Запустите сканирование снова, когда библиотека изменится."
+
+#: templates/suggestions.html:243
+msgid "No scan results yet."
+msgstr "Результатов сканирования пока нет."
+
+#: templates/suggestions.html:243
+msgid "Click \"Scan Library\" to begin."
+msgstr "Нажмите «Сканировать библиотеку», чтобы начать."
+
+#: templates/suggestions.html:252
+msgid "Batch Match Queue"
+msgstr "Очередь пакетного сопоставления"
+
+#: templates/suggestions.html:257
+msgid "Selected Suggestion"
+msgstr "Выбранное предложение"
+
+#: templates/suggestions.html:258
+msgid "Click a suggestion to review and add to queue."
+msgstr "Нажмите на предложение, чтобы проверить его и добавить в очередь."
+
+#: templates/suggestions.html:261
+msgid "Selected"
+msgstr "Выбрано"
+
+#: templates/suggestions.html:285
+msgid "Optional. Choose this to create a tri-link."
+msgstr "Необязательно. Выберите, чтобы создать тройную связь."
+
+#: templates/suggestions.html:290
+msgid "Ebook Match"
+msgstr "Электронная книга"
+
+#: templates/suggestions.html:294
+msgid "No ebook matches available for this suggestion. Storyteller-only queue is allowed."
+msgstr "Для этого предложения нет подходящих электронных книг. Можно поставить в очередь только с Storyteller."
+
+#: templates/whats_new.html:3 templates/whats_new.html:61
+msgid "What's New"
+msgstr "Что нового"
+
+#: templates/whats_new.html:61
+#, python-format
+msgid "What's New in %(version)s"
+msgstr "Что нового в %(version)s"
+
+#: templates/whats_new.html:63
+msgid "All releases"
+msgstr "Все релизы"
+
+#: templates/whats_new.html:69
+msgid "Release notes aren't available right now."
+msgstr "Примечания к релизу сейчас недоступны."
+
