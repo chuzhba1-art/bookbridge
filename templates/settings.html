@@ -2102,13 +2102,14 @@
                     <div class="toggle-switch-wrapper">
                         <span class="toggle-label">Enable</span>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="toggle_suggestions" name="SUGGESTIONS_ENABLED" {% if
+                            <input type="checkbox" id="toggle_suggestions" name="SUGGESTIONS_ENABLED"
+                                onchange="toggleSection('suggestions_body', this.checked)" {% if
                                 get_bool('SUGGESTIONS_ENABLED') %}checked{% endif %}>
                             <span class="slider"></span>
                         </label>
                     </div>
                 </div>
-                <div class="section-body">
+                <div id="suggestions_body" class="section-body {% if not get_bool('SUGGESTIONS_ENABLED') %}collapsed{% endif %}">
                     <div class="full-width">
                         <p class="help-text">
                             When enabled, the system will look for unmapped audiobooks with progress and suggest
@@ -2318,20 +2319,21 @@
 
             <!-- Shelfmark (Optional) -->
             <div class="settings-section">
+                {% set shelfmark_enabled = get_bool('SHELFMARK_ENABLED') or (get_val('SHELFMARK_URL') != '' and
+                get_val('SHELFMARK_ENABLED') == '') %}
                 <div class="section-header">
                     <h3>Shelfmark View</h3>
                     <div class="toggle-switch-wrapper">
                         <span class="toggle-label">Enable</span>
                         <label class="toggle-switch">
                             <input type="checkbox" id="toggle_shelfmark" aria-label="Enable Shelfmark"
-                                name="SHELFMARK_ENABLED" {% if get_bool('SHELFMARK_ENABLED') or
-                                (get_val('SHELFMARK_URL') !='' and get_val('SHELFMARK_ENABLED')=='' ) %}checked{% endif
-                                %}>
+                                name="SHELFMARK_ENABLED" onchange="toggleSection('shelfmark_body', this.checked)"
+                                {% if shelfmark_enabled %}checked{% endif %}>
                             <span class="slider"></span>
                         </label>
                     </div>
                 </div>
-                <div class="section-body">
+                <div id="shelfmark_body" class="section-body {% if not shelfmark_enabled %}collapsed{% endif %}">
                     <div class="form-group full-width">
                         <label>Shelfmark URL</label>
                         <input type="text" name="SHELFMARK_URL" value="{{ get_val('SHELFMARK_URL') }}">
@@ -2920,13 +2922,14 @@
                             <span class="toggle-label">Enable</span>
                             <label class="toggle-switch">
                                 <input type="checkbox" name="REMOTE_AUTH_ENABLED"
+                                    onchange="toggleSection('remote_auth_body', this.checked)"
                                     {% if get_bool('REMOTE_AUTH_ENABLED') %}checked{% endif %}>
                                 <span class="slider"></span>
                             </label>
                         </div>
                     </div>
                 </div>
-                <div class="section-body">
+                <div id="remote_auth_body" class="section-body {% if not get_bool('REMOTE_AUTH_ENABLED') %}collapsed{% endif %}">
                     <div class="form-group full-width">
                         <label>Username Header</label>
                         <input type="text" name="REMOTE_AUTH_HEADER" value="{{ get_val('REMOTE_AUTH_HEADER') }}" placeholder="Remote-User">

@@ -163,6 +163,15 @@ class TestSettingsSaveRestartsOnlyWhenNeeded(unittest.TestCase):
         self.assertEqual(self.store['STORYTELLER_POLL_WAIT_FOR_SETTLE'], 'false')
         self.assertEqual(self.store['BOOKORBIT_AUDIO_POLL_WAIT_FOR_SETTLE'], 'false')
 
+    def test_a_card_switched_off_folds_its_settings_away(self):
+        os.environ.pop('REMOTE_AUTH_ENABLED', None)
+        html = self.client.get('/settings').get_data(as_text=True)
+        self.assertIn('id="remote_auth_body" class="section-body collapsed"', html)
+        for card in html.split('<div class="settings-section')[1:]:
+            header, _, body = card.partition('class="section-body')
+            if 'toggle-switch' in header and 'toggleSection(' not in header:
+                self.assertNotRegex(body, r'<(input|select|textarea)\b', header.split('</h3>')[0])
+
     def test_the_page_marks_restart_settings_and_ships_defaults(self):
         html = self.client.get('/settings').get_data(as_text=True)
         self.assertIn('"SYNC_PERIOD_MINS"', html.split('RESTART_KEYS', 1)[1].split(';', 1)[0])
