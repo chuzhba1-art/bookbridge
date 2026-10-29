@@ -4245,8 +4245,8 @@ msgid "Data Directory"
 msgstr "Каталог данных"
 
 #: templates/settings.html:2875
-msgid "Where BookBridge keeps its database and caches. It must match your Docker volume, so change it only if you moved that."
-msgstr "Где BookBridge хранит базу данных и кэши. Должен совпадать с вашим томом Docker, так что меняйте, только если перенесли его."
+msgid "Where BookBridge keeps its database and caches. Set it with the <code>DATA_DIR</code> environment variable, because BookBridge needs it before it can open its database. Changing it does not move existing data."
+msgstr "Где BookBridge хранит базу данных и кэши. Задаётся переменной окружения <code>DATA_DIR</code>: она нужна BookBridge ещё до того, как он откроет свою базу данных. При её изменении существующие данные не переносятся."
 
 #: templates/settings.html:2878
 msgid "Download library ebooks again after (minutes)"
